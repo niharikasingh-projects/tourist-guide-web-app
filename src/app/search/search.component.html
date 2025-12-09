@@ -75,6 +75,8 @@
     <app-result-card 
       *ngFor="let attraction of searchResults" 
       [attraction]="attraction"
+      [fromDate]="fromDate"
+      [toDate]="toDate"
       (selectAttraction)="onSelectAttraction($event)">
     </app-result-card>
   </div>

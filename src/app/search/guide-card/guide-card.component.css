@@ -1,0 +1,262 @@
+.guide-card {
+  background: var(--card, #fff);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(255, 140, 43, 0.15);
+}
+
+.guide-header {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 140, 43, 0.05), rgba(255, 140, 43, 0.02));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.guide-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--brand);
+  flex-shrink: 0;
+}
+
+.guide-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guide-name {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brand-700);
+  line-height: 1.2;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  color: #ffa726;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.experience {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.guide-details {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.bio {
+  margin: 0;
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--brand-700);
+  font-size: 0.95rem;
+}
+
+.icon {
+  font-size: 1rem;
+}
+
+.languages,
+.specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.language-badge,
+.specialty-badge {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.language-badge {
+  background: rgba(255, 140, 43, 0.15);
+  color: var(--brand-700);
+  border: 1px solid rgba(255, 140, 43, 0.3);
+}
+
+.specialty-badge {
+  background: rgba(100, 100, 100, 0.08);
+  color: #555;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.availability-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 140, 43, 0.05);
+  border-radius: 8px;
+  margin-top: auto;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.availability-status {
+  color: #2e7d32;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.price-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.price-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.book-button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.book-button:hover {
+  background: var(--brand-600);
+}
+
+.book-button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 700px) {
+  .guide-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.25rem;
+  }
+
+  .guide-image {
+    width: 90px;
+    height: 90px;
+  }
+
+  .guide-name {
+    font-size: 1.2rem;
+  }
+
+  .guide-details {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .bio {
+    font-size: 0.9rem;
+  }
+
+  .availability-price {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .price {
+    align-items: center;
+  }
+
+  .book-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .guide-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .guide-name {
+    font-size: 1.1rem;
+  }
+
+  .language-badge,
+  .specialty-badge {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}

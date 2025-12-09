@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TouristAttraction } from '../../services/search.service';
 
 @Component({
@@ -11,10 +12,17 @@ import { TouristAttraction } from '../../services/search.service';
 })
 export class ResultCardComponent {
   @Input() attraction!: TouristAttraction;
+  @Input() fromDate: string | null = null;
+  @Input() toDate: string | null = null;
   @Output() selectAttraction = new EventEmitter<string>();
 
+  constructor(private router: Router) {}
+
   onSelect() {
-    this.selectAttraction.emit(this.attraction.id);
+    const queryParams: any = {};
+    if (this.fromDate) queryParams.from = this.fromDate;
+    if (this.toDate) queryParams.to = this.toDate;
+    this.router.navigate(['/attraction', this.attraction.id], { queryParams });
   }
 
   getRatingStars(): string {

@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AutosuggestService, LocationSuggestion } from '../services/autosuggest.service';
 import { SearchService, TouristAttraction } from '../services/search.service';
+import { SearchStateService } from '../services/search-state.service';
 import { ResultCardComponent } from './result-card/result-card.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
@@ -14,7 +15,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
   location = '';
   fromDate: string | null = null;
   toDate: string | null = null;
@@ -39,6 +40,7 @@ export class SearchComponent {
   constructor(
     private autosuggestService: AutosuggestService,
     private searchService: SearchService,
+    private searchStateService: SearchStateService,
     private cdr: ChangeDetectorRef
   ) {
     // Set minimum date to today
@@ -57,6 +59,19 @@ export class SearchComponent {
       this.hasSearched = false;
       this.cdr.detectChanges();
     });
+  }
+
+  ngOnInit() {
+    // Restore search state if it exists
+    const savedState = this.searchStateService.getSearchState();
+    if (savedState) {
+      this.location = savedState.location;
+      this.fromDate = savedState.fromDate;
+      this.toDate = savedState.toDate;
+      this.searchResults = savedState.searchResults;
+      this.hasSearched = savedState.hasSearched;
+      this.cdr.detectChanges();
+    }
   }
 
   onLocationInput(event: Event) {
@@ -194,6 +209,14 @@ export class SearchComponent {
       next: (results) => {
         this.searchResults = results;
         this.isSearching = false;
+        // Save search state
+        this.searchStateService.saveSearchState({
+          location: this.location,
+          fromDate: this.fromDate,
+          toDate: this.toDate,
+          searchResults: this.searchResults,
+          hasSearched: this.hasSearched
+        });
         this.cdr.detectChanges();
       },
       error: (error) => {

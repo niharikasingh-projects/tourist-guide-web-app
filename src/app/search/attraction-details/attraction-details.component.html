@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="back-nav">
+    <button class="back-button" (click)="goBack()">
+      <span class="icon">←</span>
+      Back to Search
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading attraction details...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-container">
+    <p class="error-message">{{error}}</p>
+    <button class="retry-button" (click)="goBack()">Return to Search</button>
+  </div>
+
+  <div *ngIf="attraction && !isLoading" class="details-container">
+    <!-- Attraction Details Section -->
+    <section class="attraction-section">
+      <div class="attraction-banner">
+        <img [src]="attraction.imageUrl" [alt]="attraction.name" class="attraction-image">
+        <div class="banner-overlay">
+          <span class="category-badge">{{attraction.category}}</span>
+        </div>
+      </div>
+
+      <div class="attraction-info">
+        <h1 class="attraction-title">{{attraction.name}}</h1>
+        
+        <div class="location-row">
+          <span class="icon">📍</span>
+          <span>{{attraction.location}}, {{attraction.country}}</span>
+        </div>
+
+        <div class="rating-row">
+          <span class="stars">{{getRatingStars()}}</span>
+          <span class="rating-value">{{attraction.rating}}</span>
+        </div>
+
+        <p class="description">{{attraction.description}}</p>
+
+        <div class="details-grid">
+          <div class="detail-box">
+            <span class="icon">⏱️</span>
+            <div class="detail-content">
+              <span class="detail-label">Duration</span>
+              <span class="detail-value">{{attraction.duration}}</span>
+            </div>
+          </div>
+
+          <div class="detail-box">
+            <span class="icon">💰</span>
+            <div class="detail-content">
+              <span class="detail-label">Entry Fee</span>
+              <span class="detail-value">{{attraction.price}}</span>
+            </div>
+          </div>
+
+          <div class="detail-box">
+            <span class="icon">🏷️</span>
+            <div class="detail-content">
+              <span class="detail-label">Category</span>
+              <span class="detail-value">{{attraction.category}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Available Guides Section -->
+    <section class="guides-section">
+      <div class="section-header">
+        <h2>Available Guides</h2>
+        <p class="section-subtitle">Choose from our experienced local guides for this attraction</p>
+      </div>
+
+      <div *ngIf="guides.length === 0" class="no-guides">
+        <p>No guides available for this attraction at the moment.</p>
+        <p class="help-text">Please check back later or contact support.</p>
+      </div>
+
+      <div *ngIf="guides.length > 0" class="guides-grid">
+        <app-guide-card 
+          *ngFor="let guide of guides" 
+          [guide]="guide"
+          (bookGuide)="onBookGuide($event)">
+        </app-guide-card>
+      </div>
+    </section>
+  </div>
+</div>
