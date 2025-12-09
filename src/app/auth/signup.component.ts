@@ -8,34 +8,7 @@ import { AuthService, User } from './auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   selector: 'app-signup',
-  template: `
-    <main class="auth-container">
-      <h1 class="title-text">Create your tourist account</h1>
-
-      <form (ngSubmit)="onSubmit()" class="auth-form">
-        <input name="name" [(ngModel)]="name" placeholder="Name" required />
-        <input name="email" [(ngModel)]="email" type="email" placeholder="Email" required />
-        <input name="password" [(ngModel)]="password" type="password" placeholder="Password" required />
-        <input name="confirm" [(ngModel)]="confirm" type="password" placeholder="Confirm password" required />
-
-        <button type="submit" class="main-button" [disabled]="loading">
-          <span *ngIf="!loading">Sign up</span>
-          <span *ngIf="loading">Creating…</span>
-        </button>
-
-        <div class="separator"><span class="separator-text">Sign up with</span></div>
-      </form>
-
-      <div class="link-section">
-        <p>Already have an account?</p>
-        <a routerLink="/signin" class="main-link">Login</a>
-      </div>
-
-      <div aria-live="polite" *ngIf="message" role="status" style="margin-top:12px;">
-        <span [style.color]="messageType === 'error' ? '#b00020' : '#064e3b'">{{ message }}</span>
-      </div>
-    </main>
-  `,
+  templateUrl: './signup.component.html',
   styleUrls: ['./auth.css']
 })
 export class SignupComponent {

@@ -1,0 +1,36 @@
+<header class="app-header">
+  <div class="container">
+    <div class="brand-wrap">
+      <h1 class="brand">Tourist Guide</h1>
+      <button
+        #hamburger
+        class="hamburger"
+        type="button"
+        aria-label="Toggle navigation menu"
+        aria-controls="main-navigation"
+        [attr.aria-expanded]="menuOpen"
+        (click)="toggleMenu()"
+      >
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+
+    <nav id="main-navigation" class="nav" [class.open]="menuOpen" role="navigation" [attr.aria-hidden]="!menuOpen">
+      <a #firstLink routerLink="/home" (click)="closeMenu()" (mouseenter)="onHover($event)">Home</a>
+      <a routerLink="/booking" (click)="menuOpen = false" (mouseenter)="onHover($event)">Booking</a>
+      <a routerLink="/match" (click)="menuOpen = false" (mouseenter)="onHover($event)">Request/Match</a>
+      <a routerLink="/guide-profile" (click)="menuOpen = false" (mouseenter)="onHover($event)">Guides</a>
+      <a *ngIf="!auth.isAuthenticated()" routerLink="/signin" (click)="closeMenu()" (mouseenter)="onHover($event)">Sign in</a>
+      <a *ngIf="auth.isAuthenticated()"
+        (click)="onSignOut()"
+        (mouseenter)="onHover($event)"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onSignOut()"
+        (keydown.space)="onSignOut()"
+      >Sign out</a>
+    </nav>
+  </div>
+</header>
