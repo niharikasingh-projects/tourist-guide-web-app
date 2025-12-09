@@ -13,6 +13,8 @@ export interface Guide {
   specialties: string[];
   bio: string;
   availableDates: { from: string; to: string }[];
+  contact?: string;
+  email?: string;
 }
 
 @Injectable({

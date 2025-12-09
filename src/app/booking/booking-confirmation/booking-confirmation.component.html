@@ -1,0 +1,180 @@
+<app-header></app-header>
+
+<div class="confirmation-container">
+  <div class="confirmation-wrapper">
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading booking details...</p>
+    </div>
+
+    <div *ngIf="error && !isLoading" class="error-container">
+      <p class="error-message">{{error}}</p>
+      <button class="home-button" (click)="goToHome()">Go to Home</button>
+    </div>
+
+    <div *ngIf="!isLoading && !error && booking" class="confirmation-content">
+      <!-- Success Header -->
+      <div class="success-header" *ngIf="booking.status === 'confirmed'">
+        <div class="success-icon">✓</div>
+        <h1 class="success-title">Booking Confirmed!</h1>
+        <p class="success-message">Your tour guide has been successfully booked</p>
+      </div>
+
+      <!-- Cancelled Header -->
+      <div class="cancelled-header" *ngIf="booking.status === 'cancelled'">
+        <div class="cancelled-icon">✕</div>
+        <h1 class="cancelled-title">Booking Cancelled</h1>
+        <p class="cancelled-message">This booking has been cancelled</p>
+      </div>
+
+      <!-- Booking Details Card -->
+      <div class="booking-card">
+        <div class="booking-id-section">
+          <span class="label">Booking ID:</span>
+          <span class="booking-id">{{booking.id}}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Attraction Details -->
+        <div class="detail-section">
+          <h2 class="section-title">Attraction Details</h2>
+          <div class="detail-row">
+            <span class="icon">🏛️</span>
+            <div class="detail-content">
+              <span class="detail-label">Attraction</span>
+              <span class="detail-value">{{booking.attractionName}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Guide Details -->
+        <div class="detail-section">
+          <h2 class="section-title">Guide Details</h2>
+          <div class="detail-row">
+            <span class="icon">👤</span>
+            <div class="detail-content">
+              <span class="detail-label">Guide Name</span>
+              <span class="detail-value">{{booking.guideName}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="icon">📞</span>
+            <div class="detail-content">
+              <span class="detail-label">Guide Contact</span>
+              <span class="detail-value">{{booking.guideContact}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="icon">✉️</span>
+            <div class="detail-content">
+              <span class="detail-label">Guide Email</span>
+              <span class="detail-value">{{booking.guideEmail}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Customer Details -->
+        <div class="detail-section">
+          <h2 class="section-title">Your Details</h2>
+          <div class="detail-row">
+            <span class="icon">👤</span>
+            <div class="detail-content">
+              <span class="detail-label">Name</span>
+              <span class="detail-value">{{booking.customerName}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="icon">📞</span>
+            <div class="detail-content">
+              <span class="detail-label">Contact</span>
+              <span class="detail-value">{{booking.customerContact}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="icon">✉️</span>
+            <div class="detail-content">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">{{booking.customerEmail}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Payment Details -->
+        <div class="detail-section">
+          <h2 class="section-title">Payment Details</h2>
+          <div class="detail-row">
+            <span class="icon">💰</span>
+            <div class="detail-content">
+              <span class="detail-label">Amount Paid</span>
+              <span class="detail-value amount">${{booking.amount}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <span class="icon">📅</span>
+            <div class="detail-content">
+              <span class="detail-label">Booking Date</span>
+              <span class="detail-value">{{formatDate(booking.bookingDate)}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="home-button" (click)="goToHome()">
+          Back to Home
+        </button>
+        <button 
+          *ngIf="booking.status === 'confirmed'"
+          class="cancel-button" 
+          (click)="openCancelModal()">
+          Cancel Booking
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Cancel Booking</h2>
+      <button class="close-button" (click)="closeCancelModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <p>Are you sure you want to cancel this booking?</p>
+      <p class="warning-text">This action cannot be undone.</p>
+      
+      <div *ngIf="cancelError" class="cancel-error">
+        {{cancelError}}
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button 
+        class="modal-cancel-button" 
+        (click)="closeCancelModal()"
+        [disabled]="isCancelling">
+        No, Keep Booking
+      </button>
+      <button 
+        class="modal-confirm-button" 
+        (click)="confirmCancellation()"
+        [disabled]="isCancelling">
+        <span *ngIf="!isCancelling">Yes, Cancel Booking</span>
+        <span *ngIf="isCancelling">Cancelling...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

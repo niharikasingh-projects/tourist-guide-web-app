@@ -20,9 +20,7 @@
     <nav id="main-navigation" class="nav" [class.open]="menuOpen" role="navigation" [attr.aria-hidden]="!menuOpen">
       <div class="panel">
         <a #firstLink routerLink="/home" (click)="closeMenu()" (mouseenter)="onHover($event)">Home</a>
-        <a routerLink="/booking" (click)="menuOpen = false" (mouseenter)="onHover($event)">Booking</a>
-        <a routerLink="/match" (click)="menuOpen = false" (mouseenter)="onHover($event)">Request/Match</a>
-        <a routerLink="/guide-profile" (click)="menuOpen = false" (mouseenter)="onHover($event)">Guides</a>
+        <a *ngIf="auth.isAuthenticated()" routerLink="/my-bookings" (click)="closeMenu()" (mouseenter)="onHover($event)">My Bookings</a>
         <a *ngIf="!auth.isAuthenticated()" routerLink="/signin" (click)="closeMenu()" (mouseenter)="onHover($event)">Sign in</a>
         <a *ngIf="auth.isAuthenticated()"
           (click)="onSignOut()"

@@ -1,0 +1,139 @@
+<app-header></app-header>
+
+<div class="checkout-container">
+  <div class="checkout-wrapper">
+    <div class="back-nav">
+      <button class="back-button" (click)="goBack()">
+        <span class="icon">←</span>
+        Back
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading checkout details...</p>
+    </div>
+
+    <div *ngIf="error && !isLoading" class="error-container">
+      <p class="error-message">{{error}}</p>
+      <button class="retry-button" (click)="goBack()">Go Back</button>
+    </div>
+
+    <div *ngIf="!isLoading && !error && attraction && guide" class="checkout-content">
+      <h1 class="page-title">Checkout</h1>
+
+      <!-- Booking Summary -->
+      <section class="booking-summary">
+        <h2 class="section-title">Booking Summary</h2>
+        
+        <div class="summary-card">
+          <div class="attraction-info">
+            <img [src]="attraction.imageUrl" [alt]="attraction.name" class="attraction-thumb">
+            <div class="attraction-details">
+              <h3>{{attraction.name}}</h3>
+              <p class="location">📍 {{attraction.location}}, {{attraction.country}}</p>
+              <p class="category">{{attraction.category}}</p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="guide-info">
+            <img [src]="guide.imageUrl" [alt]="guide.name" class="guide-thumb">
+            <div class="guide-details">
+              <h3>{{guide.name}}</h3>
+              <p class="experience">{{guide.experienceYears}} years experience</p>
+              <p class="languages">🗣️ {{guide.languages.join(', ')}}</p>
+              <p class="specialties">{{guide.specialties.join(', ')}}</p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="amount-section">
+            <div class="amount-row">
+              <span class="label">Guide Hourly Rate:</span>
+              <span class="value">${{guide.hourlyRate}}</span>
+            </div>
+            <div class="amount-row total">
+              <span class="label">Total Amount:</span>
+              <span class="value">${{totalAmount}}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Details Form -->
+      <section class="customer-form">
+        <h2 class="section-title">Your Details</h2>
+        
+        <form (ngSubmit)="onConfirmBooking()" #bookingForm="ngForm">
+          <div class="form-group">
+            <label for="name">Full Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name"
+              [(ngModel)]="customerName"
+              placeholder="Enter your full name"
+              required
+              [class.invalid]="formSubmitted && !customerName.trim()">
+            <span *ngIf="formSubmitted && !customerName.trim()" class="error-text">
+              Name is required
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="contact">Contact Number <span class="required">*</span></label>
+            <input 
+              type="tel" 
+              id="contact" 
+              name="contact"
+              [(ngModel)]="customerContact"
+              placeholder="Enter your contact number"
+              required
+              [class.invalid]="formSubmitted && (!customerContact.trim() || !isValidPhone(customerContact))">
+            <span *ngIf="formSubmitted && !customerContact.trim()" class="error-text">
+              Contact number is required
+            </span>
+            <span *ngIf="formSubmitted && customerContact.trim() && !isValidPhone(customerContact)" class="error-text">
+              Please enter a valid contact number (10-15 digits)
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email"
+              [(ngModel)]="customerEmail"
+              placeholder="Enter your email address"
+              required
+              [class.invalid]="formSubmitted && (!customerEmail.trim() || !isValidEmail(customerEmail))">
+            <span *ngIf="formSubmitted && !customerEmail.trim()" class="error-text">
+              Email is required
+            </span>
+            <span *ngIf="formSubmitted && customerEmail.trim() && !isValidEmail(customerEmail)" class="error-text">
+              Please enter a valid email address
+            </span>
+          </div>
+
+          <div *ngIf="error" class="form-error">
+            {{error}}
+          </div>
+
+          <button 
+            type="submit" 
+            class="confirm-button"
+            [disabled]="isProcessing">
+            <span *ngIf="!isProcessing">Confirm Booking</span>
+            <span *ngIf="isProcessing">Processing...</span>
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

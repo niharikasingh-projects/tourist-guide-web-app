@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from './auth.service';
+import { SearchStateService } from '../services/search-state.service';
 
 @Component({
   standalone: true,
@@ -20,7 +21,11 @@ export class SignupComponent {
   messageType: 'error' | 'success' | '' = '';
   loading = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private searchStateService: SearchStateService
+  ) {}
 
   async onSubmit() {
     this.message = '';
@@ -38,6 +43,8 @@ export class SignupComponent {
       if (res.success) {
         this.messageType = 'success';
         this.message = 'Account created — you can sign in now';
+        // Clear any existing search state
+        this.searchStateService.clearSearchState();
         setTimeout(() => { try { this.router.navigate(['/signin']); } catch (e) {} }, 500);
       } else {
         this.messageType = 'error';

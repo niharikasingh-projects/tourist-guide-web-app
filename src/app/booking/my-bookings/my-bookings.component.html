@@ -1,0 +1,125 @@
+<app-header></app-header>
+
+<div class="bookings-container">
+  <div class="bookings-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">My Bookings</h1>
+      <p class="page-subtitle">View and manage all your tour guide bookings</p>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading your bookings...</p>
+    </div>
+
+    <div *ngIf="error && !isLoading" class="error-container">
+      <p class="error-message">{{error}}</p>
+      <button class="home-button" (click)="goToHome()">Go to Home</button>
+    </div>
+
+    <div *ngIf="!isLoading && !error" class="bookings-content">
+      <!-- No bookings message -->
+      <div *ngIf="bookings.length === 0" class="no-bookings">
+        <div class="no-bookings-icon">📋</div>
+        <h2>No Bookings Yet</h2>
+        <p>You haven't made any bookings yet. Start exploring attractions and book your guide!</p>
+        <button class="home-button" (click)="goToHome()">Explore Attractions</button>
+      </div>
+
+      <!-- Bookings list -->
+      <div *ngIf="bookings.length > 0" class="bookings-grid">
+        <div *ngFor="let booking of bookings" class="booking-card" [class.cancelled]="booking.status === 'cancelled'">
+          <div class="booking-header">
+            <div class="booking-id-badge">
+              <span class="label">Booking ID:</span>
+              <span class="id">{{booking.id}}</span>
+            </div>
+            <div class="status-badge" [ngClass]="getStatusClass(booking.status)">
+              <span class="status-icon">{{getStatusIcon(booking.status)}}</span>
+              <span class="status-text">{{booking.status | titlecase}}</span>
+            </div>
+          </div>
+
+          <div class="booking-body">
+            <div class="attraction-section">
+              <h3 class="attraction-name">{{booking.attractionName}}</h3>
+              <p class="booking-date">📅 Booked on: {{formatDate(booking.bookingDate)}}</p>
+            </div>
+
+            <div class="guide-section">
+              <div class="info-row">
+                <span class="icon">👤</span>
+                <span class="label">Guide:</span>
+                <span class="value">{{booking.guideName}}</span>
+              </div>
+              <div class="info-row">
+                <span class="icon">📞</span>
+                <span class="label">Contact:</span>
+                <span class="value">{{booking.guideContact}}</span>
+              </div>
+            </div>
+
+            <div class="amount-section">
+              <span class="amount-label">Amount Paid</span>
+              <span class="amount-value">${{booking.amount}}</span>
+            </div>
+          </div>
+
+          <div class="booking-footer">
+            <button class="view-button" (click)="viewBookingDetails(booking.id)">
+              View Details
+            </button>
+            <button 
+              *ngIf="booking.status === 'confirmed'"
+              class="cancel-button" 
+              (click)="openCancelModal(booking)">
+              Cancel Booking
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancelModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Cancel Booking</h2>
+      <button class="close-button" (click)="closeCancelModal()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <p>Are you sure you want to cancel this booking?</p>
+      <div *ngIf="selectedBooking" class="booking-info">
+        <p><strong>Booking ID:</strong> {{selectedBooking.id}}</p>
+        <p><strong>Attraction:</strong> {{selectedBooking.attractionName}}</p>
+        <p><strong>Guide:</strong> {{selectedBooking.guideName}}</p>
+      </div>
+      <p class="warning-text">This action cannot be undone.</p>
+      
+      <div *ngIf="cancelError" class="cancel-error">
+        {{cancelError}}
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button 
+        class="modal-cancel-button" 
+        (click)="closeCancelModal()"
+        [disabled]="isCancelling">
+        No, Keep Booking
+      </button>
+      <button 
+        class="modal-confirm-button" 
+        (click)="confirmCancellation()"
+        [disabled]="isCancelling">
+        <span *ngIf="!isCancelling">Yes, Cancel Booking</span>
+        <span *ngIf="isCancelling">Cancelling...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
