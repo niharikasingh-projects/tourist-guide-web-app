@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AutosuggestService, LocationSuggestion } from '../services/autosuggest.service';
+import { SearchService, TouristAttraction } from '../services/search.service';
+import { ResultCardComponent } from './result-card/result-card.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ResultCardComponent],
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
@@ -21,6 +23,12 @@ export class SearchComponent {
   // Date validation error messages
   fromDateError = '';
   toDateError = '';
+  locationError = '';
+
+  // Search results
+  searchResults: TouristAttraction[] = [];
+  isSearching = false;
+  hasSearched = false;
 
   // Autosuggest properties
   suggestions: LocationSuggestion[] = [];
@@ -28,7 +36,11 @@ export class SearchComponent {
   selectedIndex = -1;
   private searchSubject = new Subject<string>();
 
-  constructor(private autosuggestService: AutosuggestService) {
+  constructor(
+    private autosuggestService: AutosuggestService,
+    private searchService: SearchService,
+    private cdr: ChangeDetectorRef
+  ) {
     // Set minimum date to today
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
@@ -41,6 +53,9 @@ export class SearchComponent {
       this.suggestions = suggestions;
       this.showSuggestions = suggestions.length > 0;
       this.selectedIndex = -1;
+      this.isSearching = false;
+      this.hasSearched = false;
+      this.cdr.detectChanges();
     });
   }
 
@@ -137,9 +152,17 @@ export class SearchComponent {
   }
 
   onSearch() {
-    // Clear any existing errors
+    // Clear any existing errors and previous results
     this.fromDateError = '';
     this.toDateError = '';
+    this.locationError = '';
+    this.searchResults = [];
+    
+    // Validate location is not empty
+    if (!this.location || this.location.trim() === '') {
+      this.locationError = 'Please enter a location';
+      return;
+    }
     
     // Validate dates before search
     if (this.fromDate) {
@@ -163,7 +186,28 @@ export class SearchComponent {
       }
     }
     
-    // simple demo action — in a real app you'd call a service
-    alert(`Searching for guides in ${this.location} from ${this.fromDate || '—'} to ${this.toDate || '—'}`);
+    // Perform search
+    this.isSearching = true;
+    this.hasSearched = true;
+    
+    this.searchService.searchAttractionsByLocation(this.location).subscribe({
+      next: (results) => {
+        this.searchResults = results;
+        this.isSearching = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Search error:', error);
+        this.isSearching = false;
+        this.searchResults = [];
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onSelectAttraction(attractionId: string) {
+    console.log('Selected attraction ID:', attractionId);
+    // In a real app, this would navigate to the attraction detail page or save selection
+    alert(`You selected attraction with ID: ${attractionId}`);
   }
 }

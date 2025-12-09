@@ -1,0 +1,37 @@
+<div class="result-card">
+  <div class="card-image">
+    <img [src]="attraction.imageUrl" [alt]="attraction.name" />
+    <span class="category-badge">{{ attraction.category }}</span>
+  </div>
+  
+  <div class="card-content">
+    <h3 class="attraction-name">{{ attraction.name }}</h3>
+    
+    <div class="location-info">
+      <span class="icon">📍</span>
+      <span>{{ attraction.location }}, {{ attraction.country }}</span>
+    </div>
+    
+    <p class="description">{{ attraction.description }}</p>
+    
+    <div class="details-row">
+      <div class="detail-item">
+        <span class="icon">⏱️</span>
+        <span>{{ attraction.duration }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="icon">💰</span>
+        <span>${{ attraction.price }}</span>
+      </div>
+    </div>
+    
+    <div class="rating">
+      <span class="stars">{{ getRatingStars() }}</span>
+      <span class="rating-value">{{ attraction.rating }}/5</span>
+    </div>
+    
+    <button class="select-button" (click)="onSelect()">
+      Select This Attraction
+    </button>
+  </div>
+</div>

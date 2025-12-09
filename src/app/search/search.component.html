@@ -24,6 +24,7 @@
         <div class="suggestion-meta">{{ suggestion.country }} • {{ suggestion.type }}</div>
       </div>
     </div>
+    <div class="error-message" *ngIf="locationError">{{ locationError }}</div>
   </label>
   <label>
     <span class="sr-only">From Date</span>
@@ -47,5 +48,39 @@
       aria-label="To date" />
     <div class="error-message" *ngIf="toDateError">{{ toDateError }}</div>
   </label>
-  <button type="submit" class="search-button" aria-label="Search for guides">Search</button>
+  <button type="submit" class="search-button" aria-label="Search for guides" [disabled]="isSearching">
+    <span *ngIf="!isSearching">Search</span>
+    <span *ngIf="isSearching">Searching...</span>
+  </button>
 </form>
+
+<!-- Search Results Section -->
+<div class="search-results-section" *ngIf="hasSearched">
+  <div class="results-header">
+    <h2 *ngIf="isSearching">
+      Searching for attractions in {{ location }}...
+    </h2>
+    <h2 *ngIf="!isSearching && searchResults.length > 0">
+      Found {{ searchResults.length }} attraction{{ searchResults.length === 1 ? '' : 's' }} in {{ location }}
+    </h2>
+    <h2 *ngIf="!isSearching && searchResults.length === 0">
+      No attractions found for "{{ location }}"
+    </h2>
+    <p *ngIf="!isSearching && searchResults.length === 0" class="no-results-text">
+      Try searching for a different location or check the spelling.
+    </p>
+  </div>
+  
+  <div class="results-grid" *ngIf="searchResults.length > 0 && !isSearching">
+    <app-result-card 
+      *ngFor="let attraction of searchResults" 
+      [attraction]="attraction"
+      (selectAttraction)="onSelectAttraction($event)">
+    </app-result-card>
+  </div>
+  
+  <div class="loading-spinner" *ngIf="isSearching">
+    <div class="spinner"></div>
+    <p>Loading results...</p>
+  </div>
+</div>

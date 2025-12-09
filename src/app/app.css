@@ -2,8 +2,14 @@
 	--footer-height: 56px;
 }
 
-html, body, app-root {
-	height: 100%;
+html, body {
+	min-height: 100%;
+}
+
+app-root {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 /* Ensure page content doesn't get hidden behind the fixed footer */
@@ -46,8 +52,10 @@ h2 { font-size: clamp(1.125rem, 1.6vw, 1.75rem); }
 }
 
 /* Layout: make app root fill viewport and allow main to grow */
-app-root { display: block; min-height: 100vh; }
-main { display: block; }
+main { 
+	display: block; 
+	flex: 1;
+}
 
 /* Ensure scalable images & svgs */
 img, svg { max-width: 100%; height: auto; }
