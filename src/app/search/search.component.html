@@ -1,15 +1,51 @@
 <form (ngSubmit)="onSearch()" class="search-form" role="search" aria-label="Find a guide">
-  <label>
+  <label class="location-wrapper">
     <span class="sr-only">Location</span>
-    <input name="location" [(ngModel)]="location" placeholder="Location (city or attraction)" aria-label="Location" />
+    <input 
+      name="location" 
+      [(ngModel)]="location" 
+      (input)="onLocationInput($event)"
+      (keydown)="onLocationKeydown($event)"
+      (blur)="closeSuggestions()"
+      placeholder="Location (city or attraction)" 
+      aria-label="Location"
+      autocomplete="off" />
+    
+    <!-- Autosuggest dropdown -->
+    <div class="suggestions-dropdown" *ngIf="showSuggestions && suggestions.length > 0">
+      <div 
+        *ngFor="let suggestion of suggestions; let i = index"
+        class="suggestion-item"
+        [class.selected]="i === selectedIndex"
+        (mousedown)="selectSuggestion(suggestion)"
+        role="option"
+        [attr.aria-selected]="i === selectedIndex">
+        <div class="suggestion-name">{{ suggestion.name }}</div>
+        <div class="suggestion-meta">{{ suggestion.country }} • {{ suggestion.type }}</div>
+      </div>
+    </div>
   </label>
   <label>
     <span class="sr-only">From Date</span>
-    <input type="date" name="from" [(ngModel)]="fromDate" aria-label="From date" />
+    <input 
+      type="date" 
+      name="from" 
+      [(ngModel)]="fromDate" 
+      (change)="onFromDateChange()"
+      [min]="minDate"
+      aria-label="From date" />
+    <div class="error-message" *ngIf="fromDateError">{{ fromDateError }}</div>
   </label>
   <label>
     <span class="sr-only">To Date</span>
-    <input type="date" name="to" [(ngModel)]="toDate" aria-label="To date" />
+    <input 
+      type="date" 
+      name="to" 
+      [(ngModel)]="toDate" 
+      (change)="onToDateChange()"
+      [min]="fromDate || minDate"
+      aria-label="To date" />
+    <div class="error-message" *ngIf="toDateError">{{ toDateError }}</div>
   </label>
   <button type="submit" class="search-button" aria-label="Search for guides">Search</button>
 </form>
