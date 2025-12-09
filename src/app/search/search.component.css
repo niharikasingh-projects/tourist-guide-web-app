@@ -1,0 +1,89 @@
+.search-bg {
+    background: var(--glass, #fff7f2);
+    border-radius: var(--radius, 12px);
+    box-shadow: var(--shadow, 0 2px 8px rgba(255, 140, 43, 0.08));
+    margin: 36px 0;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.search-form label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.search-form input {
+    padding: 1rem 1.2rem;
+    height: 48px;
+    line-height: 1.2;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #e6eef0;
+    background: #fff;
+    margin-bottom: 0;
+}
+
+.search-form .search-button {
+    padding: 0.9rem 1.4rem;
+    min-height: 48px;
+    font-size: 1.08rem;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(255, 140, 43, 0.08);
+    transition: background 0.18s, box-shadow 0.18s;
+    font-weight: 600;
+    flex: 0 0 auto;
+}
+
+.search-form .search-button:hover,
+.search-form .search-button:focus {
+    background: var(--brand-600);
+    box-shadow: 0 4px 16px rgba(255, 140, 43, 0.12);
+}
+
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden
+}
+
+/* On small screens make inputs stack full width and button full width */
+@media (max-width: 700px) {
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-form label {
+        flex-direction: column;
+        align-items: stretch;
+        flex: 1 1 20px;
+    }
+
+    .search-form .search-button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}

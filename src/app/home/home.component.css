@@ -1,9 +1,37 @@
-.container { max-width:900px; margin:0 auto; padding:0.75rem }
-.home-body .hero { padding:1.25rem 0 }
-.home-body .hero h2 { margin-top:0 }
+
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 0 1.5rem;
+}
+.home-body .hero {
+  padding: 2.5rem 2rem;
+  background: var(--glass);
+  /* border-radius: var(--radius); */
+  box-shadow: var(--shadow);
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.home-body .hero h2 {
+  margin-top: 0;
+  color: var(--brand-700);
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Space between the hero title and the embedded search component */
+.home-body .hero app-search,
+.home-body .hero ::ng-deep app-search {
+  margin-top: 20px;
+  width: 100%;
+}
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
-  .home-body .hero { padding: 0.75rem 0 }
-  .container { padding-left:0.5rem; padding-right:0.5rem }
+@media (max-width: 900px) {
+  .container { padding: 1rem 0.5rem 0 0.5rem; }
+  .home-body .hero { padding: 1.25rem 0.75rem; }
 }

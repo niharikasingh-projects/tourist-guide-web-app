@@ -5,12 +5,15 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  height: var(--footer-height, 56px);
-  background: #000;
+  height: var(--footer-height, 64px);
+  background: linear-gradient(90deg, var(--brand-700), var(--brand));
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 0 1.5rem;
+  /* border-radius: 18px 18px 0 0; */
+  box-shadow: 0 -4px 18px rgba(255,140,43,0.08);
 }
 .container { max-width:900px; margin:0 auto; padding:0 0.75rem }
