@@ -24,6 +24,12 @@
     font-size: 0.95rem;
     flex: 1 1 180px;
     min-width: 0;
+    position: relative;
+}
+
+/* Location wrapper needs to be positioned for dropdown */
+.location-wrapper {
+    position: relative;
 }
 
 .search-form input {
@@ -85,5 +91,88 @@
     .search-form .search-button {
         width: 100%;
         margin-top: 0.5rem;
+    }
+}
+
+/* Autosuggest dropdown styles */
+.suggestions-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e6eef0;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+    background: rgba(255, 140, 43, 0.08);
+}
+
+.suggestion-name {
+    font-weight: 600;
+    color: var(--brand-700);
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-meta {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Adjust dropdown position on mobile */
+@media (max-width: 700px) {
+    .suggestions-dropdown {
+        max-height: 250px;
+    }
+}
+
+/* Error message styles */
+.error-message {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(211, 47, 47, 0.08);
+    border-radius: 6px;
+    animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
