@@ -5,5 +5,6 @@ export const routes: Routes = [
 	{ path: 'signin', loadComponent: () => import('./auth/signin.component').then(m => m.SigninComponent) },
 	{ path: 'signup', loadComponent: () => import('./auth/signup.component').then(m => m.SignupComponent) },
 	{ path: 'home', loadComponent: () => import('./home/home.component').then(m => m.HomeComponent) },
+	{ path: 'attraction/:id', loadComponent: () => import('./search/attraction-details/attraction-details.component').then(m => m.AttractionDetailsComponent) },
 	{ path: '**', redirectTo: 'signin' },
 ];

@@ -1,0 +1,56 @@
+<div class="guide-card">
+  <div class="guide-header">
+    <img [src]="guide.imageUrl" [alt]="guide.name" class="guide-image">
+    <div class="guide-info">
+      <h3 class="guide-name">{{guide.name}}</h3>
+      <div class="rating">
+        <span class="stars">{{getRatingStars()}}</span>
+        <span class="rating-value">{{guide.rating}}</span>
+      </div>
+      <div class="experience">
+        <span class="icon">🎓</span>
+        <span>{{guide.experienceYears}} years experience</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-details">
+    <p class="bio">{{guide.bio}}</p>
+
+    <div class="detail-section">
+      <div class="detail-label">
+        <span class="icon">🗣️</span>
+        <span>Languages</span>
+      </div>
+      <div class="languages">
+        <span class="language-badge" *ngFor="let lang of guide.languages">{{lang}}</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">
+        <span class="icon">⭐</span>
+        <span>Specialties</span>
+      </div>
+      <div class="specialties">
+        <span class="specialty-badge" *ngFor="let specialty of guide.specialties">{{specialty}}</span>
+      </div>
+    </div>
+
+    <div class="availability-price">
+      <div class="availability">
+        <span class="icon">📅</span>
+        <span class="availability-status">{{guide.availability}}</span>
+      </div>
+      <div class="price">
+        <span class="price-label">Hourly Rate:</span>
+        <span class="price-value">${{guide.hourlyRate}}/hr</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="book-button" (click)="onBook()">
+    <span class="icon">📅</span>
+    Book This Guide
+  </button>
+</div>

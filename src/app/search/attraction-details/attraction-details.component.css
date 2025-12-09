@@ -1,0 +1,388 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.back-nav {
+  margin-bottom: 2rem;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--card, #fff);
+  color: var(--brand-700);
+  border: 1px solid rgba(255, 140, 43, 0.3);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.back-button:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  transform: translateX(-4px);
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 140, 43, 0.2);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.error-container {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.retry-button {
+  padding: 0.875rem 1.5rem;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.retry-button:hover {
+  background: var(--brand-600);
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Attraction Section */
+.attraction-section {
+  background: var(--card, #fff);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.attraction-banner {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+
+.attraction-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4));
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 1.5rem;
+}
+
+.category-badge {
+  background: rgba(255, 140, 43, 0.95);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.attraction-info {
+  padding: 2rem;
+}
+
+.attraction-title {
+  margin: 0 0 1rem 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--brand-700);
+  line-height: 1.2;
+}
+
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.stars {
+  color: #ffa726;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+}
+
+.rating-value {
+  font-weight: 700;
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.description {
+  margin: 0 0 2rem 0;
+  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.detail-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 140, 43, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 140, 43, 0.2);
+}
+
+.detail-box .icon {
+  font-size: 2rem;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  color: var(--brand-700);
+  font-weight: 700;
+}
+
+/* Guides Section */
+.guides-section {
+  padding: 2.5rem 2rem 2rem 2rem;
+  background: linear-gradient(135deg, rgba(255, 247, 242, 1), rgba(255, 140, 43, 0.5));
+  border-radius: 16px;
+  border: 1px solid rgba(255, 140, 43, 0.15);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.section-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--brand-700);
+}
+
+.section-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 1.05rem;
+}
+
+.no-guides {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: rgba(255, 140, 43, 0.05);
+  border-radius: 12px;
+}
+
+.no-guides p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.05rem;
+  color: #555;
+}
+
+.help-text {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.guides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .guides-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .back-nav {
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .back-button {
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .attraction-banner {
+    height: 250px;
+  }
+
+  .attraction-info {
+    padding: 1.5rem;
+  }
+
+  .attraction-title {
+    font-size: 1.75rem;
+  }
+
+  .location-row {
+    font-size: 0.95rem;
+  }
+
+  .stars {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  .rating-value {
+    font-size: 1.05rem;
+  }
+
+  .description {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .detail-box {
+    padding: 1rem;
+  }
+
+  .detail-box .icon {
+    font-size: 1.75rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .guides-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .details-container {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .attraction-banner {
+    height: 200px;
+  }
+
+  .attraction-title {
+    font-size: 1.5rem;
+  }
+
+  .category-badge {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .detail-box .icon {
+    font-size: 1.5rem;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+  }
+}
