@@ -1,0 +1,117 @@
+/* --- GLOBAL BASE STYLES FOR AUTH CARD --- */
+/* Note: scoped to the auth components when used as component styles */
+.auth-container { 
+    background-color: white;
+    padding: 60px 40px;
+    border: 1px solid #ccc;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.title-text {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 40px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+}
+
+.auth-form input {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    font-size: 16px;
+}
+
+.main-button {
+    background-color: #ff8c2b; 
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 5px;
+}
+
+.main-button:hover { background-color: #e57e26; }
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0; 
+    line-height: 1; 
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.separator-text {
+    padding: 0 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.forgot-password {
+    text-align: right;
+    font-size: 14px;
+    color: #444; 
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.link-section { margin-top: 50px; }
+.link-section p { margin-bottom: 5px; font-size: 16px; }
+.main-link { color: black; text-decoration: underline; font-size: 16px; font-weight: normal; }
+
+/* Ensure component centers on the page when used as a route component */
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem; /* safe padding on small screens */
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+/* Make the card responsive: reduce padding on small screens and keep full width */
+.auth-container {
+    padding: 48px 32px;
+    border-radius: 12px;
+}
+
+@media (max-width: 600px) {
+    .auth-container {
+        padding: 28px 18px;
+        max-width: 100%;
+        margin: 0 auto;
+        border-radius: 10px;
+    }
+
+    .title-text { font-size: 20px; margin-bottom: 20px }
+    .auth-form input { padding: 12px; border-radius: 10px }
+    .main-button { padding: 12px; border-radius: 10px }
+}
+
+/* Ensure buttons and inputs expand to available width */
+.auth-form input, .main-button { width: 100%; box-sizing: border-box }
+
+/* Message styles used by auth components */
+.auth-message { margin-top: 12px; font-weight: 600; outline: none }
+.auth-message.error { color: #b00020 }
+.auth-message.success { color: #064e3b }

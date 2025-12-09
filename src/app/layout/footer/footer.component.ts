@@ -1,0 +1,34 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  standalone: true,
+  imports: [CommonModule],
+  selector: 'app-footer',
+  template: `
+    <footer class="app-footer">
+      <div class="container">© Tourist Guide — Demo</div>
+    </footer>
+  `,
+  styles: [
+    `
+      :host { display:block }
+      .app-footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: var(--footer-height, 56px);
+        background: #000;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .container { max-width:900px; margin:0 auto; padding:0 0.75rem }
+    `
+  ]
+})
+export class FooterComponent {}
