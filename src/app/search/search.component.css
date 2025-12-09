@@ -77,6 +77,11 @@
 
 /* On small screens make inputs stack full width and button full width */
 @media (max-width: 700px) {
+    .search-bg {
+        padding: 20px 16px;
+        margin: 24px 0;
+    }
+    
     .search-form {
         flex-direction: column;
         align-items: stretch;
@@ -86,11 +91,20 @@
         flex-direction: column;
         align-items: stretch;
         flex: 1 1 20px;
+        font-size: 0.9rem;
+    }
+    
+    .search-form input {
+        padding: 0.875rem 1rem;
+        height: 44px;
+        font-size: 0.95rem;
     }
 
     .search-form .search-button {
         width: 100%;
         margin-top: 0.5rem;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
     }
 }
 
@@ -110,14 +124,119 @@
     animation: fadeIn 0.2s ease;
 }
 
-@keyframes fadeIn {
+@keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-4px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Search button disabled state */
+.search-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Search Results Section */
+.search-results-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.results-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.results-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--brand-700);
+}
+
+.no-results-text {
+    color: #666;
+    font-size: 1rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 140, 43, 0.2);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .results-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .search-results-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
     }
 }
 
