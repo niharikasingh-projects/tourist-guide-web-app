@@ -1,38 +1,170 @@
-.app-header { background: #f6f7fb; border-bottom: 1px solid #e3e6ee }
-.app-header .container { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.5rem 0 }
-.brand-wrap { display:flex; align-items:center; gap:0.5rem }
-.brand { display:inline-block; margin:0; font-weight:600 }
-.nav { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center }
-.nav a { margin: 0; color: inherit; text-decoration: none; padding:0.35rem 0.6rem; border-radius:6px; transition: background 120ms ease, color 120ms ease; outline: none; cursor: pointer }
+/* .app-header {
+  background: var(--glass);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04)
+}
+
+.app-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0
+} */
+
+.app-header {
+  background: var(--glass);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 18px rgba(255,140,43,0.08);
+  /* border-radius: 0 0 18px 18px; */
+  margin: 0 0 18px 0;
+  position: relative;
+  z-index: 1400;
+}
+.app-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem
+}
+
+.brand {
+  display: inline-block;
+  margin: 0;
+  font-weight: 700;
+  color: var(--brand-700)
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center
+}
+
+.nav a {
+  margin: 0;
+  color: var(--brand-700);
+  text-decoration: none;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  transition: background 120ms ease, color 120ms ease;
+  outline: none;
+  cursor: pointer
+}
 
 /* Hover and focus styling for better discoverability */
-.nav a:hover, .nav a:focus {
-  background: rgba(0,0,0,0.04);
-  color: #06202b;
+/* .nav a:hover,
+.nav a:focus {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--brand-700);
 }
 
 .nav a:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0,191,166,0.18);
+  box-shadow: 0 0 0 4px rgba(255, 140, 43, 0.12);
+} */
+
+.nav a:hover, .nav a:focus {
+  background: var(--accent);
+  color: var(--brand);
+}
+.nav a:focus-visible {
+  box-shadow: 0 0 0 4px rgba(255,140,43,0.18);
 }
 
-.hamburger { display:none; background:transparent; border:0; padding:0.25rem; cursor:pointer }
-.hamburger:focus-visible { outline: 2px solid rgba(0,191,166,0.22); border-radius:6px }
-.hamburger .bar { display:block; width:22px; height:2px; background:#111; margin:4px 0; transition: transform 0.15s ease }
+.hamburger {
+  display: none;
+  background: transparent;
+  border: 0;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.hamburger:focus-visible {
+  outline: 2px solid rgba(255, 140, 43, 0.18);
+  border-radius: 6px
+}
+
+.hamburger .bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--brand-700);
+  margin: 4px 0;
+  transition: transform 0.15s ease
+}
 
 /* Small screens: show hamburger and collapse nav */
 @media (max-width: 900px) {
-  .nav { gap:0.35rem }
-}
+  .nav { gap: 0.35rem }
 
-@media (max-width: 600px) {
-  .app-header .container { flex-direction:row; align-items:center }
-  .hamburger { display:inline-flex; align-items:center }
-  .nav { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; flex-direction: column; gap:0; padding:0.5rem 1rem; display:none; box-shadow: 0 6px 18px rgba(0,0,0,0.08); z-index:1200 }
-  .nav.open { display:flex }
-  .nav a { padding:0.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); width:100% }
+  .app-header .container { flex-direction: row; align-items: center }
+
+  /* show hamburger earlier and keep it on the header */
+  .hamburger {
+    display: inline-block;
+    align-items: center;
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1500;
+  }
+
+  /* Mobile nav: fixed full-height overlay beginning at the top */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: rgba(0,0,0,0.45); /* translucent backdrop */
+    display: none;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 1400;
+  }
+
+  /* inner panel for menu items (stacked) */
+  .nav .panel {
+    background: var(--card);
+    width: 100%;
+    margin-top: 64px; /* leave space for the header */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem 0;
+    box-shadow: 0 8px 28px rgba(2,6,23,0.12);
+    border-radius: 0 0 10px 10px;
+  }
+
+  .nav.open { display: flex }
+
+  .nav a {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    width: 100%;
+    display: block;
+    background: transparent;
+    color: inherit;
+  }
 }
 
 /* When menu open, animate hamburger bars into an X (optional subtle) */
-.hamburger[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(6px) rotate(45deg) }
-.hamburger[aria-expanded="true"] .bar:nth-child(2) { opacity: 0 }
-.hamburger[aria-expanded="true"] .bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg) }
+.hamburger[aria-expanded="true"] .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg)
+}
+
+.hamburger[aria-expanded="true"] .bar:nth-child(2) {
+  opacity: 0
+}
+
+.hamburger[aria-expanded="true"] .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg)
+}
