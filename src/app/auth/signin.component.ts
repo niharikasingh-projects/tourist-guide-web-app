@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from './auth.service';
+import { SearchStateService } from '../services/search-state.service';
 
 @Component({
   standalone: true,
@@ -19,7 +20,12 @@ export class SigninComponent {
   loading = false;
   @ViewChild('msgRef', { static: false }) msgRef?: ElementRef<HTMLDivElement>;
 
-  constructor(private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private searchStateService: SearchStateService
+  ) {}
 
   async onSubmit() {
     this.message = '';
@@ -30,6 +36,8 @@ export class SigninComponent {
       if (res.success) {
         this.messageType = 'success';
         this.message = 'Signed in successfully';
+        // Clear any existing search state
+        this.searchStateService.clearSearchState();
         // small delay so user sees success message before navigation
         setTimeout(() => {
           try { this.router.navigate(['/home']); } catch (e) {}

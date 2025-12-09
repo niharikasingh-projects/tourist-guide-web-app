@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService, TouristAttraction } from '../../services/search.service';
 import { GuideService, Guide } from '../../services/guide.service';
 import { GuideCardComponent } from '../guide-card/guide-card.component';
+import { HeaderComponent } from '../../layout/header/header.component';
+import { FooterComponent } from '../../layout/footer/footer.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, GuideCardComponent],
+  imports: [CommonModule, GuideCardComponent, HeaderComponent, FooterComponent],
   selector: 'app-attraction-details',
   templateUrl: './attraction-details.component.html',
   styleUrls: ['./attraction-details.component.css']
@@ -81,9 +83,9 @@ export class AttractionDetailsComponent implements OnInit {
   }
 
   onBookGuide(guideId: string) {
-    console.log('Booking guide:', guideId);
-    // TODO: Navigate to booking page or show booking modal
-    alert(`Booking guide ${guideId}. This will be implemented in the booking feature.`);
+    if (this.attraction) {
+      this.router.navigate(['/checkout', this.attraction.id, guideId]);
+    }
   }
 
   goBack() {
