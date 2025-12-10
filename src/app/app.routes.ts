@@ -9,5 +9,6 @@ export const routes: Routes = [
 	{ path: 'checkout/:attractionId/:guideId', loadComponent: () => import('./booking/checkout/checkout.component').then(m => m.CheckoutComponent) },
 	{ path: 'booking-confirmation/:bookingId', loadComponent: () => import('./booking/booking-confirmation/booking-confirmation.component').then(m => m.BookingConfirmationComponent) },
 	{ path: 'my-bookings', loadComponent: () => import('./booking/my-bookings/my-bookings.component').then(m => m.MyBookingsComponent) },
+	{ path: 'profile', loadComponent: () => import('./user/profile/profile.component').then(m => m.ProfileComponent) },
 	{ path: '**', redirectTo: 'signin' },
 ];
