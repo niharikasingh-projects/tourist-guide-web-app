@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, delay } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Guide {
   id: string;
@@ -22,7 +25,11 @@ export interface Guide {
   providedIn: 'root'
 })
 export class GuideService {
-  private guides: Guide[] = [
+  private apiUrl = `${environment.apiUrl}/api`;
+
+  constructor(private http: HttpClient) {}
+
+  private mockGuides: Guide[] = [
     // Paris guides (pa-1, pa-2, pa-3)
     {
       id: 'g-pa-1',
@@ -742,148 +749,158 @@ export class GuideService {
     }
   ];
 
-  constructor() { }
-
   getGuidesByAttractionId(attractionId: string, fromDate?: string | null, toDate?: string | null): Observable<Guide[]> {
-    // Map attraction IDs to guide IDs
-    const attractionGuideMap: { [key: string]: string[] } = {
-      // Paris
-      'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
-      'pa-2': ['g-pa-1', 'g-pa-2'],
-      'pa-3': ['g-pa-2', 'g-pa-3'],
-      // London
-      'lo-1': ['g-lo-1', 'g-lo-2', 'g-lo-3'],
-      'lo-2': ['g-lo-2', 'g-lo-3'],
-      'lo-3': ['g-lo-1', 'g-lo-3'],
-      // New York
-      'ny-1': ['g-ny-1', 'g-ny-2', 'g-ny-3'],
-      'ny-2': ['g-ny-2', 'g-ny-3'],
-      'ny-3': ['g-ny-1', 'g-ny-3'],
-      // Rome
-      'ro-1': ['g-ro-1', 'g-ro-2', 'g-ro-3'],
-      'ro-2': ['g-ro-2', 'g-ro-3'],
-      'ro-3': ['g-ro-1', 'g-ro-3'],
-      // Tokyo
-      'to-1': ['g-to-1', 'g-to-2', 'g-to-3'],
-      'to-2': ['g-to-2', 'g-to-3'],
-      'to-3': ['g-to-1', 'g-to-3'],
-      // Delhi
-      'de-1': ['g-dl-1', 'g-dl-2'],
-      'de-2': ['g-dl-1', 'g-dl-2'],
-      'de-3': ['g-dl-1', 'g-dl-2'],
-      'de-4': ['g-dl-1', 'g-dl-2'],
-      'de-5': ['g-dl-1', 'g-dl-2'],
-      'de-6': ['g-dl-1', 'g-dl-2'],
-      'de-7': ['g-dl-1', 'g-dl-2'],
-      'de-8': ['g-dl-1', 'g-dl-2'],
-      'de-9': ['g-dl-1', 'g-dl-2'],
-      'de-10': ['g-dl-1', 'g-dl-2'],
-      // Agra
-      'ag-1': ['g-tj-1', 'g-tj-2', 'g-tj-3'],
-      'ag-2': ['g-tj-1', 'g-tj-2', 'g-tj-3'],
-      'ag-3': ['g-tj-1', 'g-tj-2'],
-      'ag-4': ['g-tj-1', 'g-tj-3'],
-      'ag-5': ['g-tj-1', 'g-tj-2', 'g-tj-3'],
-      'ag-6': ['g-tj-2', 'g-tj-3'],
-      'ag-7': ['g-tj-1', 'g-tj-2'],
-      'ag-8': ['g-tj-1', 'g-tj-2', 'g-tj-3'],
-      // Jaipur
-      'ja-1': ['g-jp-1', 'g-jp-2'],
-      'ja-2': ['g-jp-1', 'g-jp-2'],
-      'ja-3': ['g-jp-1', 'g-jp-2'],
-      'ja-4': ['g-jp-1', 'g-jp-2'],
-      'ja-5': ['g-jp-1', 'g-jp-2'],
-      'ja-6': ['g-jp-1', 'g-jp-2'],
-      'ja-7': ['g-jp-1', 'g-jp-2'],
-      'ja-8': ['g-jp-1', 'g-jp-2'],
-      'ja-9': ['g-jp-1', 'g-jp-2'],
-      // Mumbai
-      'mu-1': ['g-mb-1', 'g-mb-2'],
-      'mu-2': ['g-mb-1', 'g-mb-2'],
-      'mu-3': ['g-mb-1', 'g-mb-2'],
-      'mu-5': ['g-mb-1', 'g-mb-2'],
-      'mu-6': ['g-mb-1', 'g-mb-2'],
-      'mu-7': ['g-mb-1', 'g-mb-2'],
-      'mu-8': ['g-mb-1', 'g-mb-2'],
-      'mu-9': ['g-mb-1', 'g-mb-2'],
-      'mu-10': ['g-mb-1', 'g-mb-2'],
-      // Goa
-      'go-1': ['g-go-1', 'g-go-2'],
-      'go-2': ['g-go-1', 'g-go-2'],
-      'go-3': ['g-go-1', 'g-go-2'],
-      'go-4': ['g-go-1', 'g-go-2'],
-      'go-5': ['g-go-1', 'g-go-2'],
-      'go-6': ['g-go-1', 'g-go-2'],
-      'go-7': ['g-go-1', 'g-go-2'],
-      'go-8': ['g-go-1', 'g-go-2'],
-      // Kerala
-      'ke-1': ['g-ke-1', 'g-ke-2'],
-      'ke-2': ['g-ke-1', 'g-ke-2'],
-      'ke-3': ['g-ke-1', 'g-ke-2'],
-      'ke-4': ['g-ke-1', 'g-ke-2'],
-      'ke-5': ['g-ke-1', 'g-ke-2'],
-      'ke-6': ['g-ke-1', 'g-ke-2'],
-      'ke-7': ['g-ke-1', 'g-ke-2'],
-      // Udaipur
-      'ud-1': ['g-ud-1', 'g-ud-2'],
-      'ud-2': ['g-ud-1', 'g-ud-2'],
-      'ud-3': ['g-ud-1', 'g-ud-2'],
-      'ud-4': ['g-ud-1', 'g-ud-2'],
-      'ud-5': ['g-ud-1', 'g-ud-2'],
-      'ud-6': ['g-ud-1', 'g-ud-2'],
-      'ud-7': ['g-ud-1', 'g-ud-2'],
-      // Varanasi
-      'va-1': ['g-vr-1', 'g-vr-2'],
-      'va-2': ['g-vr-1', 'g-vr-2'],
-      'va-3': ['g-vr-1', 'g-vr-2'],
-      'va-4': ['g-vr-1', 'g-vr-2'],
-      'va-5': ['g-vr-1', 'g-vr-2'],
-      'va-6': ['g-vr-1', 'g-vr-2'],
-      'va-7': ['g-vr-1', 'g-vr-2'],
-      // Rishikesh
-      'ri-1': ['g-ri-1', 'g-ri-2'],
-      'ri-2': ['g-ri-1', 'g-ri-2'],
-      'ri-3': ['g-ri-1', 'g-ri-2'],
-      'ri-4': ['g-ri-1', 'g-ri-2'],
-      'ri-5': ['g-ri-1', 'g-ri-2'],
-      'ri-6': ['g-ri-1', 'g-ri-2'],
-      'ri-7': ['g-ri-1', 'g-ri-2'],
-      // Bangalore
-      'ba-1': ['g-bl-1', 'g-bl-2'],
-      'ba-2': ['g-bl-1', 'g-bl-2'],
-      'ba-3': ['g-bl-1', 'g-bl-2'],
-      'ba-4': ['g-bl-1', 'g-bl-2'],
-      'ba-5': ['g-bl-1', 'g-bl-2'],
-      'ba-6': ['g-bl-1', 'g-bl-2'],
-      'ba-7': ['g-bl-1', 'g-bl-2'],
-      // Pune
-      'pu-1': ['g-pu-1', 'g-pu-2'],
-      'pu-2': ['g-pu-1', 'g-pu-2'],
-      'pu-3': ['g-pu-1', 'g-pu-2'],
-      'pu-4': ['g-pu-1', 'g-pu-2'],
-      'pu-5': ['g-pu-1', 'g-pu-2'],
-      'pu-6': ['g-pu-1', 'g-pu-2'],
-      'pu-7': ['g-pu-1', 'g-pu-2'],
-      'pu-8': ['g-pu-1', 'g-pu-2']
-      // Dubai attractions (du-1, du-2, du-3) intentionally excluded - no guides
-    };
-
-    const guideIds = attractionGuideMap[attractionId] || [];
-    let availableGuides = this.guides.filter(guide => guideIds.includes(guide.id));
-    
-    // Filter by date availability if dates are provided
+    let url = `${this.apiUrl}/guides/by-attraction/${attractionId}`;
     if (fromDate && toDate) {
-      availableGuides = availableGuides.filter(guide => 
-        this.isGuideAvailable(guide, fromDate, toDate)
-      );
+      url += `?fromDate=${fromDate}&toDate=${toDate}`;
     }
-    
-    return of(availableGuides).pipe(delay(200));
+
+    return this.http.get<Guide[]>(url).pipe(
+      catchError(() => {
+        console.warn('API call failed, using mock data');
+        const attractionGuideMap: { [key: string]: string[] } = {
+          // Paris attractions (pa-1, pa-2, pa-3)
+          'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
+          'pa-2': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
+          'pa-3': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
+          // London attractions (lo-1, lo-2, lo-3)
+          'lo-1': ['g-lo-1', 'g-lo-2', 'g-lo-3'],
+          'lo-2': ['g-lo-1', 'g-lo-2', 'g-lo-3'],
+          'lo-3': ['g-lo-1', 'g-lo-2', 'g-lo-3'],
+          // New York attractions (ny-1, ny-2, ny-3)
+          'ny-1': ['g-ny-1', 'g-ny-2', 'g-ny-3'],
+          'ny-2': ['g-ny-1', 'g-ny-2', 'g-ny-3'],
+          'ny-3': ['g-ny-1', 'g-ny-2', 'g-ny-3'],
+          // Rome attractions (ro-1, ro-2, ro-3)
+          'ro-1': ['g-ro-1', 'g-ro-2', 'g-ro-3'],
+          'ro-2': ['g-ro-1', 'g-ro-2', 'g-ro-3'],
+          'ro-3': ['g-ro-1', 'g-ro-2', 'g-ro-3'],
+          // Tokyo attractions (to-1, to-2, to-3)
+          'to-1': ['g-to-1', 'g-to-2', 'g-to-3'],
+          'to-2': ['g-to-1', 'g-to-2', 'g-to-3'],
+          'to-3': ['g-to-1', 'g-to-2', 'g-to-3'],
+          // Delhi
+          'de-1': ['g-de-1', 'g-de-2'],
+          'de-2': ['g-de-1', 'g-de-2'],
+          'de-3': ['g-de-1', 'g-de-2'],
+          'de-4': ['g-de-1', 'g-de-2'],
+          'de-5': ['g-de-1', 'g-de-2'],
+          'de-6': ['g-de-1', 'g-de-2'],
+          'de-7': ['g-de-1', 'g-de-2'],
+          'de-8': ['g-de-1', 'g-de-2'],
+          'de-9': ['g-de-1', 'g-de-2'],
+          'de-10': ['g-de-1', 'g-de-2'],
+          // Agra
+          'ag-1': ['g-ag-1', 'g-ag-2'],
+          'ag-2': ['g-ag-1', 'g-ag-2'],
+          'ag-3': ['g-ag-1', 'g-ag-2'],
+          'ag-4': ['g-ag-1', 'g-ag-2'],
+          'ag-5': ['g-ag-1', 'g-ag-2'],
+          'ag-6': ['g-ag-1', 'g-ag-2'],
+          'ag-7': ['g-ag-1', 'g-ag-2'],
+          'ag-8': ['g-ag-1', 'g-ag-2'],
+          // Jaipur
+          'ja-1': ['g-ja-1', 'g-ja-2'],
+          'ja-2': ['g-ja-1', 'g-ja-2'],
+          'ja-3': ['g-ja-1', 'g-ja-2'],
+          'ja-4': ['g-ja-1', 'g-ja-2'],
+          'ja-5': ['g-ja-1', 'g-ja-2'],
+          'ja-6': ['g-ja-1', 'g-ja-2'],
+          'ja-7': ['g-ja-1', 'g-ja-2'],
+          'ja-8': ['g-ja-1', 'g-ja-2'],
+          'ja-9': ['g-ja-1', 'g-ja-2'],
+          // Mumbai
+          'mu-1': ['g-mu-1', 'g-mu-2'],
+          'mu-2': ['g-mu-1', 'g-mu-2'],
+          'mu-3': ['g-mu-1', 'g-mu-2'],
+          'mu-5': ['g-mu-1', 'g-mu-2'],
+          'mu-6': ['g-mu-1', 'g-mu-2'],
+          'mu-7': ['g-mu-1', 'g-mu-2'],
+          'mu-8': ['g-mu-1', 'g-mu-2'],
+          'mu-9': ['g-mu-1', 'g-mu-2'],
+          'mu-10': ['g-mu-1', 'g-mu-2'],
+          // Goa
+          'go-1': ['g-go-1', 'g-go-2'],
+          'go-2': ['g-go-1', 'g-go-2'],
+          'go-3': ['g-go-1', 'g-go-2'],
+          'go-4': ['g-go-1', 'g-go-2'],
+          'go-5': ['g-go-1', 'g-go-2'],
+          'go-6': ['g-go-1', 'g-go-2'],
+          'go-7': ['g-go-1', 'g-go-2'],
+          'go-8': ['g-go-1', 'g-go-2'],
+          // Kerala
+          'ke-1': ['g-ke-1', 'g-ke-2'],
+          'ke-2': ['g-ke-1', 'g-ke-2'],
+          'ke-3': ['g-ke-1', 'g-ke-2'],
+          'ke-4': ['g-ke-1', 'g-ke-2'],
+          'ke-5': ['g-ke-1', 'g-ke-2'],
+          'ke-6': ['g-ke-1', 'g-ke-2'],
+          'ke-7': ['g-ke-1', 'g-ke-2'],
+          // Udaipur
+          'ud-1': ['g-ud-1', 'g-ud-2'],
+          'ud-2': ['g-ud-1', 'g-ud-2'],
+          'ud-3': ['g-ud-1', 'g-ud-2'],
+          'ud-4': ['g-ud-1', 'g-ud-2'],
+          'ud-5': ['g-ud-1', 'g-ud-2'],
+          'ud-6': ['g-ud-1', 'g-ud-2'],
+          'ud-7': ['g-ud-1', 'g-ud-2'],
+          // Varanasi
+          'va-1': ['g-va-1', 'g-va-2'],
+          'va-2': ['g-va-1', 'g-va-2'],
+          'va-3': ['g-va-1', 'g-va-2'],
+          'va-4': ['g-va-1', 'g-va-2'],
+          'va-5': ['g-va-1', 'g-va-2'],
+          'va-6': ['g-va-1', 'g-va-2'],
+          'va-7': ['g-va-1', 'g-va-2'],
+          // Rishikesh
+          'ri-1': ['g-ri-1', 'g-ri-2'],
+          'ri-2': ['g-ri-1', 'g-ri-2'],
+          'ri-3': ['g-ri-1', 'g-ri-2'],
+          'ri-4': ['g-ri-1', 'g-ri-2'],
+          'ri-5': ['g-ri-1', 'g-ri-2'],
+          'ri-6': ['g-ri-1', 'g-ri-2'],
+          'ri-7': ['g-ri-1', 'g-ri-2'],
+          // Bangalore
+          'ba-1': ['g-bl-1', 'g-bl-2'],
+          'ba-2': ['g-bl-1', 'g-bl-2'],
+          'ba-3': ['g-bl-1', 'g-bl-2'],
+          'ba-4': ['g-bl-1', 'g-bl-2'],
+          'ba-5': ['g-bl-1', 'g-bl-2'],
+          'ba-6': ['g-bl-1', 'g-bl-2'],
+          'ba-7': ['g-bl-1', 'g-bl-2'],
+          // Pune
+          'pu-1': ['g-pu-1', 'g-pu-2'],
+          'pu-2': ['g-pu-1', 'g-pu-2'],
+          'pu-3': ['g-pu-1', 'g-pu-2'],
+          'pu-4': ['g-pu-1', 'g-pu-2'],
+          'pu-5': ['g-pu-1', 'g-pu-2'],
+          'pu-6': ['g-pu-1', 'g-pu-2'],
+          'pu-7': ['g-pu-1', 'g-pu-2'],
+          'pu-8': ['g-pu-1', 'g-pu-2']
+        };
+
+        const guideIds = attractionGuideMap[attractionId] || [];
+        let availableGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
+        
+        if (fromDate && toDate) {
+          availableGuides = availableGuides.filter(guide => 
+            this.isGuideAvailable(guide, fromDate, toDate)
+          );
+        }
+        
+        return of(availableGuides);
+      })
+    );
   }
 
   getGuideById(guideId: string): Observable<Guide | undefined> {
-    const guide = this.guides.find(g => g.id === guideId);
-    return of(guide).pipe(delay(100));
+    return this.http.get<Guide>(`${this.apiUrl}/guides/${guideId}`).pipe(
+      catchError(() => {
+        console.warn('API call failed, using mock data');
+        const guide = this.mockGuides.find(g => g.id === guideId);
+        return of(guide);
+      })
+    );
   }
 
   private isGuideAvailable(guide: Guide, fromDate: string, toDate: string): boolean {
@@ -894,7 +911,6 @@ export class GuideService {
       const availableFrom = new Date(dateRange.from);
       const availableTo = new Date(dateRange.to);
       
-      // Check if requested date range overlaps with available date range
       return requestFrom <= availableTo && requestTo >= availableFrom;
     });
   }
