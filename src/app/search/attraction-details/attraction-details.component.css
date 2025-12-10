@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  padding-bottom: 4rem;
 }
 
 .back-nav {
@@ -291,6 +292,7 @@
 @media (max-width: 700px) {
   .container {
     padding: 1.5rem 0.75rem;
+    padding-bottom: 4rem;
   }
 
   .back-nav {

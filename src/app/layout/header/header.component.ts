@@ -1,7 +1,8 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { ProfileService, UserProfile } from '../../services/profile.service';
 
 @Component({
   standalone: true,
@@ -12,7 +13,17 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class HeaderComponent {
   menuOpen = false;
-  constructor(public auth: AuthService) {}
+  profileDropdownOpen = false;
+  userProfile: UserProfile | null = null;
+
+  constructor(
+    public auth: AuthService,
+    private profileService: ProfileService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.loadUserProfile();
+  }
 
   @ViewChild('hamburger', { static: true }) hamburger!: ElementRef<HTMLButtonElement>;
   @ViewChild('firstLink', { static: false }) firstLink?: ElementRef<HTMLElement>;
@@ -46,15 +57,67 @@ export class HeaderComponent {
     }, 0);
   }
 
+  loadUserProfile() {
+    if (this.auth.isAuthenticated()) {
+      this.profileService.getUserProfile().subscribe({
+        next: (profile) => {
+          this.userProfile = profile;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error loading profile:', err);
+        }
+      });
+    }
+  }
+
+  toggleProfileDropdown() {
+    this.profileDropdownOpen = !this.profileDropdownOpen;
+  }
+
+  closeProfileDropdown() {
+    this.profileDropdownOpen = false;
+  }
+
+  onProfileClick() {
+    this.closeMenu();
+    this.closeProfileDropdown();
+    this.router.navigate(['/profile']);
+  }
+
   onSignOut() {
     this.closeMenu();
+    this.closeProfileDropdown();
     try { this.auth.signOut(); } catch {}
+  }
+
+  getUserInitials(): string {
+    if (this.userProfile?.name) {
+      const names = this.userProfile.name.split(' ');
+      if (names.length >= 2) {
+        return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      }
+      return this.userProfile.name.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.profile-section')) {
+      this.closeProfileDropdown();
+    }
   }
 
   @HostListener('document:keydown.escape', ['$event'])
   onEscape(event: any) {
     if (this.menuOpen) {
       this.closeMenu();
+      event.stopPropagation();
+    }
+    if (this.profileDropdownOpen) {
+      this.closeProfileDropdown();
       event.stopPropagation();
     }
   }

@@ -3,7 +3,7 @@
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 0 1.5rem;
+  padding: 1.5rem 1.5rem 4rem 1.5rem;
 }
 .home-body .hero {
   padding: 2.5rem 2rem;

@@ -20,16 +20,45 @@
     <nav id="main-navigation" class="nav" [class.open]="menuOpen" role="navigation" [attr.aria-hidden]="!menuOpen">
       <div class="panel">
         <a #firstLink routerLink="/home" (click)="closeMenu()" (mouseenter)="onHover($event)">Home</a>
-        <a *ngIf="auth.isAuthenticated()" routerLink="/my-bookings" (click)="closeMenu()" (mouseenter)="onHover($event)">My Bookings</a>
+        <!-- <a *ngIf="auth.isAuthenticated()" routerLink="/my-bookings" (click)="closeMenu()" (mouseenter)="onHover($event)">My Bookings</a> -->
         <a *ngIf="!auth.isAuthenticated()" routerLink="/signin" (click)="closeMenu()" (mouseenter)="onHover($event)">Sign in</a>
-        <a *ngIf="auth.isAuthenticated()"
-          (click)="onSignOut()"
-          (mouseenter)="onHover($event)"
-          role="button"
-          tabindex="0"
-          (keydown.enter)="onSignOut()"
-          (keydown.space)="onSignOut()"
-        >Sign out</a>
+        
+        <!-- Profile Section for authenticated users -->
+        <div *ngIf="auth.isAuthenticated()" class="profile-section">
+          <button 
+            class="profile-button" 
+            (click)="toggleProfileDropdown()"
+            [attr.aria-expanded]="profileDropdownOpen"
+            aria-label="User profile menu">
+            <span class="profile-avatar">{{ getUserInitials() }}</span>
+            <!-- <span class="profile-name">{{ userProfile?.name || 'User' }}</span> -->
+            <span class="dropdown-arrow" [class.open]="profileDropdownOpen">▼</span>
+          </button>
+          
+          <div class="profile-dropdown" *ngIf="profileDropdownOpen">
+            <div class="profile-info">
+              <div class="profile-avatar-large">{{ getUserInitials() }}</div>
+              <div class="profile-details">
+                <div class="profile-name-large">{{ userProfile?.name || 'User' }}</div>
+                <div class="profile-email">{{ userProfile?.email || '' }}</div>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" (click)="onProfileClick()">
+              <span class="item-icon">👤</span>
+              <span>My Profile</span>
+            </a>
+            <a class="dropdown-item" routerLink="/my-bookings" (click)="closeProfileDropdown()">
+              <span class="item-icon">📋</span>
+              <span>My Bookings</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item signout" (click)="onSignOut()">
+              <span class="item-icon">🚪</span>
+              <span>Sign Out</span>
+            </a>
+          </div>
+        </div>
       </div>
     </nav>
   </div>

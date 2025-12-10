@@ -1,0 +1,128 @@
+<app-header></app-header>
+
+<div class="profile-container">
+  <div class="profile-wrapper">
+    <div class="back-nav">
+      <button class="back-button" (click)="goBack()">
+        <span class="icon">←</span>
+        Back to Home
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <div *ngIf="!isLoading" class="profile-content">
+      <div class="profile-header">
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-subtitle">Manage your personal information</p>
+      </div>
+
+      <div class="profile-card">
+        <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="name">Full Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name"
+                [(ngModel)]="profile.name"
+                placeholder="Enter your full name"
+                required
+                [class.invalid]="formSubmitted && !profile.name.trim()">
+              <span *ngIf="formSubmitted && !profile.name.trim()" class="error-text">
+                Name is required
+              </span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="email">Email Address <span class="required">*</span></label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email"
+                [(ngModel)]="profile.email"
+                placeholder="Enter your email address"
+                required
+                readonly
+                [class.invalid]="formSubmitted && (!profile.email.trim() || !isValidEmail(profile.email))">
+              <span class="field-note">Email cannot be changed</span>
+              <span *ngIf="formSubmitted && !profile.email.trim()" class="error-text">
+                Email is required
+              </span>
+              <span *ngIf="formSubmitted && profile.email.trim() && !isValidEmail(profile.email)" class="error-text">
+                Please enter a valid email address
+              </span>
+            </div>
+          </div>
+
+          <div class="form-row two-columns">
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input 
+                type="date" 
+                id="dateOfBirth" 
+                name="dateOfBirth"
+                [(ngModel)]="profile.dateOfBirth"
+                max="{{ '9999-12-31' }}">
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input 
+                type="tel" 
+                id="phoneNumber" 
+                name="phoneNumber"
+                [(ngModel)]="profile.phoneNumber"
+                placeholder="Enter your phone number"
+                [class.invalid]="formSubmitted && profile.phoneNumber && !isValidPhone(profile.phoneNumber)">
+              <span *ngIf="formSubmitted && profile.phoneNumber && !isValidPhone(profile.phoneNumber)" class="error-text">
+                Please enter a valid phone number (10-15 digits)
+              </span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="country">Country</label>
+              <select 
+                id="country" 
+                name="country"
+                [(ngModel)]="profile.country">
+                <option value="">Select your country</option>
+                <option *ngFor="let country of countries" [value]="country">
+                  {{ country }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div *ngIf="error" class="form-error">
+            {{ error }}
+          </div>
+
+          <div *ngIf="successMessage" class="form-success">
+            {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="save-button"
+              [disabled]="isSaving">
+              <span *ngIf="!isSaving">Save Changes</span>
+              <span *ngIf="isSaving">Saving...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
