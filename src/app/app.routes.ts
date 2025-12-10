@@ -10,5 +10,6 @@ export const routes: Routes = [
 	{ path: 'booking-confirmation/:bookingId', loadComponent: () => import('./booking/booking-confirmation/booking-confirmation.component').then(m => m.BookingConfirmationComponent) },
 	{ path: 'my-bookings', loadComponent: () => import('./booking/my-bookings/my-bookings.component').then(m => m.MyBookingsComponent) },
 	{ path: 'profile', loadComponent: () => import('./user/profile/profile.component').then(m => m.ProfileComponent) },
+	{ path: 'about', loadComponent: () => import('./about/about.component').then(m => m.AboutComponent) },
 	{ path: '**', redirectTo: 'signin' },
 ];

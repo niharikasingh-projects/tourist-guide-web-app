@@ -228,6 +228,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: none;
 }
 
 .dropdown-arrow {
@@ -329,6 +330,7 @@
 
 .dropdown-item:hover {
   background: #f3f4f6;
+  width: inherit;
 }
 
 .dropdown-item:first-of-type {
@@ -342,6 +344,7 @@
 
 .dropdown-item.signout:hover {
   background: #fee2e2;
+  width: inherit  ;
 }
 
 .item-icon {
@@ -356,17 +359,35 @@
 @media (max-width: 900px) {
   .profile-section {
     width: 100%;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
+    border-bottom: none;
   }
 
   .profile-button {
     width: 100%;
     padding: 0.75rem 1rem;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    border-radius: 0;
+  }
+
+  .profile-button:hover {
+    background: rgba(0,0,0,0.04);
+  }
+
+  .profile-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
   }
 
   .profile-name {
+    display: inline-block;
     max-width: none;
+    flex: 1;
+  }
+
+  .dropdown-arrow {
+    margin-left: auto;
   }
 
   .profile-dropdown {
@@ -374,15 +395,59 @@
     box-shadow: none;
     border-radius: 0;
     min-width: 100%;
-    animation: none;
+    width: 100%;
+    animation: mobileDropdownSlide 0.3s ease;
     border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    margin-top: 0;
+  }
+
+  @keyframes mobileDropdownSlide {
+    from {
+      max-height: 0;
+      opacity: 0;
+    }
+    to {
+      max-height: 500px;
+      opacity: 1;
+    }
   }
 
   .profile-info {
     padding: 1rem;
+    background: white;
+  }
+
+  .profile-avatar-large {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .profile-name-large {
+    font-size: 0.95rem;
+  }
+
+  .profile-email {
+    font-size: 0.8rem;
   }
 
   .dropdown-item {
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1.25rem;
+    background: white;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .dropdown-item:hover {
+    background: #f3f4f6;
+  }
+
+  .dropdown-item:last-of-type {
+    border-bottom: none;
+  }
+
+  .dropdown-divider {
+    margin: 0;
+    background: #e5e7eb;
   }
 }
