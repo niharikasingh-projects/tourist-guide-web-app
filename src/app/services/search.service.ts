@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface TouristAttraction {
   id: string;
   name: string;
   location: string;
   country: string;
+  city: string;
   description: string;
   imageUrl: string;
   rating: number;
-  price: number;
-  duration: string;
+  price?: number;
+  duration?: string;
   category: string;
 }
 
@@ -19,7 +22,11 @@ export interface TouristAttraction {
   providedIn: 'root'
 })
 export class SearchService {
-  private attractions: TouristAttraction[] = [
+  private apiUrl = `${environment.apiUrl}/api`;
+
+  constructor(private http: HttpClient) {}
+
+  private mockAttractions: any[] = [
     // Paris, France
     { id: 'pa-1', name: 'Eiffel Tower Tour', location: 'Paris', country: 'France', description: 'Visit the iconic Eiffel Tower with skip-the-line access and stunning views of Paris', imageUrl: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', rating: 4.8, price: 120, duration: '3 hours', category: 'Landmark' },
     { id: 'pa-2', name: 'Louvre Museum Visit', location: 'Paris', country: 'France', description: 'Explore the world\'s largest art museum and see the Mona Lisa', imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', rating: 4.7, price: 85, duration: '4 hours', category: 'Museum' },
@@ -161,27 +168,51 @@ export class SearchService {
     { id: 'pu-8', name: 'Parvati Hill Sunset Point', location: 'Pune', country: 'India', description: 'Climb to historic temples with stunning city views', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.3, price: 15, duration: '2 hours', category: 'Nature' },
   ];
 
-  constructor() {}
-
   /**
    * Search for tourist attractions by location
    * @param location Location name to search for
+   * @param fromDate Optional from date
+   * @param toDate Optional to date
    * @returns Observable of tourist attractions
    */
-  searchAttractionsByLocation(location: string): Observable<TouristAttraction[]> {
+  searchAttractionsByLocation(location: string, fromDate?: string, toDate?: string): Observable<TouristAttraction[]> {
     if (!location) {
       return of([]);
     }
 
-    const normalizedLocation = location.toLowerCase().trim();
-    
-    const results = this.attractions.filter(attraction => 
-      attraction.location.toLowerCase() === normalizedLocation ||
-      attraction.name.toLowerCase().includes(normalizedLocation)
-    );
+    let url = `${this.apiUrl}/attractions/search?location=${encodeURIComponent(location)}`;
+    if (fromDate) {
+      url += `&fromDate=${fromDate}`;
+    }
+    if (toDate) {
+      url += `&toDate=${toDate}`;
+    }
 
-    // Add 200ms delay for better user experience
-    return of(results).pipe(delay(200));
+    return this.http.get<TouristAttraction[]>(url).pipe(
+      catchError(() => {
+        // Fallback to mock data if API fails
+        console.warn('API call failed, using mock data');
+        const normalizedLocation = location.toLowerCase().trim();
+        const results = this.mockAttractions.filter(attraction => 
+          attraction.location.toLowerCase() === normalizedLocation ||
+          attraction.name.toLowerCase().includes(normalizedLocation)
+        );
+        return of(results).pipe(delay(200));
+      })
+    );
+  }
+
+  /**
+   * Get all attractions
+   * @returns Observable of all tourist attractions
+   */
+  getAllAttractions(): Observable<TouristAttraction[]> {
+    return this.http.get<TouristAttraction[]>(`${this.apiUrl}/attractions`).pipe(
+      catchError(() => {
+        console.warn('API call failed, using mock data');
+        return of(this.mockAttractions);
+      })
+    );
   }
 
   /**
@@ -190,7 +221,12 @@ export class SearchService {
    * @returns Observable of tourist attraction or null
    */
   getAttractionById(id: string): Observable<TouristAttraction | null> {
-    const attraction = this.attractions.find(a => a.id === id);
-    return of(attraction || null);
+    return this.http.get<TouristAttraction>(`${this.apiUrl}/attractions/${id}`).pipe(
+      catchError(() => {
+        console.warn('API call failed, using mock data');
+        const attraction = this.mockAttractions.find(a => a.id === id);
+        return of(attraction || null);
+      })
+    );
   }
 }
