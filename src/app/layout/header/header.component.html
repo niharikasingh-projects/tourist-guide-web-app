@@ -20,6 +20,7 @@
     <nav id="main-navigation" class="nav" [class.open]="menuOpen" role="navigation" [attr.aria-hidden]="!menuOpen">
       <div class="panel">
         <a #firstLink routerLink="/home" (click)="closeMenu()" (mouseenter)="onHover($event)">Home</a>
+        <a routerLink="/about" (click)="closeMenu()" (mouseenter)="onHover($event)">About Us</a>
         <!-- <a *ngIf="auth.isAuthenticated()" routerLink="/my-bookings" (click)="closeMenu()" (mouseenter)="onHover($event)">My Bookings</a> -->
         <a *ngIf="!auth.isAuthenticated()" routerLink="/signin" (click)="closeMenu()" (mouseenter)="onHover($event)">Sign in</a>
         
@@ -31,7 +32,7 @@
             [attr.aria-expanded]="profileDropdownOpen"
             aria-label="User profile menu">
             <span class="profile-avatar">{{ getUserInitials() }}</span>
-            <!-- <span class="profile-name">{{ userProfile?.name || 'User' }}</span> -->
+            <span class="profile-name">{{ userProfile?.name || 'User' }}</span>
             <span class="dropdown-arrow" [class.open]="profileDropdownOpen">▼</span>
           </button>
           

@@ -1,0 +1,95 @@
+<app-header></app-header>
+
+<div class="about-container">
+  <div class="about-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <h1 class="page-title">About TouristGuide</h1>
+      <p class="page-subtitle">Connecting travelers with expert local guides worldwide</p>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+      <div class="mission-card">
+        <h2 class="section-title">Our Mission</h2>
+        <p class="mission-text">
+          At TouristGuide, we believe that the best way to experience a destination is through the eyes of a local. 
+          Our platform connects travelers with verified, passionate local guides who bring destinations to life with 
+          authentic stories, hidden gems, and personalized experiences.
+        </p>
+        <p class="mission-text">
+          Whether you're exploring ancient temples, discovering street food treasures, or seeking adventure in nature, 
+          our network of expert guides ensures you get the most memorable and meaningful travel experiences.
+        </p>
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features-section">
+      <h2 class="section-title center">Why Choose Us</h2>
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let feature of features">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-card">
+        <div class="stat-item">
+          <div class="stat-number">640+</div>
+          <div class="stat-label">Expert Guides</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">35+</div>
+          <div class="stat-label">Cities</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Happy Travelers</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Network Section -->
+    <section class="network-section">
+      <h2 class="section-title center">Our Guide Network</h2>
+      <p class="network-subtitle">We operate across major destinations in Asia and beyond</p>
+      
+      <div class="locations-grid">
+        <div class="location-card" *ngFor="let location of locations">
+          <div class="location-header">
+            <h3 class="location-country">{{ location.country }}</h3>
+            <span class="guide-count">{{ location.guides }} Guides</span>
+          </div>
+          <div class="cities-list">
+            <span class="city-tag" *ngFor="let city of location.cities">{{ city }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-card">
+        <h2 class="cta-title">Ready to Explore?</h2>
+        <p class="cta-text">Find your perfect local guide and start your adventure today</p>
+        <button class="cta-button" (click)="navigateToSearch()">
+          Find a Guide
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<app-footer></app-footer>
