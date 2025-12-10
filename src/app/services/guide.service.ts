@@ -15,6 +15,7 @@ export interface Guide {
   availableDates: { from: string; to: string }[];
   contact?: string;
   email?: string;
+  phoneNumber: string;
 }
 
 @Injectable({
@@ -38,7 +39,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-31' },
         { from: '2026-01-05', to: '2026-01-25' },
         { from: '2026-02-01', to: '2026-02-28' }
-      ]
+      ],
+      phoneNumber: '+33 1 42 86 93 50',
+      email: 'pierre.dubois@parisguides.fr'
     },
     {
       id: 'g-pa-2',
@@ -55,7 +58,9 @@ export class GuideService {
         { from: '2025-12-09', to: '2025-12-20' },
         { from: '2025-12-26', to: '2026-01-15' },
         { from: '2026-01-20', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+33 1 45 23 67 89',
+      email: 'sophie.laurent@parisguides.fr'
     },
     {
       id: 'g-pa-3',
@@ -71,7 +76,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-15', to: '2026-01-10' },
         { from: '2026-01-25', to: '2026-02-20' }
-      ]
+      ],
+      phoneNumber: '+33 1 48 92 34 71',
+      email: 'antoine.martin@parisguides.fr'
     },
     // London guides (lo-1, lo-2, lo-3)
     {
@@ -88,7 +95,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-12', to: '2026-01-15' },
         { from: '2026-01-20', to: '2026-03-10' }
-      ]
+      ],
+      phoneNumber: '+44 20 7946 0958',
+      email: 'james.harrison@londonguides.co.uk'
     },
     {
       id: 'g-lo-2',
@@ -105,7 +114,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-28' },
         { from: '2026-01-10', to: '2026-02-20' },
         { from: '2026-03-01', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+44 20 7123 4567',
+      email: 'emma.thompson@londonguides.co.uk'
     },
     {
       id: 'g-lo-3',
@@ -121,7 +132,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-18', to: '2026-01-08' },
         { from: '2026-02-01', to: '2026-03-15' }
-      ]
+      ],
+      phoneNumber: '+44 20 7834 9201',
+      email: 'oliver.davies@londonguides.co.uk'
     },
     // New York guides (ny-1, ny-2, ny-3)
     {
@@ -138,7 +151,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-15', to: '2026-01-10' },
         { from: '2026-01-25', to: '2026-03-05' }
-      ]
+      ],
+      phoneNumber: '+1 212-555-0147',
+      email: 'michael.rodriguez@nycguides.com'
     },
     {
       id: 'g-ny-2',
@@ -155,7 +170,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-25' },
         { from: '2026-01-05', to: '2026-02-15' },
         { from: '2026-02-25', to: '2026-03-20' }
-      ]
+      ],
+      phoneNumber: '+1 212-555-0289',
+      email: 'sarah.chen@nycguides.com'
     },
     {
       id: 'g-ny-3',
@@ -171,7 +188,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-20', to: '2026-01-20' },
         { from: '2026-02-10', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+1 212-555-0392',
+      email: 'david.johnson@nycguides.com'
     },
     // Rome guides (ro-1, ro-2, ro-3)
     {
@@ -188,7 +207,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-11', to: '2026-01-05' },
         { from: '2026-01-15', to: '2026-02-28' }
-      ]
+      ],
+      phoneNumber: '+39 06 8745 3210',
+      email: 'marco.rossi@romeguides.it'
     },
     {
       id: 'g-ro-2',
@@ -205,7 +226,9 @@ export class GuideService {
         { from: '2025-12-09', to: '2025-12-30' },
         { from: '2026-01-10', to: '2026-02-15' },
         { from: '2026-03-01', to: '2026-03-25' }
-      ]
+      ],
+      phoneNumber: '+39 06 9234 5678',
+      email: 'giulia.bianchi@romeguides.it'
     },
     {
       id: 'g-ro-3',
@@ -221,7 +244,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-16', to: '2026-01-12' },
         { from: '2026-02-05', to: '2026-03-20' }
-      ]
+      ],
+      phoneNumber: '+39 06 7812 4563',
+      email: 'alessandro.ferrari@romeguides.it'
     },
     // Tokyo guides (to-1, to-2, to-3)
     {
@@ -238,7 +263,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-14', to: '2026-01-18' },
         { from: '2026-02-01', to: '2026-03-10' }
-      ]
+      ],
+      phoneNumber: '+81 3-5689-1234',
+      email: 'hiroshi.tanaka@tokyoguides.jp'
     },
     {
       id: 'g-to-2',
@@ -255,7 +282,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-24' },
         { from: '2026-01-08', to: '2026-02-10' },
         { from: '2026-02-20', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+81 3-4567-8901',
+      email: 'yuki.yamamoto@tokyoguides.jp'
     },
     {
       id: 'g-to-3',
@@ -271,7 +300,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-17', to: '2026-01-14' },
         { from: '2026-02-05', to: '2026-03-15' }
-      ]
+      ],
+      phoneNumber: '+81 3-8765-4321',
+      email: 'kenji.sato@tokyoguides.jp'
     },
     // Taj Mahal guides (ag-1)
     {
@@ -288,7 +319,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-10', to: '2026-01-10' },
         { from: '2026-01-20', to: '2026-03-15' }
-      ]
+      ],
+      phoneNumber: '+91 562-2234567',
+      email: 'rajesh.kumar@agraguides.in'
     },
     {
       id: 'g-tj-2',
@@ -305,7 +338,9 @@ export class GuideService {
         { from: '2025-12-12', to: '2025-12-31' },
         { from: '2026-01-15', to: '2026-02-25' },
         { from: '2026-03-05', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 562-2345678',
+      email: 'priya.sharma@agraguides.in'
     },
     {
       id: 'g-tj-3',
@@ -321,7 +356,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-14', to: '2026-01-08' },
         { from: '2026-02-01', to: '2026-03-20' }
-      ]
+      ],
+      phoneNumber: '+91 562-2456789',
+      email: 'mohammed.ali@agraguides.in'
     },
     // Red Fort Delhi guides (dl-1)
     {
@@ -339,7 +376,9 @@ export class GuideService {
         { from: '2025-12-09', to: '2026-01-05' },
         { from: '2026-01-18', to: '2026-02-28' },
         { from: '2026-03-10', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 11-23456789',
+      email: 'vikram.singh@delhiguides.in'
     },
     {
       id: 'g-dl-2',
@@ -355,7 +394,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-11', to: '2025-12-29' },
         { from: '2026-01-12', to: '2026-02-18' }
-      ]
+      ],
+      phoneNumber: '+91 11-24567890',
+      email: 'anjali.verma@delhiguides.in'
     },
     // Jaipur - Hawa Mahal guides (jp-2)
     {
@@ -372,7 +413,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-15', to: '2026-01-12' },
         { from: '2026-02-01', to: '2026-03-10' }
-      ]
+      ],
+      phoneNumber: '+91 141-2345678',
+      email: 'arjun.rathore@jaipurguides.in'
     },
     {
       id: 'g-jp-2',
@@ -389,7 +432,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-27' },
         { from: '2026-01-10', to: '2026-02-20' },
         { from: '2026-03-01', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 141-2456789',
+      email: 'meera.chouhan@jaipurguides.in'
     },
     // Mumbai - Gateway of India guides (mb-1)
     {
@@ -406,7 +451,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-13', to: '2026-01-15' },
         { from: '2026-02-05', to: '2026-03-25' }
-      ]
+      ],
+      phoneNumber: '+91 22-23456789',
+      email: 'karan.desai@mumbaiguides.in'
     },
     {
       id: 'g-mb-2',
@@ -423,7 +470,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-30' },
         { from: '2026-01-08', to: '2026-02-12' },
         { from: '2026-02-25', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 22-24567890',
+      email: 'shalini.iyer@mumbaiguides.in'
     },
     // Goa Beach guides (go-1)
     {
@@ -440,7 +489,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-16', to: '2026-01-20' },
         { from: '2026-02-10', to: '2026-03-15' }
-      ]
+      ],
+      phoneNumber: '+91 832-2345678',
+      email: 'carlos.fernandes@goaguides.in'
     },
     {
       id: 'g-go-2',
@@ -457,7 +508,9 @@ export class GuideService {
         { from: '2025-12-12', to: '2026-01-08' },
         { from: '2026-01-25', to: '2026-02-28' },
         { from: '2026-03-10', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 832-2456789',
+      email: 'maria.dsouza@goaguides.in'
     },
     // Kerala Backwaters guides (ke-1)
     {
@@ -474,7 +527,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-09', to: '2026-01-10' },
         { from: '2026-01-22', to: '2026-03-05' }
-      ]
+      ],
+      phoneNumber: '+91 484-2345678',
+      email: 'arun.nair@keralaguides.in'
     },
     {
       id: 'g-ke-2',
@@ -491,7 +546,9 @@ export class GuideService {
         { from: '2025-12-14', to: '2025-12-31' },
         { from: '2026-01-15', to: '2026-02-20' },
         { from: '2026-03-01', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 484-2456789',
+      email: 'lakshmi.menon@keralaguides.in'
     },
     // Varanasi guides (vr-1)
     {
@@ -508,7 +565,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-11', to: '2026-01-12' },
         { from: '2026-02-01', to: '2026-03-20' }
-      ]
+      ],
+      phoneNumber: '+91 542-2345678',
+      email: 'pandit.sharma@varanasiguides.in'
     },
     {
       id: 'g-vr-2',
@@ -525,7 +584,9 @@ export class GuideService {
         { from: '2025-12-15', to: '2026-01-05' },
         { from: '2026-01-20', to: '2026-02-25' },
         { from: '2026-03-10', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 542-2456789',
+      email: 'kavita.rai@varanasiguides.in'
     },
     // Udaipur guides (ud-1)
     {
@@ -542,7 +603,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-10', to: '2026-01-15' },
         { from: '2026-02-01', to: '2026-03-10' }
-      ]
+      ],
+      phoneNumber: '+91 294-2345678',
+      email: 'ravi.mewar@udaipurguides.in'
     },
     {
       id: 'g-ud-2',
@@ -559,7 +622,9 @@ export class GuideService {
         { from: '2025-12-12', to: '2025-12-28' },
         { from: '2026-01-10', to: '2026-02-15' },
         { from: '2026-03-01', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 294-2456789',
+      email: 'priyanka.rathore@udaipurguides.in'
     },
     // Rishikesh guides (ri-1)
     {
@@ -576,7 +641,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-14', to: '2026-01-18' },
         { from: '2026-02-05', to: '2026-03-15' }
-      ]
+      ],
+      phoneNumber: '+91 135-2345678',
+      email: 'amit.sharma@rishikeshguides.in'
     },
     {
       id: 'g-ri-2',
@@ -593,7 +660,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2026-01-08' },
         { from: '2026-01-25', to: '2026-02-28' },
         { from: '2026-03-10', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 135-2456789',
+      email: 'swami.ananda@rishikeshguides.in'
     },
     // Bangalore guides (bl-1)
     {
@@ -610,7 +679,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-16', to: '2026-01-14' },
         { from: '2026-02-01', to: '2026-03-20' }
-      ]
+      ],
+      phoneNumber: '+91 80-23456789',
+      email: 'suresh.reddy@bangaloreguides.in'
     },
     {
       id: 'g-bl-2',
@@ -627,7 +698,9 @@ export class GuideService {
         { from: '2025-12-11', to: '2025-12-31' },
         { from: '2026-01-12', to: '2026-02-18' },
         { from: '2026-03-01', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 80-24567890',
+      email: 'divya.krishnan@bangaloreguides.in'
     },
     // Pune guides (pu-1)
     {
@@ -644,7 +717,9 @@ export class GuideService {
       availableDates: [
         { from: '2025-12-13', to: '2026-01-16' },
         { from: '2026-02-05', to: '2026-03-12' }
-      ]
+      ],
+      phoneNumber: '+91 20-23456789',
+      email: 'rohit.patil@puneguides.in'
     },
     {
       id: 'g-pu-2',
@@ -661,7 +736,9 @@ export class GuideService {
         { from: '2025-12-10', to: '2025-12-29' },
         { from: '2026-01-10', to: '2026-02-20' },
         { from: '2026-03-05', to: '2026-03-31' }
-      ]
+      ],
+      phoneNumber: '+91 20-24567890',
+      email: 'sneha.kulkarni@puneguides.in'
     }
   ];
 
