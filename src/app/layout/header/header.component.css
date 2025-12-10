@@ -38,7 +38,8 @@
   display: inline-block;
   margin: 0;
   font-weight: 700;
-  color: var(--brand-700)
+  color: var(--brand-700);
+  cursor: pointer;
 }
 
 .nav {

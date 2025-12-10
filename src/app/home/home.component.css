@@ -8,7 +8,7 @@
 .home-body .hero {
   padding: 2.5rem 2rem;
   background: var(--glass);
-  /* border-radius: var(--radius); */
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin: 32px 0;
   display: flex;

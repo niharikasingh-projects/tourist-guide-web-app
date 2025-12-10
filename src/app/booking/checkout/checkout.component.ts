@@ -135,7 +135,7 @@ export class CheckoutComponent implements OnInit {
       attractionName: this.attraction.name,
       guideId: this.guide.id,
       guideName: this.guide.name,
-      guideContact: this.guide.contact || 'N/A',
+      guideContact: this.guide.phoneNumber || 'N/A',
       guideEmail: this.guide.email || 'N/A',
       customerName: this.customerName.trim(),
       customerContact: this.customerContact.trim(),
