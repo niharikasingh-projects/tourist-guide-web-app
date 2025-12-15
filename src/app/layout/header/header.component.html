@@ -43,6 +43,7 @@
                 <div class="profile-name-large">{{ userProfile?.name || 'User' }}</div>
                 <div class="profile-email">{{ userProfile?.email || '' }}</div>
                 <div class="profile-role" *ngIf="isGuide()">🎯 Guide</div>
+                <div class="profile-role" *ngIf="isAdmin()">👑 Admin</div>
               </div>
             </div>
             <div class="dropdown-divider"></div>
@@ -51,11 +52,19 @@
               <span>My Profile</span>
             </a>
             
-            <!-- Show different menu items based on user role -->
+            <!-- Admin menu items -->
+            <ng-container *ngIf="isAdmin()">
+              <a class="dropdown-item" routerLink="/admin/attractions" (click)="closeProfileDropdown()">
+                <span class="item-icon">🏛️</span>
+                <span>Manage Attractions</span>
+              </a>
+            </ng-container>
+            
+            <!-- Guide menu items -->
             <ng-container *ngIf="isGuide()">
               <a class="dropdown-item" routerLink="/guide/attractions" (click)="closeProfileDropdown()">
                 <span class="item-icon">🏛️</span>
-                <span>Manage Attractions</span>
+                <span>My Guide Profiles</span>
               </a>
               <a class="dropdown-item" routerLink="/guide/bookings" (click)="closeProfileDropdown()">
                 <span class="item-icon">📋</span>
@@ -63,7 +72,8 @@
               </a>
             </ng-container>
             
-            <ng-container *ngIf="!isGuide()">
+            <!-- Tourist menu items -->
+            <ng-container *ngIf="!isGuide() && !isAdmin()">
               <a class="dropdown-item" routerLink="/my-bookings" (click)="closeProfileDropdown()">
                 <span class="item-icon">📋</span>
                 <span>My Bookings</span>

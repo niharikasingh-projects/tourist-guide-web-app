@@ -6,6 +6,11 @@ export interface User {
   email: string;
   password: string;
   role?: string;
+  languages?: string;
+  profilePicture?: string;
+  location?: string;
+  phoneNumber?: string;
+  certifications?: string;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -18,6 +18,11 @@ export class SignupComponent {
   password = '';
   confirm = '';
   role = 'tourist';
+  languages = '';
+  profilePicture = '';
+  location = '';
+  phoneNumber = '';
+  certifications = '';
   message = '';
   messageType: 'error' | 'success' | '' = '';
   loading = false;
@@ -27,6 +32,21 @@ export class SignupComponent {
     private router: Router,
     private searchStateService: SearchStateService
   ) {}
+
+  onProfilePictureSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profilePicture = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeProfilePicture() {
+    this.profilePicture = '';
+  }
 
   async onSubmit() {
     this.message = '';
@@ -41,7 +61,12 @@ export class SignupComponent {
       username: this.name || this.email.split('@')[0], 
       email: this.email, 
       password: this.password,
-      role: this.role
+      role: this.role,
+      languages: this.role === 'guide' ? this.languages : undefined,
+      profilePicture: this.role === 'guide' ? this.profilePicture : undefined,
+      location: this.role === 'guide' ? this.location : undefined,
+      phoneNumber: this.role === 'guide' ? this.phoneNumber : undefined,
+      certifications: this.role === 'guide' ? this.certifications : undefined
     };
     this.loading = true;
     try {

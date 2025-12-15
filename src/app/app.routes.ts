@@ -12,8 +12,11 @@ export const routes: Routes = [
 	{ path: 'profile', loadComponent: () => import('./user/profile/profile.component').then(m => m.ProfileComponent) },
 	{ path: 'about', loadComponent: () => import('./about/about.component').then(m => m.AboutComponent) },
 	
+	// Admin-specific routes
+	{ path: 'admin/attractions', loadComponent: () => import('./admin/admin-attractions/admin-attractions.component').then(m => m.AdminAttractionsComponent) },
+	
 	// Guide-specific routes
-	{ path: 'guide/attractions', loadComponent: () => import('./guide/manage-attractions/manage-attractions.component').then(m => m.ManageAttractionsComponent) },
+	{ path: 'guide/attractions', loadComponent: () => import('./guide/manage-attractions/guide-manage-attractions.component').then(m => m.GuideManageAttractionsComponent) },
 	{ path: 'guide/bookings', loadComponent: () => import('./guide/guide-bookings/guide-bookings.component').then(m => m.GuideBookingsComponent) },
 	
 	{ path: '**', redirectTo: 'signin' },

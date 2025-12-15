@@ -1,0 +1,129 @@
+<app-header></app-header>
+
+<main class="admin-container">
+  <div class="page-header">
+    <h1>Manage Attractions</h1>
+    <button class="add-button" (click)="toggleAddForm()">
+      {{ showAddForm ? 'Cancel' : '+ Add Attraction' }}
+    </button>
+  </div>
+
+  <!-- Add/Edit Attraction Form -->
+  <div class="add-form" *ngIf="showAddForm">
+    <h2>{{ editingId ? 'Edit Attraction' : 'Add New Attraction' }}</h2>
+    <form (ngSubmit)="editingId ? updateAttraction() : addAttraction()">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Attraction Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="newAttraction.attractionName" 
+            name="attractionName" 
+            placeholder="e.g., Taj Mahal"
+            required />
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select [(ngModel)]="newAttraction.category" name="category" required>
+            <option value="">Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group autocomplete-container">
+        <label>Location *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="newAttraction.location" 
+          name="location" 
+          placeholder="Start typing city name..."
+          (input)="onLocationInput($event)"
+          autocomplete="off"
+          required />
+        <div class="suggestions-dropdown" *ngIf="showLocationSuggestions">
+          <div 
+            class="suggestion-item" 
+            *ngFor="let suggestion of locationSuggestions"
+            (click)="selectLocation(suggestion)">
+            {{ suggestion.name }}, {{ suggestion.country }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea 
+          [(ngModel)]="newAttraction.description" 
+          name="description" 
+          rows="4"
+          placeholder="Provide a detailed description of the attraction..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Upload Pictures</label>
+        <input 
+          type="file" 
+          (change)="onFileSelected($event)" 
+          accept="image/*" 
+          multiple 
+          class="file-input" />
+        <div class="picture-preview" *ngIf="newAttraction.pictures.length > 0">
+          <div class="preview-item" *ngFor="let pic of newAttraction.pictures; let i = index">
+            <img [src]="pic" alt="Preview" />
+            <button type="button" class="remove-pic-btn" (click)="removePicture(i)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button" [disabled]="loading">
+        {{ loading ? 'Processing...' : (editingId ? 'Update Attraction' : 'Add Attraction') }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Attractions List -->
+  <div class="attractions-list">
+    <div class="attraction-card" *ngFor="let attraction of attractions">
+      <div class="card-header">
+        <div>
+          <h3>{{ attraction.attractionName }}</h3>
+          <p class="location">📍 {{ attraction.location }}</p>
+          <span class="category-badge">{{ attraction.category }}</span>
+        </div>
+        <div class="card-actions">
+          <button class="edit-button" (click)="editAttraction(attraction)">✏️</button>
+          <button class="delete-button" (click)="deleteAttraction(attraction.id)">🗑️</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row" *ngIf="attraction.description">
+          <span class="label">Description:</span>
+          <span class="value">{{ attraction.description }}</span>
+        </div>
+
+        <div class="pictures-section" *ngIf="attraction.pictures && attraction.pictures.length > 0">
+          <span class="label">Pictures:</span>
+          <div class="pictures-grid">
+            <img *ngFor="let pic of attraction.pictures" [src]="pic" alt="Attraction" class="attraction-pic" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="attractions.length === 0 && !showAddForm && !loading">
+      <div class="empty-icon">🏛️</div>
+      <h3>No attractions added yet</h3>
+      <p>Click "Add Attraction" to create your first attraction!</p>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
