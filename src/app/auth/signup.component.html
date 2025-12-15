@@ -2,28 +2,98 @@
   <h1 class="title-text">Create your account</h1>
 
   <form (ngSubmit)="onSubmit()" class="auth-form">
-    <input name="name" [(ngModel)]="name" placeholder="Name" required />
-    <input name="email" [(ngModel)]="email" type="email" placeholder="Email" required />
-    <input name="password" [(ngModel)]="password" type="password" placeholder="Password" required />
-    <input name="confirm" [(ngModel)]="confirm" type="password" placeholder="Confirm password" required />
-
-    <div class="role-selection">
-      <label class="role-label">Sign up as:</label>
-      <div class="role-options">
-        <label class="role-option">
+    <!-- User Type Selection at the Top -->
+    <div class="user-type-selection">
+      <label class="section-label">I want to sign up as:</label>
+      <div class="type-options">
+        <label class="type-option" [class.selected]="role === 'tourist'">
           <input type="radio" name="role" [(ngModel)]="role" value="tourist" required />
-          <span>Tourist</span>
+          <div class="option-content">
+            <span class="option-icon">🧳</span>
+            <span class="option-title">Tourist</span>
+            <span class="option-desc">Explore and book tours</span>
+          </div>
         </label>
-        <label class="role-option">
+        <label class="type-option" [class.selected]="role === 'guide'">
           <input type="radio" name="role" [(ngModel)]="role" value="guide" required />
-          <span>Guide</span>
+          <div class="option-content">
+            <span class="option-icon">🎯</span>
+            <span class="option-title">Tour Guide</span>
+            <span class="option-desc">Offer guided tours</span>
+          </div>
         </label>
       </div>
     </div>
 
+    <!-- Common Fields -->
+    <div class="common-fields">
+      <input name="name" [(ngModel)]="name" placeholder="Full Name *" required />
+      <input name="email" [(ngModel)]="email" type="email" placeholder="Email *" required />
+      <input name="password" [(ngModel)]="password" type="password" placeholder="Password *" required />
+      <input name="confirm" [(ngModel)]="confirm" type="password" placeholder="Confirm Password *" required />
+    </div>
+
+    <!-- Guide-specific fields -->
+    <div class="guide-fields" *ngIf="role === 'guide'">
+      <h3 class="section-heading">Guide Information</h3>
+      
+      <div class="form-group">
+        <label>Location *</label>
+        <input 
+          name="location" 
+          [(ngModel)]="location" 
+          placeholder="City, Country (e.g., Paris, France)"
+          [required]="role === 'guide'" />
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input 
+          name="phoneNumber" 
+          [(ngModel)]="phoneNumber" 
+          type="tel"
+          placeholder="e.g., +91 98765 43210"
+          [required]="role === 'guide'" />
+      </div>
+
+      <div class="form-group">
+        <label>Languages Known *</label>
+        <input 
+          name="languages" 
+          [(ngModel)]="languages" 
+          placeholder="e.g., English, Hindi, Spanish"
+          [required]="role === 'guide'" />
+        <small class="field-hint">Separate multiple languages with commas</small>
+      </div>
+
+      <div class="form-group">
+        <label>Professional Certifications <span class="optional">(Optional)</span></label>
+        <textarea 
+          name="certifications" 
+          [(ngModel)]="certifications" 
+          rows="3"
+          placeholder="e.g., Certified Tour Guide License, First Aid Certification, etc."></textarea>
+        <small class="field-hint">List any relevant certifications or qualifications</small>
+      </div>
+
+      <div class="form-group">
+        <label>Profile Picture</label>
+        <input 
+          type="file" 
+          (change)="onProfilePictureSelected($event)" 
+          accept="image/*" 
+          class="file-input" />
+        <small class="field-hint">Upload a professional photo</small>
+        <div class="profile-preview" *ngIf="profilePicture">
+          <img [src]="profilePicture" alt="Profile Preview" />
+          <button type="button" class="remove-pic-btn" (click)="removeProfilePicture()">×</button>
+        </div>
+      </div>
+    </div>
+
     <button type="submit" class="main-button" [disabled]="loading">
-      <span *ngIf="!loading">Sign up</span>
-      <span *ngIf="loading">Creating…</span>
+      <span *ngIf="!loading">Create Account</span>
+      <span *ngIf="loading">Creating Account…</span>
     </button>
 
     <div class="separator">

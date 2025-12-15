@@ -4,7 +4,7 @@
     background-color: white;
     padding: 60px 40px;
     border: 1px solid #ccc;
-    max-width: 400px;
+    max-width: 500px;
     width: 100%;
     text-align: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -107,12 +107,126 @@
     .title-text { font-size: 20px; margin-bottom: 20px }
     .auth-form input { padding: 12px; border-radius: 10px }
     .main-button { padding: 12px; border-radius: 10px }
+
+    .type-options {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .type-option {
+        padding: 1rem;
+    }
+
+    .option-icon {
+        font-size: 1.75rem;
+    }
+
+    .guide-fields {
+        padding: 1rem;
+        gap: 1rem;
+    }
 }
 
 /* Ensure buttons and inputs expand to available width */
 .auth-form input, .main-button { width: 100%; box-sizing: border-box }
 
-/* Role selection styles */
+/* User Type Selection at the top */
+.user-type-selection {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.section-label {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--gray-700);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.type-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.type-option {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--gray-300);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.type-option:hover {
+  border-color: var(--brand);
+  background: rgba(255, 140, 43, 0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 140, 43, 0.15);
+}
+
+.type-option.selected {
+  border-color: var(--brand);
+  background: rgba(255, 140, 43, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 140, 43, 0.2);
+}
+
+.type-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.option-icon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.option-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--gray-800);
+}
+
+.option-desc {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+}
+
+.type-option.selected .option-title {
+  color: var(--brand);
+}
+
+/* Common fields container */
+.common-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 1rem;
+}
+
+/* Section heading for guide fields */
+.section-heading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin: 0 0 1rem 0;
+  text-align: left;
+  border-bottom: 2px solid var(--brand);
+  padding-bottom: 0.5rem;
+}
+
+/* Role selection styles (deprecated - kept for backwards compatibility) */
 .role-selection {
   margin: 1rem 0;
 }
@@ -163,6 +277,141 @@
   font-size: 0.95rem;
   color: var(--gray-700);
   transition: all 0.2s ease;
+}
+
+/* Guide-specific fields */
+.guide-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(to bottom, #fef5eb, #ffffff);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 140, 43, 0.3);
+  text-align: left;
+}
+
+.guide-fields .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guide-fields label {
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  font-weight: 600;
+}
+
+.guide-fields .optional {
+  font-weight: 400;
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}
+
+.guide-fields input,
+.guide-fields textarea {
+  padding: 0.875rem;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.guide-fields textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.guide-fields input:focus,
+.guide-fields textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(255, 140, 43, 0.1);
+}
+
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+.guide-fields input:focus,
+.guide-fields textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(255, 140, 43, 0.1);
+}
+
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+.file-input {
+  padding: 0.5rem !important;
+  cursor: pointer;
+  border: 2px dashed var(--gray-400) !important;
+  background: white !important;
+}
+
+.file-input::-webkit-file-upload-button {
+  background: var(--brand);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-right: 1rem;
+}
+
+.file-input::-webkit-file-upload-button:hover {
+  background: var(--brand-700);
+}
+
+.profile-preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--brand);
+  margin-top: 0.5rem;
+}
+
+.profile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-pic-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-pic-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
 }
 
 /* Message styles used by auth components */

@@ -1,0 +1,212 @@
+<app-header></app-header>
+
+<main class="guide-container">
+  <div class="page-header">
+    <h1>My Guide Profiles</h1>
+    <button class="add-button" (click)="toggleAddForm()">
+      {{ showAddForm ? 'Cancel' : '+ Add Profile' }}
+    </button>
+  </div>
+
+  <!-- Add/Edit Guide Profile Form -->
+  <div class="add-form" *ngIf="showAddForm">
+    <h2>{{ editingId ? 'Edit Guide Profile' : 'Add New Guide Profile' }}</h2>
+    <form (ngSubmit)="editingId ? updateGuideProfile() : addGuideProfile()">
+      
+      <div class="form-group autocomplete-container">
+        <label>Location *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="newProfile.location" 
+          name="location" 
+          placeholder="Start typing city name..."
+          (input)="onLocationInput($event)"
+          autocomplete="off"
+          [disabled]="!!editingId"
+          required />
+        <div class="suggestions-dropdown" *ngIf="showLocationSuggestions">
+          <div 
+            class="suggestion-item" 
+            *ngFor="let suggestion of locationSuggestions"
+            (click)="selectLocation(suggestion)">
+            {{ suggestion.name }}, {{ suggestion.country }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="filteredAttractions.length > 0 && !editingId">
+        <label>Attraction *</label>
+        <select 
+          [(ngModel)]="newProfile.attractionId" 
+          name="attractionId" 
+          (change)="onAttractionSelect($event)"
+          required>
+          <option value="">Select an attraction</option>
+          <option *ngFor="let attraction of filteredAttractions" [value]="attraction.id">
+            {{ attraction.attractionName }}
+          </option>
+        </select>
+      </div>
+
+      <div class="info-message" *ngIf="newProfile.location && filteredAttractions.length === 0 && !editingId">
+        <p>ℹ️ No attractions found for this location. Please select a different location or contact admin to add attractions.</p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Hourly Rate (₹) *</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newProfile.hourlyRate" 
+            name="hourlyRate" 
+            min="0" 
+            placeholder="e.g., 500"
+            required />
+        </div>
+        <div class="form-group">
+          <label>Tour Duration (hours)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="newProfile.tourDuration" 
+            name="tourDuration" 
+            min="0" 
+            step="0.5" 
+            placeholder="e.g., 2.5" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Languages (comma-separated)</label>
+        <input 
+          type="text" 
+          [(ngModel)]="newProfile.languagesInput" 
+          name="languages" 
+          placeholder="e.g., English, Hindi, Spanish" />
+      </div>
+
+      <div class="form-group">
+        <label>Specialties (comma-separated)</label>
+        <input 
+          type="text" 
+          [(ngModel)]="newProfile.specialties" 
+          name="specialties" 
+          placeholder="e.g., History, Architecture, Photography" />
+      </div>
+
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea 
+          [(ngModel)]="newProfile.bio" 
+          name="bio" 
+          rows="3"
+          placeholder="Tell visitors about yourself and your expertise..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Available From</label>
+          <input type="date" [(ngModel)]="newProfile.fromDate" name="fromDate" />
+        </div>
+        <div class="form-group">
+          <label>Available To</label>
+          <input type="date" [(ngModel)]="newProfile.toDate" name="toDate" />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button" [disabled]="loading">
+        {{ loading ? 'Processing...' : (editingId ? 'Update Profile' : 'Add Profile') }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Guide Profiles List -->
+  <div class="profiles-list">
+    <div class="profile-card" *ngFor="let profile of guideProfiles">
+      <div class="card-header">
+        <div>
+          <h3>{{ profile.attractionName }}</h3>
+          <p class="location">📍 {{ profile.location }}</p>
+        </div>
+        <div class="card-actions">
+          <button class="edit-button" (click)="editGuideProfile(profile)">✏️</button>
+          <button class="delete-button" (click)="deleteGuideProfile(profile.id)">🗑️</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Hourly Rate:</span>
+          <span class="value rate">₹{{ profile.hourlyRate }}/hr</span>
+        </div>
+
+        <div class="info-row" *ngIf="profile.tourDuration">
+          <span class="label">Tour Duration:</span>
+          <span class="value">{{ profile.tourDuration }} hours</span>
+        </div>
+
+        <div class="info-row" *ngIf="profile.languages.length">
+          <span class="label">Languages:</span>
+          <span class="value">{{ profile.languages.join(', ') }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="profile.specialties && profile.specialties.length">
+          <span class="label">Specialties:</span>
+          <span class="value">{{ profile.specialties.join(', ') }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="profile.bio">
+          <span class="label">Bio:</span>
+          <span class="value">{{ profile.bio }}</span>
+        </div>
+
+        <div class="availability-section">
+          <div class="section-header">
+            <span class="label">Available Dates:</span>
+            <button class="small-button" (click)="toggleDateRangeForm(profile.id)">
+              {{ addingDateForId === profile.id ? 'Cancel' : '+ Add Date' }}
+            </button>
+          </div>
+
+          <!-- Date Range Form -->
+          <div class="date-range-form" *ngIf="addingDateForId === profile.id">
+            <div class="date-form-row">
+              <div class="date-form-group">
+                <label>From Date</label>
+                <input type="date" [(ngModel)]="newDateRange.from" name="fromDate" />
+              </div>
+              <div class="date-form-group">
+                <label>To Date</label>
+                <input type="date" [(ngModel)]="newDateRange.to" name="toDate" />
+              </div>
+              <button class="add-date-btn" (click)="submitDateRange(profile)">Add</button>
+            </div>
+          </div>
+
+          <div class="date-ranges" *ngIf="profile.availableDates.length > 0">
+            <div class="date-range" *ngFor="let dateRange of profile.availableDates; let i = index">
+              <span>{{ dateRange.from }} → {{ dateRange.to }}</span>
+              <button class="remove-button" (click)="removeDateRange(profile, i)">×</button>
+            </div>
+          </div>
+
+          <p class="no-dates" *ngIf="profile.availableDates.length === 0 && addingDateForId !== profile.id">
+            No dates added yet
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="guideProfiles.length === 0 && !showAddForm && !loading">
+      <div class="empty-icon">👤</div>
+      <h3>No guide profiles yet</h3>
+      <p>Click "Add Profile" to create your first guide profile and start offering tours!</p>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
