@@ -102,6 +102,11 @@ export class HeaderComponent {
     return 'U';
   }
 
+  isGuide(): boolean {
+    const user = this.auth.getCurrentUser();
+    return user?.role === 'guide';
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;

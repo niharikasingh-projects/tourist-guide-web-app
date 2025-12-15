@@ -1,0 +1,266 @@
+.bookings-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 200px);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--gray-600);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: var(--brand);
+}
+
+.tab.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+}
+
+/* Bookings List */
+.bookings-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.booking-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.booking-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--gray-900);
+  font-size: 1.25rem;
+}
+
+.booking-id {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}
+
+.status-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-pending {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-completed {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-cancelled {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* Card Body */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.label {
+  margin: 0 0 0.25rem 0;
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.value {
+  margin: 0;
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.email {
+  margin: 0.25rem 0 0 0;
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}
+
+.amount {
+  color: var(--brand);
+  font-size: 1.1rem;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.btn {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-confirm {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.btn-complete {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-complete:hover {
+  background: #1976d2;
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #d32f2f;
+  border: 2px solid #d32f2f;
+}
+
+.btn-cancel:hover {
+  background: #d32f2f;
+  color: white;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--gray-900);
+  font-size: 1.5rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs {
+    overflow-x: auto;
+  }
+
+  .tab {
+    white-space: nowrap;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

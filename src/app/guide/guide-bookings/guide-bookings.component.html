@@ -1,0 +1,121 @@
+<app-header></app-header>
+
+<main class="bookings-container">
+  <div class="page-header">
+    <h1>My Bookings</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'current'"
+      (click)="setActiveTab('current')">
+      Current ({{ currentBookings.length }})
+    </button>
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'past'"
+      (click)="setActiveTab('past')">
+      Past ({{ pastBookings.length }})
+    </button>
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'future'"
+      (click)="setActiveTab('future')">
+      Future ({{ futureBookings.length }})
+    </button>
+  </div>
+
+  <!-- Bookings List -->
+  <div class="bookings-list">
+    <div class="booking-card" *ngFor="let booking of displayedBookings">
+      <div class="card-header">
+        <div class="booking-info">
+          <h3>{{ booking.attraction }}</h3>
+          <p class="booking-id">Booking ID: {{ booking.id }}</p>
+        </div>
+        <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+          {{ booking.status }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="icon">👤</span>
+            <div>
+              <p class="label">Customer</p>
+              <p class="value">{{ booking.customerName }}</p>
+              <p class="email">{{ booking.customerEmail }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">📍</span>
+            <div>
+              <p class="label">Location</p>
+              <p class="value">{{ booking.location }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">📅</span>
+            <div>
+              <p class="label">Date</p>
+              <p class="value">{{ booking.date }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">⏱️</span>
+            <div>
+              <p class="label">Duration</p>
+              <p class="value">{{ booking.hours }} hours</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">💰</span>
+            <div>
+              <p class="label">Amount</p>
+              <p class="value amount">₹{{ booking.amount }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions" *ngIf="booking.status !== 'completed' && booking.status !== 'cancelled'">
+          <button 
+            class="btn btn-confirm" 
+            *ngIf="booking.status === 'pending'"
+            (click)="confirmBooking(booking.id)">
+            Confirm
+          </button>
+          <button 
+            class="btn btn-complete" 
+            *ngIf="booking.status === 'confirmed' && activeTab === 'current'"
+            (click)="completeBooking(booking.id)">
+            Mark Complete
+          </button>
+          <button 
+            class="btn btn-cancel" 
+            (click)="cancelBooking(booking.id)">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="displayedBookings.length === 0">
+      <div class="empty-icon">📅</div>
+      <h3>No {{ activeTab }} bookings</h3>
+      <p *ngIf="activeTab === 'current'">You don't have any bookings for today.</p>
+      <p *ngIf="activeTab === 'past'">No completed or past bookings yet.</p>
+      <p *ngIf="activeTab === 'future'">You don't have any upcoming bookings.</p>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

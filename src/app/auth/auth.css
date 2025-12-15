@@ -112,6 +112,59 @@
 /* Ensure buttons and inputs expand to available width */
 .auth-form input, .main-button { width: 100%; box-sizing: border-box }
 
+/* Role selection styles */
+.role-selection {
+  margin: 1rem 0;
+}
+
+.role-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--gray-700);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.role-options {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.role-option:hover {
+  border-color: var(--brand);
+  background: rgba(255, 140, 43, 0.05);
+}
+
+.role-option input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+}
+
+.role-option input[type="radio"]:checked + span {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.role-option span {
+  font-size: 0.95rem;
+  color: var(--gray-700);
+  transition: all 0.2s ease;
+}
+
 /* Message styles used by auth components */
 .auth-message { margin-top: 12px; font-weight: 600; outline: none }
 .auth-message.error { color: #b00020 }

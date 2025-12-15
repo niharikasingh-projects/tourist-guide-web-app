@@ -11,7 +11,8 @@ export interface User {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private users: User[] = [
-    { username: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' }
+    { username: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' },
+    { username: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' }
   ];
   private currentUser: User | null = null;
 

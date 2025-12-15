@@ -1,0 +1,170 @@
+<app-header></app-header>
+
+<main class="manage-container">
+  <div class="page-header">
+    <h1>Manage Attractions & Availability</h1>
+    <button class="add-button" (click)="toggleAddForm()">
+      {{ showAddForm ? 'Cancel' : '+ Add Attraction' }}
+    </button>
+  </div>
+
+  <!-- Add New Attraction Form -->
+  <div class="add-form" *ngIf="showAddForm">
+    <h2>{{ editingId ? 'Edit Attraction' : 'Add New Attraction' }}</h2>
+    <form (ngSubmit)="editingId ? updateAttraction() : addAttraction()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Attraction Name *</label>
+          <input type="text" [(ngModel)]="newAttraction.attractionName" name="attractionName" required />
+        </div>
+        <div class="form-group">
+          <label>Location *</label>
+          <input type="text" [(ngModel)]="newAttraction.location" name="location" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Hourly Rate (₹)</label>
+          <input type="number" [(ngModel)]="newAttraction.hourlyRate" name="hourlyRate" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Tour Duration (hours)</label>
+          <input type="number" [(ngModel)]="newAttraction.tourDuration" name="tourDuration" min="0" step="0.5" placeholder="e.g., 2.5" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select [(ngModel)]="newAttraction.category" name="category">
+            <option value="">Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Specialties (comma-separated)</label>
+          <input type="text" [(ngModel)]="newAttraction.specialties" name="specialties" placeholder="History, Architecture, Food" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bio / Description</label>
+        <textarea [(ngModel)]="newAttraction.bio" name="bio" rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Upload Pictures</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" multiple class="file-input" />
+        <div class="picture-preview" *ngIf="newAttraction.pictures.length > 0">
+          <div class="preview-item" *ngFor="let pic of newAttraction.pictures; let i = index">
+            <img [src]="pic" alt="Preview" />
+            <button type="button" class="remove-pic-btn" (click)="removePicture(i)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Available From</label>
+          <input type="date" [(ngModel)]="newAttraction.fromDate" name="fromDate" />
+        </div>
+        <div class="form-group">
+          <label>Available To</label>
+          <input type="date" [(ngModel)]="newAttraction.toDate" name="toDate" />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button">{{ editingId ? 'Update Attraction' : 'Add Attraction' }}</button>
+    </form>
+  </div>
+
+  <!-- Attractions List -->
+  <div class="attractions-list">
+    <div class="attraction-card" *ngFor="let attraction of attractions">
+      <div class="card-header">
+        <div>
+          <h3>{{ attraction.attractionName }}</h3>
+          <p class="location">📍 {{ attraction.location }}</p>
+        </div>
+        <div class="card-actions">
+          <button class="edit-button" (click)="editAttraction(attraction)">✏️</button>
+          <button class="delete-button" (click)="deleteAttraction(attraction.id)">🗑️</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="info-row" *ngIf="attraction.category">
+          <span class="label">Category:</span>
+          <span class="value category-badge">{{ attraction.category }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Hourly Rate:</span>
+          <span class="value">₹{{ attraction.hourlyRate }}/hr</span>
+        </div>
+
+        <div class="info-row" *ngIf="attraction.tourDuration">
+          <span class="label">Tour Duration:</span>
+          <span class="value">{{ attraction.tourDuration }} hours</span>
+        </div>
+
+        <div class="info-row" *ngIf="attraction.specialties.length">
+          <span class="label">Specialties:</span>
+          <span class="value">{{ attraction.specialties.join(', ') }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="attraction.bio">
+          <span class="label">Bio:</span>
+          <span class="value">{{ attraction.bio }}</span>
+        </div>
+
+        <div class="pictures-section" *ngIf="attraction.pictures && attraction.pictures.length > 0">
+          <span class="label">Pictures:</span>
+          <div class="pictures-grid">
+            <img *ngFor="let pic of attraction.pictures" [src]="pic" alt="Attraction" class="attraction-pic" />
+          </div>
+        </div>
+
+        <div class="availability-section">
+          <div class="section-header">
+            <span class="label">Available Dates:</span>
+            <button class="small-button" (click)="toggleDateRangeForm(attraction.id)">
+              {{ addingDateForId === attraction.id ? 'Cancel' : '+ Add Date' }}
+            </button>
+          </div>
+
+          <!-- Date Range Form -->
+          <div class="date-range-form" *ngIf="addingDateForId === attraction.id">
+            <div class="date-form-row">
+              <div class="date-form-group">
+                <label>From Date</label>
+                <input type="date" [(ngModel)]="newDateRange.from" name="fromDate" />
+              </div>
+              <div class="date-form-group">
+                <label>To Date</label>
+                <input type="date" [(ngModel)]="newDateRange.to" name="toDate" />
+              </div>
+              <button class="add-date-btn" (click)="submitDateRange(attraction)">Add</button>
+            </div>
+          </div>
+
+          <div class="date-ranges" *ngIf="attraction.availableDates.length > 0">
+            <div class="date-range" *ngFor="let dateRange of attraction.availableDates; let i = index">
+              <span>{{ dateRange.from }} → {{ dateRange.to }}</span>
+              <button class="remove-button" (click)="removeDateRange(attraction, i)">×</button>
+            </div>
+          </div>
+
+          <p class="no-dates" *ngIf="attraction.availableDates.length === 0 && addingDateForId !== attraction.id">No dates added yet</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="attractions.length === 0 && !showAddForm">
+      <p>No attractions added yet. Click "Add Attraction" to get started!</p>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

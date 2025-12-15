@@ -17,6 +17,7 @@ export class SignupComponent {
   email = '';
   password = '';
   confirm = '';
+  role = 'tourist';
   message = '';
   messageType: 'error' | 'success' | '' = '';
   loading = false;
@@ -36,7 +37,12 @@ export class SignupComponent {
       return;
     }
 
-    const user: User = { username: this.name || this.email.split('@')[0], email: this.email, password: this.password };
+    const user: User = { 
+      username: this.name || this.email.split('@')[0], 
+      email: this.email, 
+      password: this.password,
+      role: this.role
+    };
     this.loading = true;
     try {
       const res = await this.auth.signUp(user);

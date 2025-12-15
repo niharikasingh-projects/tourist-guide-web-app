@@ -42,6 +42,7 @@
               <div class="profile-details">
                 <div class="profile-name-large">{{ userProfile?.name || 'User' }}</div>
                 <div class="profile-email">{{ userProfile?.email || '' }}</div>
+                <div class="profile-role" *ngIf="isGuide()">🎯 Guide</div>
               </div>
             </div>
             <div class="dropdown-divider"></div>
@@ -49,10 +50,26 @@
               <span class="item-icon">👤</span>
               <span>My Profile</span>
             </a>
-            <a class="dropdown-item" routerLink="/my-bookings" (click)="closeProfileDropdown()">
-              <span class="item-icon">📋</span>
-              <span>My Bookings</span>
-            </a>
+            
+            <!-- Show different menu items based on user role -->
+            <ng-container *ngIf="isGuide()">
+              <a class="dropdown-item" routerLink="/guide/attractions" (click)="closeProfileDropdown()">
+                <span class="item-icon">🏛️</span>
+                <span>Manage Attractions</span>
+              </a>
+              <a class="dropdown-item" routerLink="/guide/bookings" (click)="closeProfileDropdown()">
+                <span class="item-icon">📋</span>
+                <span>My Bookings</span>
+              </a>
+            </ng-container>
+            
+            <ng-container *ngIf="!isGuide()">
+              <a class="dropdown-item" routerLink="/my-bookings" (click)="closeProfileDropdown()">
+                <span class="item-icon">📋</span>
+                <span>My Bookings</span>
+              </a>
+            </ng-container>
+            
             <div class="dropdown-divider"></div>
             <a class="dropdown-item signout" (click)="onSignOut()">
               <span class="item-icon">🚪</span>
