@@ -1,11 +1,25 @@
 <main class="auth-container">
-  <h1 class="title-text">Create your tourist account</h1>
+  <h1 class="title-text">Create your account</h1>
 
   <form (ngSubmit)="onSubmit()" class="auth-form">
     <input name="name" [(ngModel)]="name" placeholder="Name" required />
     <input name="email" [(ngModel)]="email" type="email" placeholder="Email" required />
     <input name="password" [(ngModel)]="password" type="password" placeholder="Password" required />
     <input name="confirm" [(ngModel)]="confirm" type="password" placeholder="Confirm password" required />
+
+    <div class="role-selection">
+      <label class="role-label">Sign up as:</label>
+      <div class="role-options">
+        <label class="role-option">
+          <input type="radio" name="role" [(ngModel)]="role" value="tourist" required />
+          <span>Tourist</span>
+        </label>
+        <label class="role-option">
+          <input type="radio" name="role" [(ngModel)]="role" value="guide" required />
+          <span>Guide</span>
+        </label>
+      </div>
+    </div>
 
     <button type="submit" class="main-button" [disabled]="loading">
       <span *ngIf="!loading">Sign up</span>
