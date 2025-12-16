@@ -3,8 +3,9 @@ import { TouristAttraction } from './search.service';
 
 export interface SearchState {
   location: string;
-  fromDate: string | null;
-  toDate: string | null;
+  selectedDate: string | null;
+  timeFrom?: string;
+  timeTo?: string;
   searchResults: TouristAttraction[];
   hasSearched: boolean;
 }

@@ -50,14 +50,22 @@
 
           <div class="divider"></div>
 
-          <div class="amount-section">
-            <div class="amount-row">
+          <div class="booking-details">
+            <div class="detail-row">
               <span class="label">Guide Hourly Rate:</span>
-              <span class="value">₹{{guide.hourlyRate}}</span>
+              <span class="value">₹{{guide.hourlyRate}}/hour</span>
             </div>
-            <div class="amount-row total">
+            <div class="detail-row">
+              <span class="label">Date:</span>
+              <span class="value">{{selectedDate | date}}</span>
+            </div>
+            <div class="detail-row" *ngIf="timeFrom && timeTo">
+              <span class="label">Time:</span>
+              <span class="value">{{timeFrom}} - {{timeTo}} ({{hoursBooked}} hour<span *ngIf="hoursBooked !== 1">s</span>)</span>
+            </div>
+            <div class="detail-row">
               <span class="label">Total Amount:</span>
-              <span class="value">₹{{totalAmount}}</span>
+              <span class="value total-amount">₹{{guide.hourlyRate * hoursBooked}}</span>
             </div>
           </div>
         </div>
@@ -127,7 +135,7 @@
             type="submit" 
             class="confirm-button"
             [disabled]="isProcessing">
-            <span *ngIf="!isProcessing">Confirm Booking</span>
+            <span *ngIf="!isProcessing">Proceed to Payment</span>
             <span *ngIf="isProcessing">Processing...</span>
           </button>
         </form>

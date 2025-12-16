@@ -103,4 +103,17 @@ export class BookingConfirmationComponent implements OnInit {
       minute: '2-digit'
     });
   }
+
+  getPaymentMethodLabel(method: string): string {
+    switch(method) {
+      case 'upi':
+        return 'UPI';
+      case 'credit-card':
+        return 'Credit/Debit Card';
+      case 'pay-later':
+        return 'Pay at Check-in';
+      default:
+        return method;
+    }
+  }
 }

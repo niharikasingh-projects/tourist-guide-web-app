@@ -26,6 +26,10 @@ export class CheckoutComponent implements OnInit {
   customerName = '';
   customerContact = '';
   customerEmail = '';
+  hoursBooked = 1;
+  selectedDate = new Date();
+  timeFrom = '';
+  timeTo = '';
 
   // Validation flags
   formSubmitted = false;
@@ -42,6 +46,36 @@ export class CheckoutComponent implements OnInit {
   ngOnInit() {
     const attractionId = this.route.snapshot.paramMap.get('attractionId');
     const guideId = this.route.snapshot.paramMap.get('guideId');
+    
+    // Get date and time from query params
+    const dateParam = this.route.snapshot.queryParamMap.get('date');
+    const timeFromParam = this.route.snapshot.queryParamMap.get('timeFrom');
+    const timeToParam = this.route.snapshot.queryParamMap.get('timeTo');
+    
+    if (dateParam) {
+      this.selectedDate = new Date(dateParam);
+    }
+    
+    if (timeFromParam && timeToParam) {
+      this.timeFrom = timeFromParam;
+      this.timeTo = timeToParam;
+      
+      // Calculate hours based on time difference
+      const [fromHour, fromMin] = timeFromParam.split(':').map(Number);
+      const [toHour, toMin] = timeToParam.split(':').map(Number);
+      const fromMinutes = fromHour * 60 + fromMin;
+      const toMinutes = toHour * 60 + toMin;
+      this.hoursBooked = (toMinutes - fromMinutes) / 60;
+    }
+    
+    // Restore customer details from navigation state (when coming back from payment page)
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || history.state;
+    if (state) {
+      if (state['customerName']) this.customerName = state['customerName'];
+      if (state['customerContact']) this.customerContact = state['customerContact'];
+      if (state['customerEmail']) this.customerEmail = state['customerEmail'];
+    }
 
     if (attractionId && guideId) {
       this.loadCheckoutData(attractionId, guideId);
@@ -127,31 +161,18 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    this.isProcessing = true;
-    this.error = '';
-
-    const bookingData = {
-      attractionId: this.attraction.id,
-      attractionName: this.attraction.name,
-      guideId: this.guide.id,
-      guideName: this.guide.name,
-      guideContact: this.guide.phoneNumber || 'N/A',
-      guideEmail: this.guide.email || 'N/A',
-      customerName: this.customerName.trim(),
-      customerContact: this.customerContact.trim(),
-      customerEmail: this.customerEmail.trim(),
-      amount: this.totalAmount
-    };
-
-    this.bookingService.createBooking(bookingData).subscribe({
-      next: (booking) => {
-        this.isProcessing = false;
-        this.router.navigate(['/booking-confirmation', booking.id]);
-      },
-      error: (err) => {
-        this.error = 'Failed to process booking. Please try again.';
-        this.isProcessing = false;
-        this.cdr.detectChanges();
+    // Navigate to payment page with booking data
+    this.router.navigate(['/payment'], {
+      state: {
+        attraction: this.attraction,
+        guide: this.guide,
+        selectedDate: this.selectedDate,
+        timeFrom: this.timeFrom,
+        timeTo: this.timeTo,
+        customerName: this.customerName.trim(),
+        customerContact: this.customerContact.trim(),
+        customerEmail: this.customerEmail.trim(),
+        hoursBooked: this.hoursBooked
       }
     });
   }

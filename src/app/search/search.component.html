@@ -27,26 +27,58 @@
     <div class="error-message" *ngIf="locationError">{{ locationError }}</div>
   </label>
   <label>
-    <span class="sr-only">From Date</span>
+    <span class="sr-only">Date</span>
     <input 
       type="date" 
-      name="from" 
-      [(ngModel)]="fromDate" 
-      (change)="onFromDateChange()"
+      name="date" 
+      [(ngModel)]="selectedDate" 
+      (change)="onDateChange()"
       [min]="minDate"
-      aria-label="From date" />
-    <div class="error-message" *ngIf="fromDateError">{{ fromDateError }}</div>
+      aria-label="Date" 
+      placeholder="Date" />
+    <div class="error-message" *ngIf="dateError">{{ dateError }}</div>
   </label>
   <label>
-    <span class="sr-only">To Date</span>
-    <input 
-      type="date" 
-      name="to" 
-      [(ngModel)]="toDate" 
-      (change)="onToDateChange()"
-      [min]="fromDate || minDate"
-      aria-label="To date" />
-    <div class="error-message" *ngIf="toDateError">{{ toDateError }}</div>
+    <span class="sr-only">Time From</span>
+    <select 
+      name="timeFrom" 
+      [(ngModel)]="timeFrom"
+      (change)="onTimeChange()"
+      aria-label="Time From">
+      <option value="">Time From</option>
+      <option value="09:00">09:00</option>
+      <option value="10:00">10:00</option>
+      <option value="11:00">11:00</option>
+      <option value="12:00">12:00</option>
+      <option value="13:00">13:00</option>
+      <option value="14:00">14:00</option>
+      <option value="15:00">15:00</option>
+      <option value="16:00">16:00</option>
+      <option value="17:00">17:00</option>
+      <option value="18:00">18:00</option>
+    </select>
+    <div class="error-message" *ngIf="timeFromError">{{ timeFromError }}</div>
+  </label>
+  <label>
+    <span class="sr-only">Time To</span>
+    <select 
+      name="timeTo" 
+      [(ngModel)]="timeTo"
+      (change)="onTimeChange()"
+      aria-label="Time To">
+      <option value="">Time To</option>
+      <option value="09:00">09:00</option>
+      <option value="10:00">10:00</option>
+      <option value="11:00">11:00</option>
+      <option value="12:00">12:00</option>
+      <option value="13:00">13:00</option>
+      <option value="14:00">14:00</option>
+      <option value="15:00">15:00</option>
+      <option value="16:00">16:00</option>
+      <option value="17:00">17:00</option>
+      <option value="18:00">18:00</option>
+    </select>
+    <div class="error-message" *ngIf="timeToError">{{ timeToError }}</div>
   </label>
   <button type="submit" class="search-button" aria-label="Search for guides" [disabled]="isSearching">
     <span *ngIf="!isSearching">Search</span>
@@ -75,8 +107,9 @@
     <app-result-card 
       *ngFor="let attraction of searchResults" 
       [attraction]="attraction"
-      [fromDate]="fromDate"
-      [toDate]="toDate"
+      [selectedDate]="selectedDate"
+      [timeFrom]="timeFrom"
+      [timeTo]="timeTo"
       (selectAttraction)="onSelectAttraction($event)">
     </app-result-card>
   </div>

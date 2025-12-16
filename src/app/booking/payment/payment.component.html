@@ -1,0 +1,256 @@
+<app-header></app-header>
+
+<div class="payment-container">
+  <div class="payment-wrapper">
+    <div class="back-nav">
+      <button class="back-button" (click)="goBack()">
+        <span class="icon">←</span>
+        Back to Checkout
+      </button>
+    </div>
+
+    <div *ngIf="!attraction || !guide" class="error-container">
+      <p class="error-message">No booking information found</p>
+      <button class="retry-button" (click)="goBack()">Go Back</button>
+    </div>
+
+    <div *ngIf="attraction && guide" class="payment-content">
+      <h1 class="page-title">Payment</h1>
+
+      <!-- Booking Summary -->
+      <section class="booking-summary">
+        <h2 class="section-title">Booking Summary</h2>
+        
+        <div class="summary-card">
+          <div class="summary-row">
+            <span class="label">Attraction:</span>
+            <span class="value">{{attraction.name}}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Guide:</span>
+            <span class="value">{{guide.name}}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Date:</span>
+            <span class="value">{{selectedDate | date}}</span>
+          </div>
+          <div class="summary-row" *ngIf="timeFrom && timeTo">
+            <span class="label">Time:</span>
+            <span class="value">{{timeFrom}} - {{timeTo}}</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Duration:</span>
+            <span class="value">{{hoursBooked}} hour<span *ngIf="hoursBooked !== 1">s</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Amount Breakup -->
+      <section class="amount-breakup">
+        <h2 class="section-title">Amount Breakup</h2>
+        
+        <div class="breakup-card">
+          <div class="breakup-row">
+            <span class="label">Guide Rate ({{hoursBooked}} × ₹{{guide.hourlyRate}}/hour):</span>
+            <span class="value">₹{{subtotal}}</span>
+          </div>
+          <div class="breakup-row tax">
+            <span class="label">CGST (14%):</span>
+            <span class="value">₹{{cgst.toFixed(2)}}</span>
+          </div>
+          <div class="breakup-row tax">
+            <span class="label">SGST (14%):</span>
+            <span class="value">₹{{sgst.toFixed(2)}}</span>
+          </div>
+          <div class="divider"></div>
+          <div class="breakup-row total">
+            <span class="label">Total Amount Payable:</span>
+            <span class="value">₹{{totalAmount.toFixed(2)}}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment Options -->
+      <section class="payment-options">
+        <h2 class="section-title">Payment Options</h2>
+
+        <div class="payment-methods">
+          <!-- Pay Now -->
+          <div class="payment-card" [class.selected]="showPayNowOptions" (click)="selectPaymentMethod('pay-now')">
+            <div class="payment-header">
+              <div class="radio-button">
+                <div class="radio-outer">
+                  <div class="radio-inner" *ngIf="showPayNowOptions"></div>
+                </div>
+              </div>
+              <div class="payment-title">
+                <h3>Pay Now</h3>
+                <p class="payment-desc">Complete payment to confirm your booking</p>
+              </div>
+            </div>
+
+            <!-- Pay Now Options -->
+            <div class="pay-now-options" *ngIf="showPayNowOptions">
+              <!-- UPI Option -->
+              <div class="pay-option" [class.selected]="paymentMethod === 'upi'" (click)="$event.stopPropagation(); selectPayNowOption('upi')">
+                <div class="option-header">
+                  <div class="radio-button">
+                    <div class="radio-outer">
+                      <div class="radio-inner" *ngIf="paymentMethod === 'upi'"></div>
+                    </div>
+                  </div>
+                  <span class="option-label">UPI</span>
+                </div>
+
+                <div class="upi-form" *ngIf="paymentMethod === 'upi'">
+                  <div class="form-group">
+                    <label for="upiId">UPI ID</label>
+                    <input 
+                      type="text" 
+                      id="upiId" 
+                      name="upiId"
+                      [(ngModel)]="upiId"
+                      placeholder="yourname@paytm"
+                      (click)="$event.stopPropagation()">
+                    <span class="field-hint">Enter your UPI ID (e.g., user@paytm, user@gpay)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Credit Card Option -->
+              <div class="pay-option" [class.selected]="paymentMethod === 'credit-card'" (click)="$event.stopPropagation(); selectPayNowOption('credit-card')">
+                <div class="option-header">
+                  <div class="radio-button">
+                    <div class="radio-outer">
+                      <div class="radio-inner" *ngIf="paymentMethod === 'credit-card'"></div>
+                    </div>
+                  </div>
+                  <span class="option-label">Credit/Debit Card</span>
+                </div>
+
+                <div class="card-form" *ngIf="paymentMethod === 'credit-card'">
+                  <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input 
+                      type="text" 
+                      id="cardNumber" 
+                      name="cardNumber"
+                      [(ngModel)]="cardNumber"
+                      (input)="formatCardNumber($event)"
+                      placeholder="1234 5678 9012 3456"
+                      maxlength="19"
+                      (click)="$event.stopPropagation()">
+                    <!-- <span class="field-hint">For testing, use: 1111 1111 1111 1111</span> -->
+                  </div>
+
+                  <div class="form-group">
+                    <label for="cardHolderName">Cardholder Name</label>
+                    <input 
+                      type="text" 
+                      id="cardHolderName" 
+                      name="cardHolderName"
+                      [(ngModel)]="cardHolderName"
+                      placeholder="Name as on card"
+                      (click)="$event.stopPropagation()">
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group half">
+                      <label for="expiryMonth">Expiry</label>
+                      <div class="expiry-group">
+                        <select 
+                          id="expiryMonth" 
+                          name="expiryMonth"
+                          [(ngModel)]="expiryMonth"
+                          (click)="$event.stopPropagation()">
+                          <option value="">MM</option>
+                          <option value="01">01</option>
+                          <option value="02">02</option>
+                          <option value="03">03</option>
+                          <option value="04">04</option>
+                          <option value="05">05</option>
+                          <option value="06">06</option>
+                          <option value="07">07</option>
+                          <option value="08">08</option>
+                          <option value="09">09</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                        </select>
+                        <span class="separator">/</span>
+                        <select 
+                          id="expiryYear" 
+                          name="expiryYear"
+                          [(ngModel)]="expiryYear"
+                          (click)="$event.stopPropagation()">
+                          <option value="">YY</option>
+                          <option value="24">24</option>
+                          <option value="25">25</option>
+                          <option value="26">26</option>
+                          <option value="27">27</option>
+                          <option value="28">28</option>
+                          <option value="29">29</option>
+                          <option value="30">30</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group half">
+                      <label for="cvv">CVV</label>
+                      <input 
+                        type="text" 
+                        id="cvv" 
+                        name="cvv"
+                        [(ngModel)]="cvv"
+                        placeholder="123"
+                        maxlength="4"
+                        (click)="$event.stopPropagation()">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pay Later -->
+          <div class="payment-card" [class.selected]="!showPayNowOptions" (click)="selectPaymentMethod('pay-later')">
+            <div class="payment-header">
+              <div class="radio-button">
+                <div class="radio-outer">
+                  <div class="radio-inner" *ngIf="!showPayNowOptions"></div>
+                </div>
+              </div>
+              <div class="payment-title">
+                <h3>Pay Later</h3>
+                <p class="payment-desc">Pay at the time of check-in</p>
+              </div>
+            </div>
+
+            <div class="pay-later-info" *ngIf="!showPayNowOptions">
+              <p class="info-text">
+                <span class="info-icon">ℹ️</span>
+                You can pay the total amount of ₹{{totalAmount.toFixed(2)}} at the time of check-in.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="error" class="error-message">
+          {{error}}
+        </div>
+
+        <button 
+          class="confirm-payment-button"
+          (click)="confirmPayment()"
+          [disabled]="isProcessing">
+          <span *ngIf="!isProcessing">
+            {{ showPayNowOptions ? 'Confirm Payment' : 'Confirm Booking' }}
+          </span>
+          <span *ngIf="isProcessing">Processing...</span>
+        </button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

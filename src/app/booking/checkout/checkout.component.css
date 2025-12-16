@@ -158,37 +158,31 @@
   background: linear-gradient(to right, transparent, #e2e8f0, transparent);
 }
 
-.amount-section {
+.booking-details {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.amount-row {
+.detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 1rem;
 }
 
-.amount-row .label {
+.detail-row .label {
   color: #4a5568;
 }
 
-.amount-row .value {
+.detail-row .value {
   font-weight: 600;
   color: #2d3748;
 }
 
-.amount-row.total {
-  padding-top: 0.75rem;
-  border-top: 2px solid #e2e8f0;
+.detail-row .value.total-amount {
+  color: #ff8c2b;
   font-size: 1.3rem;
-}
-
-.amount-row.total .label,
-.amount-row.total .value {
-  color: #667eea;
   font-weight: 700;
 }
 
@@ -279,6 +273,13 @@
 .confirm-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #999;
 }
 
 /* Responsive */

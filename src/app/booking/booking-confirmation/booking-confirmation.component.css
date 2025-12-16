@@ -199,6 +199,35 @@
   font-size: 1.3rem;
 }
 
+.detail-value.paid {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.detail-value.pending {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.detail-value.refunded {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.detail-row.tax-row {
+  padding-left: 2.5rem;
+}
+
+.detail-row.tax-row .detail-label {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.detail-row.tax-row .detail-value {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
 /* Action Buttons */
 .action-buttons {
   display: flex;
