@@ -26,6 +26,8 @@ export class CheckoutComponent implements OnInit {
   customerName = '';
   customerContact = '';
   customerEmail = '';
+  hoursBooked = 1;
+  selectedDate = new Date();
 
   // Validation flags
   formSubmitted = false;
@@ -122,36 +124,26 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    if (!this.hoursBooked || this.hoursBooked < 1) {
+      this.error = 'Please enter a valid number of hours';
+      return;
+    }
+
     if (!this.attraction || !this.guide) {
       this.error = 'Missing booking information';
       return;
     }
 
-    this.isProcessing = true;
-    this.error = '';
-
-    const bookingData = {
-      attractionId: this.attraction.id,
-      attractionName: this.attraction.name,
-      guideId: this.guide.id,
-      guideName: this.guide.name,
-      guideContact: this.guide.phoneNumber || 'N/A',
-      guideEmail: this.guide.email || 'N/A',
-      customerName: this.customerName.trim(),
-      customerContact: this.customerContact.trim(),
-      customerEmail: this.customerEmail.trim(),
-      amount: this.totalAmount
-    };
-
-    this.bookingService.createBooking(bookingData).subscribe({
-      next: (booking) => {
-        this.isProcessing = false;
-        this.router.navigate(['/booking-confirmation', booking.id]);
-      },
-      error: (err) => {
-        this.error = 'Failed to process booking. Please try again.';
-        this.isProcessing = false;
-        this.cdr.detectChanges();
+    // Navigate to payment page with booking data
+    this.router.navigate(['/payment'], {
+      state: {
+        attraction: this.attraction,
+        guide: this.guide,
+        selectedDate: this.selectedDate,
+        customerName: this.customerName.trim(),
+        customerContact: this.customerContact.trim(),
+        customerEmail: this.customerEmail.trim(),
+        hoursBooked: this.hoursBooked
       }
     });
   }

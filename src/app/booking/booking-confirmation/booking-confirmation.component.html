@@ -109,13 +109,65 @@
         <!-- Payment Details -->
         <div class="detail-section">
           <h2 class="section-title">Payment Details</h2>
+          
+          <div class="detail-row" *ngIf="booking.hoursBooked">
+            <span class="icon">⏱️</span>
+            <div class="detail-content">
+              <span class="detail-label">Hours Booked</span>
+              <span class="detail-value">{{booking.hoursBooked}} hour<span *ngIf="booking.hoursBooked > 1">s</span></span>
+            </div>
+          </div>
+          
+          <div class="detail-row" *ngIf="booking.subtotal">
+            <span class="icon">💵</span>
+            <div class="detail-content">
+              <span class="detail-label">Subtotal</span>
+              <span class="detail-value">₹{{booking.subtotal}}</span>
+            </div>
+          </div>
+          
+          <div class="detail-row tax-row" *ngIf="booking.cgst">
+            <span class="icon"></span>
+            <div class="detail-content">
+              <span class="detail-label">CGST (14%)</span>
+              <span class="detail-value">₹{{booking.cgst?.toFixed(2)}}</span>
+            </div>
+          </div>
+          
+          <div class="detail-row tax-row" *ngIf="booking.sgst">
+            <span class="icon"></span>
+            <div class="detail-content">
+              <span class="detail-label">SGST (14%)</span>
+              <span class="detail-value">₹{{booking.sgst?.toFixed(2)}}</span>
+            </div>
+          </div>
+          
           <div class="detail-row">
             <span class="icon">💰</span>
             <div class="detail-content">
-              <span class="detail-label">Amount Paid</span>
+              <span class="detail-label">Total Amount</span>
               <span class="detail-value amount">₹{{booking.amount}}</span>
             </div>
           </div>
+          
+          <div class="detail-row" *ngIf="booking.paymentMethod">
+            <span class="icon">💳</span>
+            <div class="detail-content">
+              <span class="detail-label">Payment Method</span>
+              <span class="detail-value">{{getPaymentMethodLabel(booking.paymentMethod)}}</span>
+            </div>
+          </div>
+          
+          <div class="detail-row" *ngIf="booking.paymentStatus">
+            <span class="icon">{{booking.paymentStatus === 'paid' ? '✅' : (booking.paymentStatus === 'refunded' ? '💰' : '⏳')}}</span>
+            <div class="detail-content">
+              <span class="detail-label">Payment Status</span>
+              <span class="detail-value" [class.paid]="booking.paymentStatus === 'paid'" [class.pending]="booking.paymentStatus === 'pending'" [class.refunded]="booking.paymentStatus === 'refunded'">
+                {{booking.paymentStatus === 'paid' ? 'Paid' : (booking.paymentStatus === 'refunded' ? 'Refunded' : 'Pending (Pay at check-in)')}}
+              </span>
+            </div>
+          </div>
+          
           <div class="detail-row">
             <span class="icon">📅</span>
             <div class="detail-content">

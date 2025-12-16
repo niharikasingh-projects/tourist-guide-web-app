@@ -12,7 +12,15 @@ export interface Booking {
   customerName: string;
   customerContact: string;
   customerEmail: string;
+  selectedDate?: Date | null;
+  hoursBooked?: number;
+  subtotal?: number;
+  cgst?: number;
+  sgst?: number;
+  totalTax?: number;
   amount: number;
+  paymentMethod?: 'upi' | 'credit-card' | 'pay-later';
+  paymentStatus?: 'paid' | 'pending' | 'refunded';
   bookingDate: string;
   status: 'confirmed' | 'cancelled';
   fromDate?: string;
@@ -99,6 +107,10 @@ export class BookingService {
     const booking = this.bookings.get(id);
     if (booking) {
       booking.status = 'cancelled';
+      // Update payment status to refunded if it was paid
+      if (booking.paymentStatus === 'paid') {
+        booking.paymentStatus = 'refunded';
+      }
       this.bookings.set(id, booking);
       this.saveBookingsToStorage();
       return of(true).pipe(delay(400));
