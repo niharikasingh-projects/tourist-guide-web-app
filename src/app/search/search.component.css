@@ -46,6 +46,38 @@
     margin-bottom: 0;
 }
 
+.search-form select {
+    padding: 0.5rem 1rem;
+    height: 48px;
+    line-height: 1.2;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #e6eef0;
+    background: #fff;
+    margin-bottom: 0;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ff8c2b' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+}
+
+.search-form select:hover,
+.search-form select:focus {
+    border-color: var(--brand);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 140, 43, 0.1);
+}
+
+.search-form input:focus {
+    border-color: var(--brand);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 140, 43, 0.1);
+}
+
 .search-form .search-button {
     padding: 0.9rem 1.4rem;
     min-height: 48px;

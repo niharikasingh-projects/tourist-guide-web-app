@@ -180,6 +180,12 @@
   color: #2d3748;
 }
 
+.detail-row .value.total-amount {
+  color: #ff8c2b;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
 /* Customer Form */
 .customer-form {
   background: white;

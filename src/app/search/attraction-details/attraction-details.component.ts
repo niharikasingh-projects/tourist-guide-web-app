@@ -86,7 +86,16 @@ export class AttractionDetailsComponent implements OnInit {
 
   onBookGuide(guideId: string) {
     if (this.attraction) {
-      this.router.navigate(['/checkout', this.attraction.id, guideId]);
+      const queryParams: any = {};
+      const date = this.route.snapshot.queryParamMap.get('date');
+      const timeFrom = this.route.snapshot.queryParamMap.get('timeFrom');
+      const timeTo = this.route.snapshot.queryParamMap.get('timeTo');
+      
+      if (date) queryParams.date = date;
+      if (timeFrom) queryParams.timeFrom = timeFrom;
+      if (timeTo) queryParams.timeTo = timeTo;
+      
+      this.router.navigate(['/checkout', this.attraction.id, guideId], { queryParams });
     }
   }
 

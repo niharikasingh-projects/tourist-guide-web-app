@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
+import { PaymentService } from '../../services/payment.service';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { TouristAttraction } from '../../services/search.service';
@@ -19,6 +20,8 @@ export class PaymentComponent implements OnInit {
   attraction: TouristAttraction | null = null;
   guide: Guide | null = null;
   selectedDate: Date | null = null;
+  timeFrom = '';
+  timeTo = '';
   customerName = '';
   customerContact = '';
   customerEmail = '';
@@ -43,7 +46,8 @@ export class PaymentComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private paymentService: PaymentService
   ) {
     // Get booking data from navigation state
     const navigation = this.router.getCurrentNavigation();
@@ -52,6 +56,8 @@ export class PaymentComponent implements OnInit {
       this.attraction = state['attraction'];
       this.guide = state['guide'];
       this.selectedDate = state['selectedDate'];
+      this.timeFrom = state['timeFrom'] || '';
+      this.timeTo = state['timeTo'] || '';
       this.customerName = state['customerName'];
       this.customerContact = state['customerContact'];
       this.customerEmail = state['customerEmail'];
@@ -67,6 +73,8 @@ export class PaymentComponent implements OnInit {
         this.attraction = state.attraction;
         this.guide = state.guide;
         this.selectedDate = state.selectedDate;
+        this.timeFrom = state.timeFrom || '';
+        this.timeTo = state.timeTo || '';
         this.customerName = state.customerName;
         this.customerContact = state.customerContact;
         this.customerEmail = state.customerEmail;
@@ -113,41 +121,32 @@ export class PaymentComponent implements OnInit {
     this.paymentMethod = option;
   }
 
+  formatCardNumber(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.cardNumber = this.paymentService.formatCardNumber(input.value);
+    
+    // Update cursor position
+    setTimeout(() => {
+      const newPosition = this.cardNumber.length;
+      input.setSelectionRange(newPosition, newPosition);
+    }, 0);
+  }
+
   validatePayment(): boolean {
-    if (this.paymentMethod === 'pay-later') {
-      return true;
-    }
+    const validationResult = this.paymentService.validatePayment({
+      paymentMethod: this.paymentMethod,
+      amount: this.totalAmount,
+      upiId: this.upiId,
+      cardNumber: this.cardNumber,
+      cardHolderName: this.cardHolderName,
+      expiryMonth: this.expiryMonth,
+      expiryYear: this.expiryYear,
+      cvv: this.cvv
+    });
 
-    if (this.paymentMethod === 'upi') {
-      if (!this.upiId.trim()) {
-        this.error = 'Please enter your UPI ID';
-        return false;
-      }
-      const upiRegex = /^[\w.\-]+@[\w]+$/;
-      if (!upiRegex.test(this.upiId)) {
-        this.error = 'Please enter a valid UPI ID (e.g., user@paytm)';
-        return false;
-      }
-    }
-
-    if (this.paymentMethod === 'credit-card') {
-      if (!this.cardNumber.trim() || !this.cardHolderName.trim() || 
-          !this.expiryMonth || !this.expiryYear || !this.cvv.trim()) {
-        this.error = 'Please fill in all card details';
-        return false;
-      }
-      
-      const cardRegex = /^[0-9]{16}$/;
-      if (!cardRegex.test(this.cardNumber.replace(/\s/g, ''))) {
-        this.error = 'Please enter a valid 16-digit card number';
-        return false;
-      }
-
-      const cvvRegex = /^[0-9]{3,4}$/;
-      if (!cvvRegex.test(this.cvv)) {
-        this.error = 'Please enter a valid CVV';
-        return false;
-      }
+    if (!validationResult.isValid) {
+      this.error = validationResult.error || 'Payment validation failed';
+      return false;
     }
 
     return true;
@@ -178,6 +177,8 @@ export class PaymentComponent implements OnInit {
       customerContact: this.customerContact,
       customerEmail: this.customerEmail,
       selectedDate: this.selectedDate,
+      timeFrom: this.timeFrom,
+      timeTo: this.timeTo,
       hoursBooked: this.hoursBooked,
       subtotal: this.subtotal,
       cgst: this.cgst,
@@ -202,12 +203,17 @@ export class PaymentComponent implements OnInit {
 
   goBack() {
     if (this.attraction && this.guide) {
+      const queryParams: any = {};
+      if (this.selectedDate) queryParams.date = this.selectedDate.toISOString().split('T')[0];
+      if (this.timeFrom) queryParams.timeFrom = this.timeFrom;
+      if (this.timeTo) queryParams.timeTo = this.timeTo;
+      
       this.router.navigate(['/checkout', this.attraction.id, this.guide.id], {
+        queryParams,
         state: {
           customerName: this.customerName,
           customerContact: this.customerContact,
-          customerEmail: this.customerEmail,
-          hoursBooked: this.hoursBooked
+          customerEmail: this.customerEmail
         }
       });
     } else {

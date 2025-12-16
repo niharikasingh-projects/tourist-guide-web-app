@@ -159,6 +159,28 @@
   font-size: 1.1rem;
 }
 
+.payment-method {
+  margin: 0.25rem 0 0 0;
+  color: var(--gray-500);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.payment-paid {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.payment-pending {
+  color: #f57c00;
+  font-weight: 700;
+}
+
+.payment-refunded {
+  color: #1976d2;
+  font-weight: 700;
+}
+
 /* Actions */
 .actions {
   display: flex;

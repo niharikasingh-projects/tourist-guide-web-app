@@ -17,13 +17,15 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 })
 export class SearchComponent implements OnInit {
   location = '';
-  fromDate: string | null = null;
-  toDate: string | null = null;
+  selectedDate: string | null = null;
+  timeFrom = '';
+  timeTo = '';
   minDate: string;
   
-  // Date validation error messages
-  fromDateError = '';
-  toDateError = '';
+  // Validation error messages
+  dateError = '';
+  timeFromError = '';
+  timeToError = '';
   locationError = '';
 
   // Search results
@@ -66,8 +68,9 @@ export class SearchComponent implements OnInit {
     const savedState = this.searchStateService.getSearchState();
     if (savedState) {
       this.location = savedState.location;
-      this.fromDate = savedState.fromDate;
-      this.toDate = savedState.toDate;
+      this.selectedDate = savedState.selectedDate;
+      this.timeFrom = savedState.timeFrom || '';
+      this.timeTo = savedState.timeTo || '';
       this.searchResults = savedState.searchResults;
       this.hasSearched = savedState.hasSearched;
       this.cdr.detectChanges();
@@ -127,49 +130,45 @@ export class SearchComponent implements OnInit {
     }, 100);
   }
 
-  onFromDateChange() {
-    this.fromDateError = '';
+  onDateChange() {
+    this.dateError = '';
     
-    if (this.fromDate) {
-      const selectedDate = new Date(this.fromDate);
+    if (this.selectedDate) {
+      const selected = new Date(this.selectedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      if (selectedDate < today) {
-        this.fromDateError = 'From date cannot be in the past';
-        this.fromDate = null;
+      if (selected < today) {
+        this.dateError = 'Date cannot be in the past';
+        this.selectedDate = null;
         return;
-      }
-      
-      // Validate against to date if it exists
-      if (this.toDate) {
-        this.validateToDate();
       }
     }
   }
 
-  onToDateChange() {
-    this.validateToDate();
-  }
-
-  private validateToDate() {
-    this.toDateError = '';
+  onTimeChange() {
+    this.timeFromError = '';
+    this.timeToError = '';
     
-    if (this.toDate && this.fromDate) {
-      const from = new Date(this.fromDate);
-      const to = new Date(this.toDate);
+    if (this.timeFrom && this.timeTo) {
+      const [fromHour, fromMin] = this.timeFrom.split(':').map(Number);
+      const [toHour, toMin] = this.timeTo.split(':').map(Number);
       
-      if (to < from) {
-        this.toDateError = 'To date cannot be earlier than from date';
-        this.toDate = null;
+      const fromMinutes = fromHour * 60 + fromMin;
+      const toMinutes = toHour * 60 + toMin;
+      
+      if (toMinutes <= fromMinutes) {
+        this.timeToError = 'Time To must be after Time From';
+        this.timeTo = '';
       }
     }
   }
 
   onSearch() {
     // Clear any existing errors and previous results
-    this.fromDateError = '';
-    this.toDateError = '';
+    this.dateError = '';
+    this.timeFromError = '';
+    this.timeToError = '';
     this.locationError = '';
     this.searchResults = [];
     
@@ -179,24 +178,28 @@ export class SearchComponent implements OnInit {
       return;
     }
     
-    // Validate dates before search
-    if (this.fromDate) {
-      const selectedDate = new Date(this.fromDate);
+    // Validate date
+    if (this.selectedDate) {
+      const selected = new Date(this.selectedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      if (selectedDate < today) {
-        this.fromDateError = 'From date cannot be in the past';
+      if (selected < today) {
+        this.dateError = 'Date cannot be in the past';
         return;
       }
     }
     
-    if (this.toDate && this.fromDate) {
-      const from = new Date(this.fromDate);
-      const to = new Date(this.toDate);
+    // Validate times
+    if (this.timeFrom && this.timeTo) {
+      const [fromHour, fromMin] = this.timeFrom.split(':').map(Number);
+      const [toHour, toMin] = this.timeTo.split(':').map(Number);
       
-      if (to < from) {
-        this.toDateError = 'To date cannot be earlier than from date';
+      const fromMinutes = fromHour * 60 + fromMin;
+      const toMinutes = toHour * 60 + toMin;
+      
+      if (toMinutes <= fromMinutes) {
+        this.timeToError = 'Time To must be after Time From';
         return;
       }
     }
@@ -212,8 +215,9 @@ export class SearchComponent implements OnInit {
         // Save search state
         this.searchStateService.saveSearchState({
           location: this.location,
-          fromDate: this.fromDate,
-          toDate: this.toDate,
+          selectedDate: this.selectedDate,
+          timeFrom: this.timeFrom,
+          timeTo: this.timeTo,
           searchResults: this.searchResults,
           hasSearched: this.hasSearched
         });

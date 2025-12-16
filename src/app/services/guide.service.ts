@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GuideProfileService } from './guide-profile.service';
+import { BookingService } from './booking.service';
 
 export interface Guide {
   id: string;
@@ -20,6 +21,8 @@ export interface Guide {
   contact?: string;
   email?: string;
   phoneNumber: string;
+  timeFrom?: string;  // Default 09:00
+  timeTo?: string;    // Default 18:00
 }
 
 @Injectable({
@@ -30,7 +33,8 @@ export class GuideService {
 
   constructor(
     private http: HttpClient,
-    private guideProfileService: GuideProfileService
+    private guideProfileService: GuideProfileService,
+    private bookingService: BookingService
   ) {}
 
   private mockGuides: Guide[] = [
@@ -768,6 +772,29 @@ export class GuideService {
   }
 
   private getLocalGuidesByAttraction(attractionId: string, fromDate?: string | null, toDate?: string | null): Observable<Guide[]> {
+    // Try to get guides from localStorage first
+    try {
+      const savedGuides = localStorage.getItem('attraction_guides_' + attractionId);
+      if (savedGuides) {
+        const localGuides: Guide[] = JSON.parse(savedGuides);
+        // Set default times if not present
+        localGuides.forEach(guide => {
+          guide.timeFrom = guide.timeFrom || '09:00';
+          guide.timeTo = guide.timeTo || '18:00';
+        });
+        
+        if (fromDate && toDate) {
+          const availableGuides = localGuides.filter(guide => 
+            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
+          );
+          return of(availableGuides);
+        }
+        return of(localGuides);
+      }
+    } catch (error) {
+      console.error('Error reading guides from localStorage:', error);
+    }
+
     // Get guides from GuideProfileService
     return this.guideProfileService.getGuidesByAttraction(attractionId).pipe(
       map(guideProfiles => {
@@ -786,8 +813,17 @@ export class GuideService {
           availableDates: profile.availableDates,
           contact: profile.guideEmail,
           email: profile.guideEmail,
-          phoneNumber: '+91 98765 43210' // Default phone
+          phoneNumber: '+91 98765 43210', // Default phone
+          timeFrom: '09:00',
+          timeTo: '18:00'
         }));
+
+        // Save to localStorage
+        try {
+          localStorage.setItem('attraction_guides_' + attractionId, JSON.stringify(profileGuides));
+        } catch (error) {
+          console.error('Error saving guides to localStorage:', error);
+        }
 
         // Get mock guides for this attraction
         const attractionGuideMap: { [key: string]: string[] } = {
@@ -914,9 +950,15 @@ export class GuideService {
         const guideIds = attractionGuideMap[attractionId] || [];
         let mockGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
         
+        // Set default times for mock guides
+        mockGuides.forEach(guide => {
+          guide.timeFrom = guide.timeFrom || '09:00';
+          guide.timeTo = guide.timeTo || '18:00';
+        });
+        
         if (fromDate && toDate) {
           mockGuides = mockGuides.filter(guide => 
-            this.isGuideAvailable(guide, fromDate, toDate)
+            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
           );
         }
 
@@ -926,7 +968,7 @@ export class GuideService {
         // Filter by dates if provided
         if (fromDate && toDate) {
           return allGuides.filter(guide => 
-            this.isGuideAvailable(guide, fromDate, toDate)
+            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
           );
         }
         
@@ -966,5 +1008,86 @@ export class GuideService {
       
       return requestFrom <= availableTo && requestTo >= availableFrom;
     });
+  }
+
+  private getBookingsForGuide(guideId: string, selectedDate: string): any[] {
+    // Try to fetch from API first
+    try {
+      // Note: This would be an async call in production
+      // For now, we'll use synchronous localStorage as the API is not yet integrated
+      const apiUrl = `${this.apiUrl}/bookings/guide/${guideId}?date=${selectedDate}`;
+      // In production: this.http.get(apiUrl).subscribe(...)
+      
+      // Fall back to localStorage
+      return this.getLocalBookingsForGuide(guideId, selectedDate);
+    } catch (error) {
+      console.warn('API call failed, using localStorage for bookings');
+      return this.getLocalBookingsForGuide(guideId, selectedDate);
+    }
+  }
+
+  private getLocalBookingsForGuide(guideId: string, selectedDate: string): any[] {
+    try {
+      const bookingsJson = localStorage.getItem('tourist_guide_bookings');
+      if (!bookingsJson) {
+        return [];
+      }
+
+      const allBookings = JSON.parse(bookingsJson);
+      
+      // Filter bookings for this guide on the selected date
+      return allBookings.filter((booking: any) => {
+        if (booking.guideId !== guideId || booking.status === 'cancelled') {
+          return false;
+        }
+        
+        // Check if booking is on the same date
+        const bookingDate = booking.selectedDate ? 
+          new Date(booking.selectedDate).toISOString().split('T')[0] : 
+          null;
+        
+        return bookingDate === selectedDate;
+      });
+    } catch (error) {
+      console.error('Error reading bookings from localStorage:', error);
+      return [];
+    }
+  }
+
+  private isGuideAvailableWithBookings(
+    guide: Guide, 
+    selectedDate: string, 
+    timeFrom: string, 
+    timeTo: string,
+    fromDate?: string | null
+  ): boolean {
+    // First check if guide is available on the date
+    if (!this.isGuideAvailable(guide, selectedDate, selectedDate)) {
+      return false;
+    }
+
+    // Check if requested time is within guide's working hours
+    const guideTimeFrom = guide.timeFrom || '09:00';
+    const guideTimeTo = guide.timeTo || '18:00';
+    
+    if (timeFrom < guideTimeFrom || timeTo > guideTimeTo) {
+      return false;
+    }
+
+    // Check for booking conflicts using backend API with localStorage fallback
+    const guideBookings = this.getBookingsForGuide(guide.id, selectedDate);
+
+    // Check for time conflicts
+    for (const booking of guideBookings) {
+      const bookingTimeFrom = booking.timeFrom || '09:00';
+      const bookingTimeTo = booking.timeTo || '18:00';
+      
+      // Check if times overlap
+      if (!(timeTo <= bookingTimeFrom || timeFrom >= bookingTimeTo)) {
+        return false; // Conflict found
+      }
+    }
+
+    return true;
   }
 }

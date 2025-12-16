@@ -13,6 +13,8 @@ export interface Booking {
   customerContact: string;
   customerEmail: string;
   selectedDate?: Date | null;
+  timeFrom?: string;
+  timeTo?: string;
   hoursBooked?: number;
   subtotal?: number;
   cgst?: number;

@@ -12,16 +12,18 @@ import { TouristAttraction } from '../../services/search.service';
 })
 export class ResultCardComponent {
   @Input() attraction!: TouristAttraction;
-  @Input() fromDate: string | null = null;
-  @Input() toDate: string | null = null;
+  @Input() selectedDate: string | null = null;
+  @Input() timeFrom: string = '';
+  @Input() timeTo: string = '';
   @Output() selectAttraction = new EventEmitter<string>();
 
   constructor(private router: Router) {}
 
   onSelect() {
     const queryParams: any = {};
-    if (this.fromDate) queryParams.from = this.fromDate;
-    if (this.toDate) queryParams.to = this.toDate;
+    if (this.selectedDate) queryParams.date = this.selectedDate;
+    if (this.timeFrom) queryParams.timeFrom = this.timeFrom;
+    if (this.timeTo) queryParams.timeTo = this.timeTo;
     this.router.navigate(['/attraction', this.attraction.id], { queryParams });
   }
 

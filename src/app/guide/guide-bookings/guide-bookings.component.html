@@ -82,6 +82,17 @@
               <p class="value amount">₹{{ booking.amount }}</p>
             </div>
           </div>
+
+          <div class="info-item" *ngIf="booking.paymentStatus">
+            <span class="icon">{{ booking.paymentStatus === 'paid' ? '✅' : (booking.paymentStatus === 'refunded' ? '💸' : '⏳') }}</span>
+            <div>
+              <p class="label">Payment Status</p>
+              <p class="value" [ngClass]="getPaymentStatusClass(booking.paymentStatus)">
+                {{ booking.paymentStatus === 'paid' ? 'Prepaid' : (booking.paymentStatus === 'refunded' ? 'Refunded' : 'Payment Pending') }}
+              </p>
+              <p class="payment-method" *ngIf="booking.paymentMethod && booking.paymentStatus === 'paid'">{{ getPaymentMethodLabel(booking.paymentMethod) }}</p>
+            </div>
+          </div>
         </div>
 
         <!-- Actions -->

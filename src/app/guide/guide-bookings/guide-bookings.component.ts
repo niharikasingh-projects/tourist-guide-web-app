@@ -15,6 +15,8 @@ interface Booking {
   hours: number;
   amount: number;
   status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
+  paymentStatus?: 'paid' | 'pending' | 'refunded';
+  paymentMethod?: string;
   createdAt: string;
 }
 
@@ -177,5 +179,24 @@ export class GuideBookingsComponent implements OnInit {
 
   getStatusClass(status: string): string {
     return `status-${status}`;
+  }
+
+  getPaymentStatusClass(paymentStatus?: string): string {
+    if (!paymentStatus) return '';
+    const classes: { [key: string]: string } = {
+      'paid': 'payment-paid',
+      'pending': 'payment-pending',
+      'refunded': 'payment-refunded'
+    };
+    return classes[paymentStatus] || '';
+  }
+
+  getPaymentMethodLabel(method: string): string {
+    const labels: { [key: string]: string } = {
+      'upi': 'via UPI',
+      'credit-card': 'via Card',
+      'pay-later': 'Pay at Check-in'
+    };
+    return labels[method] || method;
   }
 }

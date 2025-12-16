@@ -28,6 +28,8 @@ export class CheckoutComponent implements OnInit {
   customerEmail = '';
   hoursBooked = 1;
   selectedDate = new Date();
+  timeFrom = '';
+  timeTo = '';
 
   // Validation flags
   formSubmitted = false;
@@ -44,6 +46,36 @@ export class CheckoutComponent implements OnInit {
   ngOnInit() {
     const attractionId = this.route.snapshot.paramMap.get('attractionId');
     const guideId = this.route.snapshot.paramMap.get('guideId');
+    
+    // Get date and time from query params
+    const dateParam = this.route.snapshot.queryParamMap.get('date');
+    const timeFromParam = this.route.snapshot.queryParamMap.get('timeFrom');
+    const timeToParam = this.route.snapshot.queryParamMap.get('timeTo');
+    
+    if (dateParam) {
+      this.selectedDate = new Date(dateParam);
+    }
+    
+    if (timeFromParam && timeToParam) {
+      this.timeFrom = timeFromParam;
+      this.timeTo = timeToParam;
+      
+      // Calculate hours based on time difference
+      const [fromHour, fromMin] = timeFromParam.split(':').map(Number);
+      const [toHour, toMin] = timeToParam.split(':').map(Number);
+      const fromMinutes = fromHour * 60 + fromMin;
+      const toMinutes = toHour * 60 + toMin;
+      this.hoursBooked = (toMinutes - fromMinutes) / 60;
+    }
+    
+    // Restore customer details from navigation state (when coming back from payment page)
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || history.state;
+    if (state) {
+      if (state['customerName']) this.customerName = state['customerName'];
+      if (state['customerContact']) this.customerContact = state['customerContact'];
+      if (state['customerEmail']) this.customerEmail = state['customerEmail'];
+    }
 
     if (attractionId && guideId) {
       this.loadCheckoutData(attractionId, guideId);
@@ -124,11 +156,6 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    if (!this.hoursBooked || this.hoursBooked < 1) {
-      this.error = 'Please enter a valid number of hours';
-      return;
-    }
-
     if (!this.attraction || !this.guide) {
       this.error = 'Missing booking information';
       return;
@@ -140,6 +167,8 @@ export class CheckoutComponent implements OnInit {
         attraction: this.attraction,
         guide: this.guide,
         selectedDate: this.selectedDate,
+        timeFrom: this.timeFrom,
+        timeTo: this.timeTo,
         customerName: this.customerName.trim(),
         customerContact: this.customerContact.trim(),
         customerEmail: this.customerEmail.trim(),
