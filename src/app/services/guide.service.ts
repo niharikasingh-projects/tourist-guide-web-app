@@ -757,76 +757,92 @@ export class GuideService {
     }
   ];
 
-  getGuidesByAttractionId(attractionId: string, fromDate?: string | null, toDate?: string | null): Observable<Guide[]> {
+  getGuidesByAttractionId(
+    attractionId: string, 
+    fromDate?: string | null, 
+    toDate?: string | null,
+    timeFrom?: string | null,
+    timeTo?: string | null
+  ): Observable<Guide[]> {
     let url = `${this.apiUrl}/guides/by-attraction/${attractionId}`;
+    const params: string[] = [];
     if (fromDate && toDate) {
-      url += `?fromDate=${fromDate}&toDate=${toDate}`;
+      params.push(`fromDate=${fromDate}&toDate=${toDate}`);
+    }
+    if (timeFrom && timeTo) {
+      params.push(`timeFrom=${timeFrom}&timeTo=${timeTo}`);
+    }
+    if (params.length > 0) {
+      url += '?' + params.join('&');
     }
 
     return this.http.get<Guide[]>(url).pipe(
       catchError(() => {
         console.warn('API call failed, using local data');
-        return this.getLocalGuidesByAttraction(attractionId, fromDate, toDate);
+        return this.getLocalGuidesByAttraction(attractionId, fromDate, toDate, timeFrom, timeTo);
       })
     );
   }
 
-  private getLocalGuidesByAttraction(attractionId: string, fromDate?: string | null, toDate?: string | null): Observable<Guide[]> {
-    // Try to get guides from localStorage first
+  private getLocalGuidesByAttraction(
+    attractionId: string, 
+    fromDate?: string | null, 
+    toDate?: string | null,
+    timeFrom?: string | null,
+    timeTo?: string | null
+  ): Observable<Guide[]> {
+    // Fetch guides from guide_profiles_ localStorage
+    const profileGuides: Guide[] = [];
+    
     try {
-      const savedGuides = localStorage.getItem('attraction_guides_' + attractionId);
-      if (savedGuides) {
-        const localGuides: Guide[] = JSON.parse(savedGuides);
-        // Set default times if not present
-        localGuides.forEach(guide => {
-          guide.timeFrom = guide.timeFrom || '09:00';
-          guide.timeTo = guide.timeTo || '18:00';
-        });
-        
-        if (fromDate && toDate) {
-          const availableGuides = localGuides.filter(guide => 
-            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
-          );
-          return of(availableGuides);
+      // Iterate through all localStorage keys to find guide_profiles_
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('guide_profiles_')) {
+          const profilesJson = localStorage.getItem(key);
+          if (profilesJson) {
+            const profiles = JSON.parse(profilesJson);
+            
+            // Filter profiles for this attraction
+            const matchingProfiles = profiles.filter((p: any) => p.attractionId === attractionId);
+            
+            // Convert to Guide format
+            matchingProfiles.forEach((profile: any) => {
+              profileGuides.push({
+                id: profile.id,
+                name: profile.guideName,
+                imageUrl: profile.profilePicture || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+                languages: profile.languages,
+                availability: profile.availableDates.length > 0 ? 'Available' : 'Not Available',
+                hourlyRate: profile.hourlyRate,
+                rating: 4.5, // Default rating
+                experienceYears: 5, // Default experience
+                specialties: profile.specialties || [],
+                bio: profile.bio || 'Professional tour guide',
+                availableDates: profile.availableDates,
+                contact: profile.guideEmail,
+                email: profile.guideEmail,
+                phoneNumber: '+91 98765 43210', // Default phone
+                timeFrom: '09:00',
+                timeTo: '18:00'
+              });
+            });
+          }
         }
-        return of(localGuides);
       }
+      
+      // Set default times if not present
+      profileGuides.forEach(guide => {
+        guide.timeFrom = guide.timeFrom || '09:00';
+        guide.timeTo = guide.timeTo || '18:00';
+      });
+      
     } catch (error) {
-      console.error('Error reading guides from localStorage:', error);
+      console.error('Error reading guide profiles from localStorage:', error);
     }
 
-    // Get guides from GuideProfileService
-    return this.guideProfileService.getGuidesByAttraction(attractionId).pipe(
-      map(guideProfiles => {
-        // Convert guide profiles to Guide format
-        const profileGuides: Guide[] = guideProfiles.map(profile => ({
-          id: profile.id,
-          name: profile.guideName,
-          imageUrl: profile.profilePicture || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
-          languages: profile.languages,
-          availability: profile.availableDates.length > 0 ? 'Available' : 'Not Available',
-          hourlyRate: profile.hourlyRate,
-          rating: 4.5, // Default rating
-          experienceYears: 5, // Default experience
-          specialties: profile.specialties || [],
-          bio: profile.bio || 'Professional tour guide',
-          availableDates: profile.availableDates,
-          contact: profile.guideEmail,
-          email: profile.guideEmail,
-          phoneNumber: '+91 98765 43210', // Default phone
-          timeFrom: '09:00',
-          timeTo: '18:00'
-        }));
-
-        // Save to localStorage
-        try {
-          localStorage.setItem('attraction_guides_' + attractionId, JSON.stringify(profileGuides));
-        } catch (error) {
-          console.error('Error saving guides to localStorage:', error);
-        }
-
-        // Get mock guides for this attraction
-        const attractionGuideMap: { [key: string]: string[] } = {
+    // Get mock guides for this attraction
+    const attractionGuideMap: { [key: string]: string[] } = {
           // Paris attractions (pa-1, pa-2, pa-3)
           'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
           'pa-2': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
@@ -945,46 +961,150 @@ export class GuideService {
           'pu-6': ['g-pu-1', 'g-pu-2'],
           'pu-7': ['g-pu-1', 'g-pu-2'],
           'pu-8': ['g-pu-1', 'g-pu-2']
-        };
+      };
 
-        const guideIds = attractionGuideMap[attractionId] || [];
-        let mockGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
-        
-        // Set default times for mock guides
-        mockGuides.forEach(guide => {
-          guide.timeFrom = guide.timeFrom || '09:00';
-          guide.timeTo = guide.timeTo || '18:00';
-        });
-        
-        if (fromDate && toDate) {
-          mockGuides = mockGuides.filter(guide => 
-            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
-          );
-        }
+      const guideIds = attractionGuideMap[attractionId] || [];
+      let mockGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
+      
+      // Set default times for mock guides
+      mockGuides.forEach(guide => {
+        guide.timeFrom = guide.timeFrom || '09:00';
+        guide.timeTo = guide.timeTo || '18:00';
+      });
 
-        // Merge profile guides with mock guides
-        const allGuides = [...profileGuides, ...mockGuides];
-        
-        // Filter by dates if provided
-        if (fromDate && toDate) {
-          return allGuides.filter(guide => 
-            this.isGuideAvailableWithBookings(guide, fromDate, toDate, fromDate, toDate)
-          );
-        }
-        
-        return allGuides;
-      }),
-      catchError(() => {
-        // If GuideProfileService fails, return only mock data
-        const attractionGuideMap: { [key: string]: string[] } = {
-          'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
-          'pa-2': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
-          'pa-3': ['g-pa-1', 'g-pa-2', 'g-pa-3']
-        };
-        const guideIds = attractionGuideMap[attractionId] || [];
-        const guides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
-        return of(guides);
+      // Merge profile guides with mock guides
+      const allGuides = [...profileGuides, ...mockGuides];
+      
+      // If no date/time filtering needed, return all guides
+      if (!fromDate || !timeFrom || !timeTo) {
+        return of(allGuides);
+      }
+      
+      // Filter by availability and booking conflicts asynchronously
+      return this.filterGuidesByAvailability(allGuides, fromDate, timeFrom, timeTo);
+  }
+
+  /**
+   * Filter guides by availability and booking conflicts
+   */
+  private filterGuidesByAvailability(
+    guides: Guide[],
+    selectedDate: string,
+    timeFrom: string,
+    timeTo: string
+  ): Observable<Guide[]> {
+    // Filter guides that are available on the date
+    const availableGuides = guides.filter(guide => 
+      this.isGuideAvailable(guide, selectedDate, selectedDate)
+    );
+
+    // Check each guide for booking conflicts
+    const availabilityChecks = availableGuides.map(guide => 
+      this.checkGuideAvailability(guide, selectedDate, timeFrom, timeTo).pipe(
+        map(isAvailable => ({ guide, isAvailable }))
+      )
+    );
+
+    // Wait for all checks to complete
+    return of(availableGuides.length === 0 ? [] : availableGuides).pipe(
+      delay(0),
+      map(() => {
+        // Synchronously check availability for now
+        return availableGuides.filter(guide => 
+          this.isGuideAvailableWithBookingsSync(guide, selectedDate, timeFrom, timeTo)
+        );
       })
+    );
+  }
+
+  /**
+   * Synchronous version of availability check for filtering
+   */
+  private isGuideAvailableWithBookingsSync(
+    guide: Guide,
+    selectedDate: string,
+    timeFrom: string,
+    timeTo: string
+  ): boolean {
+    // Check if requested time is within guide's working hours
+    const guideTimeFrom = guide.timeFrom || '09:00';
+    const guideTimeTo = guide.timeTo || '18:00';
+    
+    if (timeFrom < guideTimeFrom || timeTo > guideTimeTo) {
+      return false;
+    }
+
+    // Synchronously check bookings from localStorage
+    try {
+      const bookingsJson = localStorage.getItem('tourist_guide_bookings');
+      if (!bookingsJson) {
+        return true;
+      }
+
+      const allBookings = JSON.parse(bookingsJson);
+      const guideBookings = allBookings.filter((booking: any) => {
+        if (booking.guideId !== guide.id || booking.status === 'cancelled') {
+          return false;
+        }
+        
+        const bookingDate = booking.selectedDate ? 
+          new Date(booking.selectedDate).toISOString().split('T')[0] : 
+          null;
+        
+        return bookingDate === selectedDate;
+      });
+
+      // Check for time conflicts
+      for (const booking of guideBookings) {
+        const bookingTimeFrom = booking.timeFrom || '09:00';
+        const bookingTimeTo = booking.timeTo || '18:00';
+        
+        // Check if times overlap
+        if (!(timeTo <= bookingTimeFrom || timeFrom >= bookingTimeTo)) {
+          return false; // Conflict found
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error checking booking conflicts:', error);
+      return true; // Allow booking on error
+    }
+  }
+
+  /**
+   * Async version for future backend integration
+   */
+  private checkGuideAvailability(
+    guide: Guide,
+    selectedDate: string,
+    timeFrom: string,
+    timeTo: string
+  ): Observable<boolean> {
+    // Check if requested time is within guide's working hours
+    const guideTimeFrom = guide.timeFrom || '09:00';
+    const guideTimeTo = guide.timeTo || '18:00';
+    
+    if (timeFrom < guideTimeFrom || timeTo > guideTimeTo) {
+      return of(false);
+    }
+
+    // Use BookingService to check conflicts
+    return this.bookingService.getBookingsForGuide(guide.id, selectedDate).pipe(
+      map(guideBookings => {
+        // Check for time conflicts
+        for (const booking of guideBookings) {
+          const bookingTimeFrom = booking.timeFrom || '09:00';
+          const bookingTimeTo = booking.timeTo || '18:00';
+          
+          // Check if times overlap
+          if (!(timeTo <= bookingTimeFrom || timeFrom >= bookingTimeTo)) {
+            return false; // Conflict found
+          }
+        }
+        return true;
+      }),
+      catchError(() => of(true)) // Allow booking on error
     );
   }
 
@@ -1008,86 +1128,5 @@ export class GuideService {
       
       return requestFrom <= availableTo && requestTo >= availableFrom;
     });
-  }
-
-  private getBookingsForGuide(guideId: string, selectedDate: string): any[] {
-    // Try to fetch from API first
-    try {
-      // Note: This would be an async call in production
-      // For now, we'll use synchronous localStorage as the API is not yet integrated
-      const apiUrl = `${this.apiUrl}/bookings/guide/${guideId}?date=${selectedDate}`;
-      // In production: this.http.get(apiUrl).subscribe(...)
-      
-      // Fall back to localStorage
-      return this.getLocalBookingsForGuide(guideId, selectedDate);
-    } catch (error) {
-      console.warn('API call failed, using localStorage for bookings');
-      return this.getLocalBookingsForGuide(guideId, selectedDate);
-    }
-  }
-
-  private getLocalBookingsForGuide(guideId: string, selectedDate: string): any[] {
-    try {
-      const bookingsJson = localStorage.getItem('tourist_guide_bookings');
-      if (!bookingsJson) {
-        return [];
-      }
-
-      const allBookings = JSON.parse(bookingsJson);
-      
-      // Filter bookings for this guide on the selected date
-      return allBookings.filter((booking: any) => {
-        if (booking.guideId !== guideId || booking.status === 'cancelled') {
-          return false;
-        }
-        
-        // Check if booking is on the same date
-        const bookingDate = booking.selectedDate ? 
-          new Date(booking.selectedDate).toISOString().split('T')[0] : 
-          null;
-        
-        return bookingDate === selectedDate;
-      });
-    } catch (error) {
-      console.error('Error reading bookings from localStorage:', error);
-      return [];
-    }
-  }
-
-  private isGuideAvailableWithBookings(
-    guide: Guide, 
-    selectedDate: string, 
-    timeFrom: string, 
-    timeTo: string,
-    fromDate?: string | null
-  ): boolean {
-    // First check if guide is available on the date
-    if (!this.isGuideAvailable(guide, selectedDate, selectedDate)) {
-      return false;
-    }
-
-    // Check if requested time is within guide's working hours
-    const guideTimeFrom = guide.timeFrom || '09:00';
-    const guideTimeTo = guide.timeTo || '18:00';
-    
-    if (timeFrom < guideTimeFrom || timeTo > guideTimeTo) {
-      return false;
-    }
-
-    // Check for booking conflicts using backend API with localStorage fallback
-    const guideBookings = this.getBookingsForGuide(guide.id, selectedDate);
-
-    // Check for time conflicts
-    for (const booking of guideBookings) {
-      const bookingTimeFrom = booking.timeFrom || '09:00';
-      const bookingTimeTo = booking.timeTo || '18:00';
-      
-      // Check if times overlap
-      if (!(timeTo <= bookingTimeFrom || timeFrom >= bookingTimeTo)) {
-        return false; // Conflict found
-      }
-    }
-
-    return true;
   }
 }

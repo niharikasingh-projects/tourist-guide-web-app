@@ -32,7 +32,7 @@
     <div class="booking-card" *ngFor="let booking of displayedBookings">
       <div class="card-header">
         <div class="booking-info">
-          <h3>{{ booking.attraction }}</h3>
+          <h3>{{ booking.attractionName }}</h3>
           <p class="booking-id">Booking ID: {{ booking.id }}</p>
         </div>
         <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
@@ -52,18 +52,18 @@
           </div>
 
           <div class="info-item">
-            <span class="icon">📍</span>
+            <span class="icon">�</span>
             <div>
-              <p class="label">Location</p>
-              <p class="value">{{ booking.location }}</p>
+              <p class="label">Date</p>
+              <p class="value">{{ booking.selectedDate | date:'mediumDate' }}</p>
             </div>
           </div>
 
-          <div class="info-item">
-            <span class="icon">📅</span>
+          <div class="info-item" *ngIf="booking.timeFrom && booking.timeTo">
+            <span class="icon">🕐</span>
             <div>
-              <p class="label">Date</p>
-              <p class="value">{{ booking.date }}</p>
+              <p class="label">Time Slot</p>
+              <p class="value">{{ booking.timeFrom }} - {{ booking.timeTo }}</p>
             </div>
           </div>
 
@@ -71,7 +71,7 @@
             <span class="icon">⏱️</span>
             <div>
               <p class="label">Duration</p>
-              <p class="value">{{ booking.hours }} hours</p>
+              <p class="value">{{ booking.hoursBooked || 0 }} hours</p>
             </div>
           </div>
 

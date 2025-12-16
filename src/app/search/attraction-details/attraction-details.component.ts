@@ -19,8 +19,9 @@ export class AttractionDetailsComponent implements OnInit {
   guides: Guide[] = [];
   isLoading = true;
   error = '';
-  fromDate: string | null = null;
-  toDate: string | null = null;
+  selectedDate: string | null = null;
+  timeFrom: string | null = null;
+  timeTo: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,8 +33,9 @@ export class AttractionDetailsComponent implements OnInit {
 
   ngOnInit() {
     const attractionId = this.route.snapshot.paramMap.get('id');
-    this.fromDate = this.route.snapshot.queryParamMap.get('from');
-    this.toDate = this.route.snapshot.queryParamMap.get('to');
+    this.selectedDate = this.route.snapshot.queryParamMap.get('date');
+    this.timeFrom = this.route.snapshot.queryParamMap.get('timeFrom');
+    this.timeTo = this.route.snapshot.queryParamMap.get('timeTo');
     
     if (attractionId) {
       this.loadAttractionDetails(attractionId);
@@ -67,7 +69,11 @@ export class AttractionDetailsComponent implements OnInit {
   }
 
   loadGuides(attractionId: string) {
-    this.guideService.getGuidesByAttractionId(attractionId, this.fromDate, this.toDate).subscribe({
+    // Pass the selected date as both from and to since we're searching for a specific date
+    const fromDate = this.selectedDate;
+    const toDate = this.selectedDate;
+    
+    this.guideService.getGuidesByAttractionId(attractionId, fromDate, toDate, this.timeFrom, this.timeTo).subscribe({
       next: (guides) => {
         this.guides = guides;
         this.isLoading = false;
