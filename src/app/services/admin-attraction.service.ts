@@ -79,9 +79,28 @@ export class AdminAttractionService {
       .pipe(
         catchError(error => {
           console.error('Error fetching attraction:', error);
-          return of(null);
+          // Fallback to localStorage
+          return this.getLocalAttractionById(id);
         })
       );
+  }
+
+  /**
+   * Get attraction by ID from localStorage
+   */
+  private getLocalAttractionById(id: string): Observable<AdminAttraction | null> {
+    try {
+      const saved = localStorage.getItem('admin_attractions');
+      if (saved) {
+        const attractions: AdminAttraction[] = JSON.parse(saved);
+        const attraction = attractions.find(a => a.id === id);
+        return of(attraction || null);
+      }
+      return of(null);
+    } catch (error) {
+      console.error('Error reading from localStorage:', error);
+      return of(null);
+    }
   }
 
   /**

@@ -17,7 +17,8 @@ export interface User {
 export class AuthService {
   private users: User[] = [
     { username: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' },
-    { username: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' }
+    { username: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' },
+    { username: 'user', email: 'user@gmail.com', password: '123', role: 'user' }
   ];
   private currentUser: User | null = null;
 
