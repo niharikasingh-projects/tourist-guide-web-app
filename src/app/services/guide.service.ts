@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, delay } from 'rxjs/operators';
+import { catchError, delay, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { GuideProfileService } from './guide-profile.service';
 
 export interface Guide {
   id: string;
@@ -27,7 +28,10 @@ export interface Guide {
 export class GuideService {
   private apiUrl = `${environment.apiUrl}/api`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private guideProfileService: GuideProfileService
+  ) {}
 
   private mockGuides: Guide[] = [
     // Paris guides (pa-1, pa-2, pa-3)
@@ -757,7 +761,35 @@ export class GuideService {
 
     return this.http.get<Guide[]>(url).pipe(
       catchError(() => {
-        console.warn('API call failed, using mock data');
+        console.warn('API call failed, using local data');
+        return this.getLocalGuidesByAttraction(attractionId, fromDate, toDate);
+      })
+    );
+  }
+
+  private getLocalGuidesByAttraction(attractionId: string, fromDate?: string | null, toDate?: string | null): Observable<Guide[]> {
+    // Get guides from GuideProfileService
+    return this.guideProfileService.getGuidesByAttraction(attractionId).pipe(
+      map(guideProfiles => {
+        // Convert guide profiles to Guide format
+        const profileGuides: Guide[] = guideProfiles.map(profile => ({
+          id: profile.id,
+          name: profile.guideName,
+          imageUrl: profile.profilePicture || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+          languages: profile.languages,
+          availability: profile.availableDates.length > 0 ? 'Available' : 'Not Available',
+          hourlyRate: profile.hourlyRate,
+          rating: 4.5, // Default rating
+          experienceYears: 5, // Default experience
+          specialties: profile.specialties || [],
+          bio: profile.bio || 'Professional tour guide',
+          availableDates: profile.availableDates,
+          contact: profile.guideEmail,
+          email: profile.guideEmail,
+          phoneNumber: '+91 98765 43210' // Default phone
+        }));
+
+        // Get mock guides for this attraction
         const attractionGuideMap: { [key: string]: string[] } = {
           // Paris attractions (pa-1, pa-2, pa-3)
           'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
@@ -880,15 +912,36 @@ export class GuideService {
         };
 
         const guideIds = attractionGuideMap[attractionId] || [];
-        let availableGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
+        let mockGuides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
         
         if (fromDate && toDate) {
-          availableGuides = availableGuides.filter(guide => 
+          mockGuides = mockGuides.filter(guide => 
+            this.isGuideAvailable(guide, fromDate, toDate)
+          );
+        }
+
+        // Merge profile guides with mock guides
+        const allGuides = [...profileGuides, ...mockGuides];
+        
+        // Filter by dates if provided
+        if (fromDate && toDate) {
+          return allGuides.filter(guide => 
             this.isGuideAvailable(guide, fromDate, toDate)
           );
         }
         
-        return of(availableGuides);
+        return allGuides;
+      }),
+      catchError(() => {
+        // If GuideProfileService fails, return only mock data
+        const attractionGuideMap: { [key: string]: string[] } = {
+          'pa-1': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
+          'pa-2': ['g-pa-1', 'g-pa-2', 'g-pa-3'],
+          'pa-3': ['g-pa-1', 'g-pa-2', 'g-pa-3']
+        };
+        const guideIds = attractionGuideMap[attractionId] || [];
+        const guides = this.mockGuides.filter(guide => guideIds.includes(guide.id));
+        return of(guides);
       })
     );
   }

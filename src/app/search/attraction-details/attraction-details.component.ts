@@ -74,9 +74,11 @@ export class AttractionDetailsComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.error = 'Failed to load guides';
-        this.isLoading = false;
+        // Don't set error - just show empty guides list
+        // The attraction details should still be visible
         console.error('Error loading guides:', err);
+        this.guides = [];
+        this.isLoading = false;
         this.cdr.detectChanges();
       }
     });

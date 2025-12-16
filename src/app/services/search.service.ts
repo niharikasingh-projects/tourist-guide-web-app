@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay, catchError } from 'rxjs/operators';
+import { Observable, of, forkJoin } from 'rxjs';
+import { delay, catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { AdminAttractionService } from './admin-attraction.service';
 
 export interface TouristAttraction {
   id: string;
@@ -24,7 +25,10 @@ export interface TouristAttraction {
 export class SearchService {
   private apiUrl = `${environment.apiUrl}/api`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private adminAttractionService: AdminAttractionService
+  ) {}
 
   private mockAttractions: any[] = [
     // Paris, France
@@ -190,15 +194,44 @@ export class SearchService {
 
     return this.http.get<TouristAttraction[]>(url).pipe(
       catchError(() => {
-        // Fallback to mock data if API fails
-        console.warn('API call failed, using mock data');
-        const normalizedLocation = location.toLowerCase().trim();
-        const results = this.mockAttractions.filter(attraction => 
-          attraction.location.toLowerCase() === normalizedLocation ||
-          attraction.name.toLowerCase().includes(normalizedLocation)
-        );
-        return of(results).pipe(delay(200));
+        // Fallback to local data (mock + admin attractions)
+        console.warn('API call failed, using local data');
+        return this.getLocalAttractionsByLocation(location);
       })
+    );
+  }
+
+  private getLocalAttractionsByLocation(location: string): Observable<TouristAttraction[]> {
+    const normalizedLocation = location.toLowerCase().trim();
+    
+    // Get mock attractions
+    const mockResults = this.mockAttractions.filter(attraction => 
+      attraction.location.toLowerCase() === normalizedLocation ||
+      attraction.name.toLowerCase().includes(normalizedLocation)
+    );
+
+    // Get admin attractions from localStorage
+    return this.adminAttractionService.getAttractionsByLocation(location).pipe(
+      map(adminAttractions => {
+        // Convert admin attractions to TouristAttraction format
+        const convertedAdminAttractions: TouristAttraction[] = adminAttractions.map(admin => ({
+          id: admin.id,
+          name: admin.attractionName,
+          location: admin.city,
+          country: admin.country,
+          city: admin.city,
+          description: admin.description,
+          imageUrl: admin.pictures && admin.pictures.length > 0 ? admin.pictures[0] : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400',
+          rating: 4.5, // Default rating
+          price: 500, // Default price
+          duration: '2-3 hours', // Default duration
+          category: admin.category
+        }));
+
+        // Merge and return
+        return [...convertedAdminAttractions, ...mockResults];
+      }),
+      catchError(() => of(mockResults))
     );
   }
 
@@ -209,8 +242,27 @@ export class SearchService {
   getAllAttractions(): Observable<TouristAttraction[]> {
     return this.http.get<TouristAttraction[]>(`${this.apiUrl}/attractions`).pipe(
       catchError(() => {
-        console.warn('API call failed, using mock data');
-        return of(this.mockAttractions);
+        console.warn('API call failed, using local data');
+        // Get admin attractions and merge with mock data
+        return this.adminAttractionService.getAllAttractions().pipe(
+          map(adminAttractions => {
+            const convertedAdminAttractions: TouristAttraction[] = adminAttractions.map(admin => ({
+              id: admin.id,
+              name: admin.attractionName,
+              location: admin.city,
+              country: admin.country,
+              city: admin.city,
+              description: admin.description,
+              imageUrl: admin.pictures && admin.pictures.length > 0 ? admin.pictures[0] : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400',
+              rating: 4.5,
+              price: 500,
+              duration: '2-3 hours',
+              category: admin.category
+            }));
+            return [...convertedAdminAttractions, ...this.mockAttractions];
+          }),
+          catchError(() => of(this.mockAttractions))
+        );
       })
     );
   }
@@ -223,9 +275,38 @@ export class SearchService {
   getAttractionById(id: string): Observable<TouristAttraction | null> {
     return this.http.get<TouristAttraction>(`${this.apiUrl}/attractions/${id}`).pipe(
       catchError(() => {
-        console.warn('API call failed, using mock data');
-        const attraction = this.mockAttractions.find(a => a.id === id);
-        return of(attraction || null);
+        console.warn('API call failed, checking local data');
+        // Check admin attractions first using switchMap to flatten the observable
+        return this.adminAttractionService.getAttractionById(id).pipe(
+          switchMap(adminAttraction => {
+            if (adminAttraction) {
+              // Convert to TouristAttraction
+              const converted: TouristAttraction = {
+                id: adminAttraction.id,
+                name: adminAttraction.attractionName,
+                location: adminAttraction.city,
+                country: adminAttraction.country,
+                city: adminAttraction.city,
+                description: adminAttraction.description,
+                imageUrl: adminAttraction.pictures && adminAttraction.pictures.length > 0 
+                  ? adminAttraction.pictures[0] 
+                  : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400',
+                rating: 4.5,
+                price: 500,
+                duration: '2-3 hours',
+                category: adminAttraction.category
+              };
+              return of(converted);
+            }
+            // Fallback to mock data
+            const attraction = this.mockAttractions.find(a => a.id === id);
+            return of(attraction || null);
+          }),
+          catchError(() => {
+            const attraction = this.mockAttractions.find(a => a.id === id);
+            return of(attraction || null);
+          })
+        );
       })
     );
   }
