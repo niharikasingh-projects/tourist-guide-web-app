@@ -101,7 +101,7 @@
 
         <div class="info-row">
           <span class="label">Hourly Rate:</span>
-          <span class="value">₹{{ attraction.hourlyRate }}/hr</span>
+          <span class="value">₹{{ attraction.hourlyRate | number:'1.2-2' }}/hr</span>
         </div>
 
         <div class="info-row" *ngIf="attraction.tourDuration">

@@ -136,7 +136,7 @@
       <div class="card-body">
         <div class="info-row">
           <span class="label">Hourly Rate:</span>
-          <span class="value rate">₹{{ profile.hourlyRate }}/hr</span>
+          <span class="value rate">₹{{ profile.hourlyRate | number:'1.2-2' }}/hr</span>
         </div>
 
         <div class="info-row" *ngIf="profile.tourDuration">

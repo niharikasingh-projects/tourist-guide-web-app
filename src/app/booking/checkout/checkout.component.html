@@ -53,7 +53,7 @@
           <div class="booking-details">
             <div class="detail-row">
               <span class="label">Guide Hourly Rate:</span>
-              <span class="value">₹{{guide.hourlyRate}}/hour</span>
+              <span class="value">₹{{guide.hourlyRate | number:'1.2-2'}}/hour</span>
             </div>
             <div class="detail-row">
               <span class="label">Date:</span>
@@ -65,7 +65,7 @@
             </div>
             <div class="detail-row">
               <span class="label">Total Amount:</span>
-              <span class="value total-amount">₹{{guide.hourlyRate * hoursBooked}}</span>
+              <span class="value total-amount">₹{{(guide.hourlyRate * hoursBooked) | number:'1.2-2'}}</span>
             </div>
           </div>
         </div>
