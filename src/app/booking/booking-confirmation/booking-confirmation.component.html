@@ -130,7 +130,7 @@
             <span class="icon">💵</span>
             <div class="detail-content">
               <span class="detail-label">Subtotal</span>
-              <span class="detail-value">₹{{booking.subtotal}}</span>
+              <span class="detail-value">₹{{booking.subtotal | number:'1.2-2'}}</span>
             </div>
           </div>
           
@@ -154,7 +154,7 @@
             <span class="icon">💰</span>
             <div class="detail-content">
               <span class="detail-label">Total Amount</span>
-              <span class="detail-value amount">₹{{booking.amount}}</span>
+              <span class="detail-value amount">₹{{booking.amount | number:'1.2-2'}}</span>
             </div>
           </div>
           

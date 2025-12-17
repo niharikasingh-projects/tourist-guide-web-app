@@ -2,6 +2,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%);
   padding: 2rem 1rem;
+  padding-bottom: 4rem;
 }
 
 .payment-wrapper {
@@ -75,7 +76,7 @@ section {
   background: white;
   border-radius: 12px;
   padding: 2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 

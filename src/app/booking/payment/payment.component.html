@@ -52,7 +52,7 @@
         <div class="breakup-card">
           <div class="breakup-row">
             <span class="label">Guide Rate ({{hoursBooked}} × ₹{{guide.hourlyRate}}/hour):</span>
-            <span class="value">₹{{subtotal}}</span>
+            <span class="value">₹{{subtotal | number:'1.2-2'}}</span>
           </div>
           <div class="breakup-row tax">
             <span class="label">CGST (14%):</span>
