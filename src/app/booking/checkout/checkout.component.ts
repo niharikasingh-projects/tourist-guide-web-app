@@ -109,7 +109,7 @@ export class CheckoutComponent implements OnInit {
   loadGuide(attractionId: string, guideId: string) {
     this.guideService.getGuidesByAttractionId(attractionId).subscribe({
       next: (guides) => {
-        this.guide = guides.find(g => g.id === guideId) || null;
+        this.guide = guides.find(g => g.id.toString() === guideId) || null;
         if (!this.guide) {
           this.error = 'Guide not found';
         }

@@ -36,7 +36,7 @@ export class ProfileService {
 
       // Return default profile if none exists
       const defaultProfile: UserProfile = {
-        name: currentUser.username,
+        name: currentUser.name,
         email: currentUser.email,
         dateOfBirth: '',
         phoneNumber: '',

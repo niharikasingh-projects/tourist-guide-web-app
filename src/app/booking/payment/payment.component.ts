@@ -168,7 +168,7 @@ export class PaymentComponent implements OnInit {
 
     const bookingData = {
       attractionId: this.attraction.id,
-      attractionName: this.attraction.name,
+      attractionName: this.attraction.attractionName,
       guideId: this.guide.id,
       guideName: this.guide.name,
       guideContact: this.guide.phoneNumber || 'N/A',
