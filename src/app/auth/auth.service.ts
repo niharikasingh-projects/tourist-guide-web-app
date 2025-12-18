@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, timeout } from 'rxjs/operators';
+import { of, firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
-  username: string;
+  name: string;
   email: string;
   password: string;
   role?: string;
@@ -15,10 +19,13 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
+  
   private users: User[] = [
-    { username: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' },
-    { username: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' },
-    { username: 'user', email: 'user@gmail.com', password: '123', role: 'user' }
+    { name: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' },
+    { name: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' },
+    { name: 'user', email: 'user@gmail.com', password: '123', role: 'user' }
   ];
   private currentUser: User | null = null;
 
@@ -30,9 +37,34 @@ export class AuthService {
   }
 
   // Simulate async network calls (small delay) so components can show loading states
-  async signIn(identifier: string, password: string): Promise<{ success: boolean; message?: string; user?: User }> {
+  async signIn(email: string, password: string): Promise<{ success: boolean; message?: string; user?: User }> {
+    try {
+      // Try backend API first
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; message?: string; user?: User }>(
+          `${this.apiUrl}/api/auth/signin`,
+          { email, password }
+        ).pipe(
+          //timeout(5000), // 5 second timeout
+          catchError((error: HttpErrorResponse) => {
+            console.warn('Backend signin failed, falling back to local auth:', error.message);
+            return of(null);
+          })
+        )
+      );
+
+      if (response && response.success) {
+        this.currentUser = response.user!;
+        try { localStorage.setItem('auth_user', JSON.stringify(response.user)); } catch {}
+        return response;
+      }
+    } catch (error) {
+      console.warn('Backend signin error, using fallback:', error);
+    }
+
+    // Fallback to local authentication
     await this.delay(600);
-    const user = this.users.find(u => u.username === identifier || u.email === identifier);
+    const user = this.users.find(u => u.name === email || u.email === email);
     if (!user) return { success: false, message: 'User not found' };
     if (user.password !== password) return { success: false, message: 'Invalid password' };
     this.currentUser = user;
@@ -41,8 +73,31 @@ export class AuthService {
   }
 
   async signUp(newUser: User): Promise<{ success: boolean; message?: string; user?: User }> {
+    try {
+      // Try backend API first
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; message?: string; user?: User }>(
+          `${this.apiUrl}/api/auth/signup`,
+          newUser
+        ).pipe(
+          timeout(5000), // 5 second timeout
+          catchError((error: HttpErrorResponse) => {
+            console.warn('Backend signup failed, falling back to local auth:', error.message);
+            return of(null);
+          })
+        )
+      );
+
+      if (response && response.success) {
+        return response;
+      }
+    } catch (error) {
+      console.warn('Backend signup error, using fallback:', error);
+    }
+
+    // Fallback to local authentication
     await this.delay(700);
-    const exists = this.users.find(u => u.username === newUser.username || u.email === newUser.email);
+    const exists = this.users.find(u => u.name === newUser.name || u.email === newUser.email);
     if (exists) return { success: false, message: 'User already exists' };
     this.users.push(newUser);
     return { success: true, user: newUser };

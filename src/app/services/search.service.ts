@@ -7,7 +7,7 @@ import { AdminAttractionService } from './admin-attraction.service';
 
 export interface TouristAttraction {
   id: string;
-  name: string;
+  attractionName: string;
   location: string;
   country: string;
   city: string;
@@ -32,56 +32,56 @@ export class SearchService {
 
   private mockAttractions: any[] = [
     // Paris, France
-    { id: 'pa-1', name: 'Eiffel Tower Tour', location: 'Paris', country: 'France', description: 'Visit the iconic Eiffel Tower with skip-the-line access and stunning views of Paris', imageUrl: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', rating: 4.8, price: 1200, duration: '3 hours', category: 'Landmark' },
-    { id: 'pa-2', name: 'Louvre Museum Visit', location: 'Paris', country: 'France', description: 'Explore the world\'s largest art museum and see the Mona Lisa', imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', rating: 4.7, price: 850, duration: '4 hours', category: 'Museum' },
-    { id: 'pa-3', name: 'Seine River Cruise', location: 'Paris', country: 'France', description: 'Romantic evening cruise along the Seine with dinner included', imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', rating: 4.6, price: 950, duration: '2 hours', category: 'Cruise' },
+    { id: 'pa-1', attractionName: 'Eiffel Tower Tour', location: 'Paris', country: 'France', description: 'Visit the iconic Eiffel Tower with skip-the-line access and stunning views of Paris', imageUrl: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', rating: 4.8, price: 1200, duration: '3 hours', category: 'Landmark' },
+    { id: 'pa-2', attractionName: 'Louvre Museum Visit', location: 'Paris', country: 'France', description: 'Explore the world\'s largest art museum and see the Mona Lisa', imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', rating: 4.7, price: 850, duration: '4 hours', category: 'Museum' },
+    { id: 'pa-3', attractionName: 'Seine River Cruise', location: 'Paris', country: 'France', description: 'Romantic evening cruise along the Seine with dinner included', imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', rating: 4.6, price: 950, duration: '2 hours', category: 'Cruise' },
     
     // London, UK
-    { id: 'lo-1', name: 'Big Ben & Parliament Tour', location: 'London', country: 'United Kingdom', description: 'Guided tour of the iconic clock tower and Houses of Parliament', imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', rating: 4.7, price: 750, duration: '2.5 hours', category: 'Landmark' },
-    { id: 'lo-2', name: 'British Museum Experience', location: 'London', country: 'United Kingdom', description: 'Discover world history and culture at this renowned museum', imageUrl: 'https://images.unsplash.com/photo-1543942276-28e9dd24e716?w=400', rating: 4.8, price: 650, duration: '3 hours', category: 'Museum' },
-    { id: 'lo-3', name: 'London Eye Flight', location: 'London', country: 'United Kingdom', description: 'Experience breathtaking 360-degree views from Europe\'s tallest Ferris wheel', imageUrl: 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400', rating: 4.5, price: 550, duration: '30 minutes', category: 'Attraction' },
+    { id: 'lo-1', attractionName: 'Big Ben & Parliament Tour', location: 'London', country: 'United Kingdom', description: 'Guided tour of the iconic clock tower and Houses of Parliament', imageUrl: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', rating: 4.7, price: 750, duration: '2.5 hours', category: 'Landmark' },
+    { id: 'lo-2', attractionName: 'British Museum Experience', location: 'London', country: 'United Kingdom', description: 'Discover world history and culture at this renowned museum', imageUrl: 'https://images.unsplash.com/photo-1543942276-28e9dd24e716?w=400', rating: 4.8, price: 650, duration: '3 hours', category: 'Museum' },
+    { id: 'lo-3', attractionName: 'London Eye Flight', location: 'London', country: 'United Kingdom', description: 'Experience breathtaking 360-degree views from Europe\'s tallest Ferris wheel', imageUrl: 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400', rating: 4.5, price: 550, duration: '30 minutes', category: 'Attraction' },
     
     // New York, USA
-    { id: 'ny-1', name: 'Statue of Liberty & Ellis Island', location: 'New York', country: 'United States', description: 'Ferry trip to Liberty Island with crown access and Ellis Island Immigration Museum', imageUrl: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400', rating: 4.9, price: 1100, duration: '4 hours', category: 'Landmark' },
-    { id: 'ny-2', name: 'Central Park Walking Tour', location: 'New York', country: 'United States', description: 'Explore NYC\'s most famous park with an expert local guide', imageUrl: 'https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=400', rating: 4.6, price: 450, duration: '2 hours', category: 'Nature' },
-    { id: 'ny-3', name: 'Empire State Building', location: 'New York', country: 'United States', description: 'Visit the iconic Art Deco skyscraper with observatory access', imageUrl: 'https://images.unsplash.com/photo-1546436836-07a91091f160?w=400', rating: 4.7, price: 800, duration: '2 hours', category: 'Landmark' },
+    { id: 'ny-1', attractionName: 'Statue of Liberty & Ellis Island', location: 'New York', country: 'United States', description: 'Ferry trip to Liberty Island with crown access and Ellis Island Immigration Museum', imageUrl: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=400', rating: 4.9, price: 1100, duration: '4 hours', category: 'Landmark' },
+    { id: 'ny-2', attractionName: 'Central Park Walking Tour', location: 'New York', country: 'United States', description: 'Explore NYC\'s most famous park with an expert local guide', imageUrl: 'https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=400', rating: 4.6, price: 450, duration: '2 hours', category: 'Nature' },
+    { id: 'ny-3', attractionName: 'Empire State Building', location: 'New York', country: 'United States', description: 'Visit the iconic Art Deco skyscraper with observatory access', imageUrl: 'https://images.unsplash.com/photo-1546436836-07a91091f160?w=400', rating: 4.7, price: 800, duration: '2 hours', category: 'Landmark' },
     
     // Rome, Italy
-    { id: 'ro-1', name: 'Colosseum & Roman Forum', location: 'Rome', country: 'Italy', description: 'Skip-the-line tour of ancient Rome\'s most iconic monuments', imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400', rating: 4.9, price: 950, duration: '3 hours', category: 'Historical' },
-    { id: 'ro-2', name: 'Vatican Museums & Sistine Chapel', location: 'Rome', country: 'Italy', description: 'Private tour of Vatican art collections and Michelangelo\'s masterpiece', imageUrl: 'https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=400', rating: 4.8, price: 1050, duration: '4 hours', category: 'Museum' },
-    { id: 'ro-3', name: 'Trevi Fountain Evening Walk', location: 'Rome', country: 'Italy', description: 'Romantic evening walking tour of Rome\'s beautiful fountains', imageUrl: 'https://images.unsplash.com/photo-1525874684015-58379d421a52?w=400', rating: 4.5, price: 400, duration: '2 hours', category: 'Walking Tour' },
+    { id: 'ro-1', attractionName: 'Colosseum & Roman Forum', location: 'Rome', country: 'Italy', description: 'Skip-the-line tour of ancient Rome\'s most iconic monuments', imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400', rating: 4.9, price: 950, duration: '3 hours', category: 'Historical' },
+    { id: 'ro-2', attractionName: 'Vatican Museums & Sistine Chapel', location: 'Rome', country: 'Italy', description: 'Private tour of Vatican art collections and Michelangelo\'s masterpiece', imageUrl: 'https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=400', rating: 4.8, price: 1050, duration: '4 hours', category: 'Museum' },
+    { id: 'ro-3', attractionName: 'Trevi Fountain Evening Walk', location: 'Rome', country: 'Italy', description: 'Romantic evening walking tour of Rome\'s beautiful fountains', imageUrl: 'https://images.unsplash.com/photo-1525874684015-58379d421a52?w=400', rating: 4.5, price: 400, duration: '2 hours', category: 'Walking Tour' },
     
     // Tokyo, Japan
-    { id: 'to-1', name: 'Mount Fuji Day Trip', location: 'Tokyo', country: 'Japan', description: 'Full day excursion to Japan\'s most sacred mountain', imageUrl: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400', rating: 4.9, price: 1450, duration: '10 hours', category: 'Nature' },
-    { id: 'to-2', name: 'Tokyo Street Food Tour', location: 'Tokyo', country: 'Japan', description: 'Taste authentic Japanese cuisine in local neighborhoods', imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400', rating: 4.7, price: 700, duration: '3 hours', category: 'Food Tour' },
-    { id: 'to-3', name: 'Senso-ji Temple Visit', location: 'Tokyo', country: 'Japan', description: 'Explore Tokyo\'s oldest and most significant Buddhist temple', imageUrl: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400', rating: 4.6, price: 500, duration: '2 hours', category: 'Temple' },    
+    { id: 'to-1', attractionName: 'Mount Fuji Day Trip', location: 'Tokyo', country: 'Japan', description: 'Full day excursion to Japan\'s most sacred mountain', imageUrl: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400', rating: 4.9, price: 1450, duration: '10 hours', category: 'Nature' },
+    { id: 'to-2', attractionName: 'Tokyo Street Food Tour', location: 'Tokyo', country: 'Japan', description: 'Taste authentic Japanese cuisine in local neighborhoods', imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400', rating: 4.7, price: 700, duration: '3 hours', category: 'Food Tour' },
+    { id: 'to-3', attractionName: 'Senso-ji Temple Visit', location: 'Tokyo', country: 'Japan', description: 'Explore Tokyo\'s oldest and most significant Buddhist temple', imageUrl: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400', rating: 4.6, price: 500, duration: '2 hours', category: 'Temple' },    
 
     // Dubai, UAE
-    { id: 'du-1', name: 'Burj Khalifa At The Top', location: 'Dubai', country: 'United Arab Emirates', description: 'Visit the world\'s tallest building with observation deck access', imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400', rating: 4.9, price: 140, duration: '2 hours', category: 'Landmark' },
-    { id: 'du-2', name: 'Desert Safari Experience', location: 'Dubai', country: 'United Arab Emirates', description: 'Dune bashing, camel ride, and traditional Bedouin dinner', imageUrl: 'https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=400', rating: 4.8, price: 1200, duration: '6 hours', category: 'Adventure' },
-    { id: 'du-3', name: 'Dubai Marina Dhow Cruise', location: 'Dubai', country: 'United Arab Emirates', description: 'Luxury dinner cruise with stunning city views', imageUrl: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400', rating: 4.6, price: 850, duration: '2 hours', category: 'Cruise' },
+    { id: 'du-1', attractionName: 'Burj Khalifa At The Top', location: 'Dubai', country: 'United Arab Emirates', description: 'Visit the world\'s tallest building with observation deck access', imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400', rating: 4.9, price: 140, duration: '2 hours', category: 'Landmark' },
+    { id: 'du-2', attractionName: 'Desert Safari Experience', location: 'Dubai', country: 'United Arab Emirates', description: 'Dune bashing, camel ride, and traditional Bedouin dinner', imageUrl: 'https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?w=400', rating: 4.8, price: 1200, duration: '6 hours', category: 'Adventure' },
+    { id: 'du-3', attractionName: 'Dubai Marina Dhow Cruise', location: 'Dubai', country: 'United Arab Emirates', description: 'Luxury dinner cruise with stunning city views', imageUrl: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=400', rating: 4.6, price: 850, duration: '2 hours', category: 'Cruise' },
     
     // Delhi, India (10 attractions)
-    { id: 'de-1', name: 'Red Fort & Old Delhi Tour', location: 'Delhi', country: 'India', description: 'Explore the magnificent Mughal fortress and bustling old city', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.7, price: 450, duration: '4 hours', category: 'Historical' },
-    { id: 'de-2', name: 'Qutub Minar Complex', location: 'Delhi', country: 'India', description: 'Visit the UNESCO World Heritage site and tallest brick minaret', imageUrl: 'https://images.unsplash.com/photo-1596423150473-bffa16b82bcd?w=400', rating: 4.6, price: 350, duration: '2 hours', category: 'Monument' },
-    { id: 'de-3', name: 'India Gate & Government Quarter', location: 'Delhi', country: 'India', description: 'Tour of Delhi\'s most iconic war memorial and administrative center', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.5, price: 300, duration: '2 hours', category: 'Landmark' },
-    { id: 'de-4', name: 'Humayun\'s Tomb Experience', location: 'Delhi', country: 'India', description: 'Explore the stunning Mughal architecture and beautiful gardens', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.8, price: 400, duration: '2.5 hours', category: 'Monument' },
-    { id: 'de-5', name: 'Lotus Temple Visit', location: 'Delhi', country: 'India', description: 'Experience peace at this unique Bahai House of Worship', imageUrl: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400', rating: 4.6, price: 250, duration: '1.5 hours', category: 'Temple' },
-    { id: 'de-6', name: 'Akshardham Temple Tour', location: 'Delhi', country: 'India', description: 'Marvel at the modern architectural wonder with light show', imageUrl: 'https://images.unsplash.com/photo-1601815023024-7b80ab8c0f0e?w=400', rating: 4.9, price: 500, duration: '3 hours', category: 'Temple' },
-    { id: 'de-7', name: 'Chandni Chowk Food Walk', location: 'Delhi', country: 'India', description: 'Taste authentic street food in Old Delhi\'s famous market', imageUrl: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400', rating: 4.7, price: 350, duration: '3 hours', category: 'Food Tour' },
-    { id: 'de-8', name: 'Lodhi Garden Heritage Walk', location: 'Delhi', country: 'India', description: 'Peaceful walk through historical monuments and gardens', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.4, price: 200, duration: '2 hours', category: 'Nature' },
-    { id: 'de-9', name: 'Hauz Khas Village Tour', location: 'Delhi', country: 'India', description: 'Explore trendy cafes and ancient ruins in hip neighborhood', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.5, price: 300, duration: '2.5 hours', category: 'Cultural' },
-    { id: 'de-10', name: 'Jama Masjid & Rickshaw Ride', location: 'Delhi', country: 'India', description: 'Visit India\'s largest mosque with thrilling rickshaw ride', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.6, price: 400, duration: '3 hours', category: 'Religious' },
+    { id: 'de-1', attractionName: 'Red Fort & Old Delhi Tour', location: 'Delhi', country: 'India', description: 'Explore the magnificent Mughal fortress and bustling old city', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.7, price: 450, duration: '4 hours', category: 'Historical' },
+    { id: 'de-2', attractionName: 'Qutub Minar Complex', location: 'Delhi', country: 'India', description: 'Visit the UNESCO World Heritage site and tallest brick minaret', imageUrl: 'https://images.unsplash.com/photo-1596423150473-bffa16b82bcd?w=400', rating: 4.6, price: 350, duration: '2 hours', category: 'Monument' },
+    { id: 'de-3', attractionName: 'India Gate & Government Quarter', location: 'Delhi', country: 'India', description: 'Tour of Delhi\'s most iconic war memorial and administrative center', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.5, price: 300, duration: '2 hours', category: 'Landmark' },
+    { id: 'de-4', attractionName: 'Humayun\'s Tomb Experience', location: 'Delhi', country: 'India', description: 'Explore the stunning Mughal architecture and beautiful gardens', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.8, price: 400, duration: '2.5 hours', category: 'Monument' },
+    { id: 'de-5', attractionName: 'Lotus Temple Visit', location: 'Delhi', country: 'India', description: 'Experience peace at this unique Bahai House of Worship', imageUrl: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400', rating: 4.6, price: 250, duration: '1.5 hours', category: 'Temple' },
+    { id: 'de-6', attractionName: 'Akshardham Temple Tour', location: 'Delhi', country: 'India', description: 'Marvel at the modern architectural wonder with light show', imageUrl: 'https://images.unsplash.com/photo-1601815023024-7b80ab8c0f0e?w=400', rating: 4.9, price: 500, duration: '3 hours', category: 'Temple' },
+    { id: 'de-7', attractionName: 'Chandni Chowk Food Walk', location: 'Delhi', country: 'India', description: 'Taste authentic street food in Old Delhi\'s famous market', imageUrl: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400', rating: 4.7, price: 350, duration: '3 hours', category: 'Food Tour' },
+    { id: 'de-8', attractionName: 'Lodhi Garden Heritage Walk', location: 'Delhi', country: 'India', description: 'Peaceful walk through historical monuments and gardens', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.4, price: 200, duration: '2 hours', category: 'Nature' },
+    { id: 'de-9', attractionName: 'Hauz Khas Village Tour', location: 'Delhi', country: 'India', description: 'Explore trendy cafes and ancient ruins in hip neighborhood', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.5, price: 300, duration: '2.5 hours', category: 'Cultural' },
+    { id: 'de-10', attractionName: 'Jama Masjid & Rickshaw Ride', location: 'Delhi', country: 'India', description: 'Visit India\'s largest mosque with thrilling rickshaw ride', imageUrl: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=400', rating: 4.6, price: 400, duration: '3 hours', category: 'Religious' },
     
     // Agra, India (8 attractions)
-    { id: 'ag-1', name: 'Taj Mahal Sunrise Tour', location: 'Agra', country: 'India', description: 'Witness the beauty of the Taj Mahal at sunrise with skip-the-line access', imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400', rating: 5.0, price: 550, duration: '3 hours', category: 'Monument' },
-    { id: 'ag-2', name: 'Agra Fort Experience', location: 'Agra', country: 'India', description: 'Explore the massive red sandstone fort of the Mughal emperors', imageUrl: 'https://images.unsplash.com/photo-1609952181726-d7b8c66e58b5?w=400', rating: 4.7, price: 400, duration: '2.5 hours', category: 'Fort' },
-    { id: 'ag-3', name: 'Mehtab Bagh Sunset View', location: 'Agra', country: 'India', description: 'View the Taj Mahal from across the Yamuna River at sunset', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=400', rating: 4.8, price: 250, duration: '1.5 hours', category: 'Garden' },
-    { id: 'ag-4', name: 'Fatehpur Sikri Day Trip', location: 'Agra', country: 'India', description: 'Visit the abandoned Mughal capital with stunning architecture', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.6, price: 500, duration: '4 hours', category: 'Historical' },
-    { id: 'ag-5', name: 'Taj Mahal Night Viewing', location: 'Agra', country: 'India', description: 'Experience the Taj Mahal under moonlight (selected days)', imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400', rating: 4.9, price: 650, duration: '2 hours', category: 'Monument' },
-    { id: 'ag-6', name: 'Agra Street Food Tour', location: 'Agra', country: 'India', description: 'Taste Agra\'s famous petha and other local delicacies', imageUrl: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400', rating: 4.5, price: 300, duration: '2.5 hours', category: 'Food Tour' },
-    { id: 'ag-7', name: 'Itmad-ud-Daulah Baby Taj', location: 'Agra', country: 'India', description: 'Discover the exquisite marble tomb and precursor to Taj Mahal', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=400', rating: 4.4, price: 350, duration: '2 hours', category: 'Monument' },
-    { id: 'ag-8', name: 'Mughal Heritage Walk', location: 'Agra', country: 'India', description: 'Comprehensive tour of Agra\'s Mughal-era monuments', imageUrl: 'https://images.unsplash.com/photo-1609952181726-d7b8c66e58b5?w=400', rating: 4.7, price: 700, duration: '6 hours', category: 'Historical' },
+    { id: 'ag-1', attractionName: 'Taj Mahal Sunrise Tour', location: 'Agra', country: 'India', description: 'Witness the beauty of the Taj Mahal at sunrise with skip-the-line access', imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400', rating: 5.0, price: 550, duration: '3 hours', category: 'Monument' },
+    { id: 'ag-2', attractionName: 'Agra Fort Experience', location: 'Agra', country: 'India', description: 'Explore the massive red sandstone fort of the Mughal emperors', imageUrl: 'https://images.unsplash.com/photo-1609952181726-d7b8c66e58b5?w=400', rating: 4.7, price: 400, duration: '2.5 hours', category: 'Fort' },
+    { id: 'ag-3', attractionName: 'Mehtab Bagh Sunset View', location: 'Agra', country: 'India', description: 'View the Taj Mahal from across the Yamuna River at sunset', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=400', rating: 4.8, price: 250, duration: '1.5 hours', category: 'Garden' },
+    { id: 'ag-4', attractionName: 'Fatehpur Sikri Day Trip', location: 'Agra', country: 'India', description: 'Visit the abandoned Mughal capital with stunning architecture', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.6, price: 500, duration: '4 hours', category: 'Historical' },
+    { id: 'ag-5', attractionName: 'Taj Mahal Night Viewing', location: 'Agra', country: 'India', description: 'Experience the Taj Mahal under moonlight (selected days)', imageUrl: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400', rating: 4.9, price: 650, duration: '2 hours', category: 'Monument' },
+    { id: 'ag-6', attractionName: 'Agra Street Food Tour', location: 'Agra', country: 'India', description: 'Taste Agra\'s famous petha and other local delicacies', imageUrl: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400', rating: 4.5, price: 300, duration: '2.5 hours', category: 'Food Tour' },
+    { id: 'ag-7', attractionName: 'Itmad-ud-Daulah Baby Taj', location: 'Agra', country: 'India', description: 'Discover the exquisite marble tomb and precursor to Taj Mahal', imageUrl: 'https://images.unsplash.com/photo-1587135941948-670b381f08ce?w=400', rating: 4.4, price: 350, duration: '2 hours', category: 'Monument' },
+    { id: 'ag-8', attractionName: 'Mughal Heritage Walk', location: 'Agra', country: 'India', description: 'Comprehensive tour of Agra\'s Mughal-era monuments', imageUrl: 'https://images.unsplash.com/photo-1609952181726-d7b8c66e58b5?w=400', rating: 4.7, price: 700, duration: '6 hours', category: 'Historical' },
     
     // Jaipur, India (9 attractions)
     { id: 'ja-1', name: 'Amber Fort & Palace', location: 'Jaipur', country: 'India', description: 'Majestic hilltop fort with optional elephant ride', imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400', rating: 4.9, price: 600, duration: '3 hours', category: 'Fort' },
@@ -216,7 +216,7 @@ export class SearchService {
         // Convert admin attractions to TouristAttraction format
         const convertedAdminAttractions: TouristAttraction[] = adminAttractions.map(admin => ({
           id: admin.id,
-          name: admin.attractionName,
+          attractionName: admin.attractionName,
           location: admin.city,
           country: admin.country,
           city: admin.city,
@@ -248,7 +248,7 @@ export class SearchService {
           map(adminAttractions => {
             const convertedAdminAttractions: TouristAttraction[] = adminAttractions.map(admin => ({
               id: admin.id,
-              name: admin.attractionName,
+              attractionName: admin.attractionName,
               location: admin.city,
               country: admin.country,
               city: admin.city,
@@ -283,7 +283,7 @@ export class SearchService {
               // Convert to TouristAttraction
               const converted: TouristAttraction = {
                 id: adminAttraction.id,
-                name: adminAttraction.attractionName,
+                attractionName: adminAttraction.attractionName,
                 location: adminAttraction.city,
                 country: adminAttraction.country,
                 city: adminAttraction.city,

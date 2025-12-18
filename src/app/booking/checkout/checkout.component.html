@@ -28,10 +28,10 @@
         
         <div class="summary-card">
           <div class="attraction-info">
-            <img [src]="attraction.imageUrl" [alt]="attraction.name" class="attraction-thumb">
+            <img [src]="attraction.imageUrl" [alt]="attraction.attractionName" class="attraction-thumb">
             <div class="attraction-details">
-              <h3>{{attraction.name}}</h3>
-              <p class="location">📍 {{attraction.location}}, {{attraction.country}}</p>
+              <h3>{{attraction.attractionName}}</h3>
+              <p class="location">📍{{attraction.country ? attraction.location + ', ' + attraction.country : attraction.location}}</p>
               <p class="category">{{attraction.category}}</p>
             </div>
           </div>
@@ -42,9 +42,9 @@
             <img [src]="guide.imageUrl" [alt]="guide.name" class="guide-thumb">
             <div class="guide-details">
               <h3>{{guide.name}}</h3>
-              <p class="experience">{{guide.experienceYears}} years experience</p>
-              <p class="languages">🗣️ {{guide.languages.join(', ')}}</p>
-              <p class="specialties">{{guide.specialties.join(', ')}}</p>
+              <p class="experience" *ngIf="guide.experienceYears > 0">{{guide.experienceYears}} years experience</p>
+              <p class="languages">🗣️ {{guide.languages}}</p>
+              <!-- <p class="specialties">{{guide?.specialties?.join(', ')}}</p> -->
             </div>
           </div>
 

@@ -58,7 +58,7 @@ export class SignupComponent {
     }
 
     const user: User = { 
-      username: this.name || this.email.split('@')[0], 
+      name: this.name || this.email.split('@')[0], 
       email: this.email, 
       password: this.password,
       role: this.role,

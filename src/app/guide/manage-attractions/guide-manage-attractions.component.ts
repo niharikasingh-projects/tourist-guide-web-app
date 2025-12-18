@@ -62,7 +62,7 @@ export class GuideManageAttractionsComponent implements OnInit {
     }
 
     this.userEmail = user.email;
-    this.userName = user.username;
+    this.userName = user.name;
     this.loadGuideProfiles();
   }
 

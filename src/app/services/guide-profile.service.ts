@@ -52,7 +52,7 @@ export interface UpdateGuideProfileDto {
   providedIn: 'root'
 })
 export class GuideProfileService {
-  private apiUrl = `${environment.apiUrl}/api/guide-profiles`;
+  private apiUrl = `${environment.apiUrl}/api/profile`;
 
   constructor(private http: HttpClient) {}
 
