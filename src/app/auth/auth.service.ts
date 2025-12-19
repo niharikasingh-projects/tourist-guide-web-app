@@ -36,6 +36,10 @@ export class AuthService {
     } catch {}
   }
 
+  getAuthToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
   // Simulate async network calls (small delay) so components can show loading states
   async signIn(email: string, password: string): Promise<{ success: boolean; message?: string; user?: User }> {
     try {
@@ -55,7 +59,13 @@ export class AuthService {
 
       if (response && response.success) {
         this.currentUser = response.user!;
-        try { localStorage.setItem('auth_user', JSON.stringify(response.user)); } catch {}
+        try { 
+          localStorage.setItem('auth_user', JSON.stringify(response.user));
+          // Store token if provided by backend
+          if ((response as any).token) {
+            localStorage.setItem('authToken', (response as any).token);
+          }
+        } catch {}
         return response;
       }
     } catch (error) {
@@ -68,7 +78,12 @@ export class AuthService {
     if (!user) return { success: false, message: 'User not found' };
     if (user.password !== password) return { success: false, message: 'Invalid password' };
     this.currentUser = user;
-    try { localStorage.setItem('auth_user', JSON.stringify(user)); } catch {}
+    try { 
+      localStorage.setItem('auth_user', JSON.stringify(user));
+      // Generate a mock token for local development
+      const mockToken = 'mock-token-' + btoa(user.email + ':' + Date.now());
+      localStorage.setItem('authToken', mockToken);
+    } catch {}
     return { success: true, user };
   }
 
@@ -117,7 +132,10 @@ export class AuthService {
 
   signOut(): void {
     this.currentUser = null;
-    try { localStorage.removeItem('auth_user'); } catch {}
+    try { 
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('authToken');
+    } catch {}
     try { this.router.navigate(['/signin']); } catch {}
   }
 
