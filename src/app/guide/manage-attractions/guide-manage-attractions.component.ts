@@ -25,6 +25,7 @@ export class GuideManageAttractionsComponent implements OnInit {
   loading = false;
   userEmail = '';
   userName = '';
+  phoneNumber = '';
 
   locationSuggestions: LocationSuggestion[] = [];
   showLocationSuggestions = false;
@@ -63,6 +64,7 @@ export class GuideManageAttractionsComponent implements OnInit {
 
     this.userEmail = user.email;
     this.userName = user.name;
+    this.phoneNumber = user.phoneNumber || '';
     this.loadGuideProfiles();
   }
 
@@ -149,6 +151,8 @@ export class GuideManageAttractionsComponent implements OnInit {
 
     const profileDto: CreateGuideProfileDto = {
       guideName: this.userName,
+      fullName: this.userName,
+      phoneNumber: this.phoneNumber,
       guideEmail: this.userEmail,
       attractionId: this.newProfile.attractionId,
       attractionName: this.newProfile.attractionName,
