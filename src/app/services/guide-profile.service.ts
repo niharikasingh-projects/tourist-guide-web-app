@@ -8,6 +8,8 @@ export interface GuideProfile {
   id: string;
   guideEmail: string;
   guideName: string;
+  fullName: string;
+  phoneNumber: string;
   attractionId: string;
   attractionName: string;
   location: string;
@@ -25,6 +27,8 @@ export interface GuideProfile {
 export interface CreateGuideProfileDto {
   guideName: string;
   guideEmail: string;
+  fullName: string;
+  phoneNumber: string;
   attractionId: string;
   attractionName: string;
   location: string;
