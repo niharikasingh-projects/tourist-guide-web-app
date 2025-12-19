@@ -14,7 +14,7 @@ export interface TouristAttraction {
   description: string;
   imageUrl: string;
   rating: number;
-  price?: number;
+  entryFee?: number;
   duration?: string;
   category: string;
 }
@@ -292,7 +292,7 @@ export class SearchService {
                   ? adminAttraction.pictures[0] 
                   : 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400',
                 rating: 4.5,
-                price: 500,
+                entryFee: 500,
                 duration: '2-3 hours',
                 category: adminAttraction.category
               };

@@ -37,7 +37,7 @@ export class GuideManageAttractionsComponent implements OnInit {
     attractionName: '',
     hourlyRate: 0,
     tourDuration: 0,
-    languages: [] as string[],
+    languages: '',
     languagesInput: '',
     bio: '',
     specialties: '',
@@ -142,10 +142,10 @@ export class GuideManageAttractionsComponent implements OnInit {
       return;
     }
 
-    const languages = this.newProfile.languagesInput
-      .split(',')
-      .map(l => l.trim())
-      .filter(l => l.length > 0);
+    // const languages = this.newProfile.languagesInput
+    //   .split(',')
+    //   .map(l => l.trim())
+    //   .filter(l => l.length > 0);
 
     const profileDto: CreateGuideProfileDto = {
       guideName: this.userName,
@@ -155,7 +155,7 @@ export class GuideManageAttractionsComponent implements OnInit {
       location: this.newProfile.location,
       hourlyRate: this.newProfile.hourlyRate,
       tourDuration: this.newProfile.tourDuration || 0,
-      languages: languages,
+      languages: this.newProfile.languagesInput,
       specialties: this.newProfile.specialties.split(',').map(s => s.trim()).filter(s => s),
       bio: this.newProfile.bio,
       availableDates: this.newProfile.fromDate && this.newProfile.toDate
@@ -190,8 +190,8 @@ export class GuideManageAttractionsComponent implements OnInit {
       attractionName: profile.attractionName,
       hourlyRate: profile.hourlyRate,
       tourDuration: profile.tourDuration || 0,
-      languages: [...profile.languages],
-      languagesInput: profile.languages.join(', '),
+      languages: profile.languages,
+      languagesInput: profile.languages,
       bio: profile.bio || '',
       specialties: (profile.specialties || []).join(', '),
       fromDate: '',
@@ -324,7 +324,7 @@ export class GuideManageAttractionsComponent implements OnInit {
       attractionName: '',
       hourlyRate: 0,
       tourDuration: 0,
-      languages: [],
+      languages: '',
       languagesInput: '',
       bio: '',
       specialties: '',

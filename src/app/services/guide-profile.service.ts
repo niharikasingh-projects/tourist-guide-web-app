@@ -13,7 +13,7 @@ export interface GuideProfile {
   location: string;
   hourlyRate: number;
   tourDuration: number;
-  languages: string[];
+  languages: string;
   availableDates: { from: string; to: string }[];
   profilePicture?: string;
   bio?: string;
@@ -30,7 +30,7 @@ export interface CreateGuideProfileDto {
   location: string;
   hourlyRate: number;
   tourDuration: number;
-  languages: string[];
+  languages: string;
   availableDates: { from: string; to: string }[];
   profilePicture?: string;
   bio?: string;
@@ -52,15 +52,23 @@ export interface UpdateGuideProfileDto {
   providedIn: 'root'
 })
 export class GuideProfileService {
-  private apiUrl = `${environment.apiUrl}/api/profile`;
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+  }
 
   /**
    * Get all guide profiles for a specific guide email
    */
   getGuideProfiles(guideEmail: string): Observable<GuideProfile[]> {
-    return this.http.get<GuideProfile[]>(`${this.apiUrl}/guide/${guideEmail}`)
+    return this.http.get<GuideProfile[]>(`${this.apiUrl}/guides/profile`, { headers: this.getAuthHeaders() })
       .pipe(
         catchError(error => {
           console.error('Error fetching guide profiles:', error);
@@ -73,7 +81,7 @@ export class GuideProfileService {
    * Get guides for a specific attraction
    */
   getGuidesByAttraction(attractionId: string): Observable<GuideProfile[]> {
-    return this.http.get<GuideProfile[]>(`${this.apiUrl}/attraction/${attractionId}`)
+    return this.http.get<GuideProfile[]>(`${this.apiUrl}/by-attraction/${attractionId}`)
       .pipe(
         catchError(error => {
           console.error('Error fetching guides by attraction:', error);
@@ -86,9 +94,7 @@ export class GuideProfileService {
    * Create a new guide profile
    */
   createGuideProfile(profile: CreateGuideProfileDto): Observable<GuideProfile> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    
-    return this.http.post<GuideProfile>(this.apiUrl, profile, { headers })
+    return this.http.post<GuideProfile>(`${this.apiUrl}/guides/profile`, profile, { headers: this.getAuthHeaders() })
       .pipe(
         catchError(error => {
           console.error('Error creating guide profile:', error);
@@ -101,9 +107,7 @@ export class GuideProfileService {
    * Update an existing guide profile
    */
   updateGuideProfile(id: string, profile: UpdateGuideProfileDto): Observable<GuideProfile> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    
-    return this.http.put<GuideProfile>(`${this.apiUrl}/${id}`, profile, { headers })
+    return this.http.put<GuideProfile>(`${this.apiUrl}/${id}`, profile, { headers: this.getAuthHeaders() })
       .pipe(
         catchError(error => {
           console.error('Error updating guide profile:', error);
@@ -116,7 +120,7 @@ export class GuideProfileService {
    * Delete a guide profile
    */
   deleteGuideProfile(id: string, guideEmail: string): Observable<boolean> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() })
       .pipe(
         map(() => true),
         catchError(error => {
