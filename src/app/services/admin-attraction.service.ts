@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { AuthService } from '../auth/auth.service';
 
 export interface AdminAttraction {
   id: string;
@@ -12,9 +13,11 @@ export interface AdminAttraction {
   country: string;
   description: string;
   category: string;
+  entryFee?: number;
   pictures?: string[];
   createdAt?: string;
   updatedAt?: string;
+  imageUrl?: string;
 }
 
 export interface CreateAdminAttractionDto {
@@ -24,7 +27,8 @@ export interface CreateAdminAttractionDto {
   country: string;
   description: string;
   category: string;
-  pictures?: string[];
+  entryFee?: number;
+  picture?: string;
 }
 
 export interface UpdateAdminAttractionDto {
@@ -34,7 +38,8 @@ export interface UpdateAdminAttractionDto {
   country?: string;
   description?: string;
   category?: string;
-  pictures?: string[];
+  entryFee?: number;
+  picture?: string;
 }
 
 @Injectable({
@@ -43,7 +48,7 @@ export interface UpdateAdminAttractionDto {
 export class AdminAttractionService {
   private apiUrl = `${environment.apiUrl}/api/attractions`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   /**
    * Get all attractions
@@ -106,14 +111,36 @@ export class AdminAttractionService {
   /**
    * Create a new attraction (admin only)
    */
-  createAttraction(attraction: CreateAdminAttractionDto): Observable<AdminAttraction> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    
-    return this.http.post<AdminAttraction>(this.apiUrl, attraction, { headers })
+  createAttraction(attraction: CreateAdminAttractionDto, attractionPictureFile?: File): Observable<AdminAttraction> {
+    const token = this.authService.getAuthToken();
+    const headers = new HttpHeaders({ 
+      'Accept': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    });
+
+    const formData = new FormData();
+
+    if (attraction.attractionName) formData.append('attractionName', attraction.attractionName);
+    if (attraction.location) formData.append('location', attraction.location);
+    if (attraction.city) formData.append('city', attraction.city);
+    if (attraction.country) formData.append('country', attraction.country);
+    if (attraction.description) formData.append('description', attraction.description);
+    if (attraction.category) formData.append('category', attraction.category);
+    if (attraction.entryFee) formData.append('entryFee', attraction.entryFee.toString());
+    // if (attraction.picture) formData.append('attractionPicture', attraction.picture);
+
+    // Append profile picture file if provided
+    if (attractionPictureFile) {
+      formData.append('attractionPicture', attractionPictureFile, attractionPictureFile.name);
+    } 
+
+
+    return this.http.post<AdminAttraction>(this.apiUrl, formData, { headers })
       .pipe(
         catchError(error => {
           console.error('Error creating attraction:', error);
-          return this.createLocalAttraction(attraction);
+          throw new Error('Failed to create attraction');
+          // return this.createLocalAttraction(attraction);
         })
       );
   }
@@ -121,14 +148,35 @@ export class AdminAttractionService {
   /**
    * Update an existing attraction (admin only)
    */
-  updateAttraction(id: string, attraction: UpdateAdminAttractionDto): Observable<AdminAttraction> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  updateAttraction(id: string, attraction: UpdateAdminAttractionDto, attractionPictureFile?: File): Observable<AdminAttraction> {
+    const token = this.authService.getAuthToken();
+    const headers = new HttpHeaders({ 
+      'Accept': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    });
     
-    return this.http.put<AdminAttraction>(`${this.apiUrl}/${id}`, attraction, { headers })
+    const formData = new FormData();
+
+    if (attraction.attractionName) formData.append('attractionName', attraction.attractionName);
+    if (attraction.location) formData.append('location', attraction.location);
+    if (attraction.city) formData.append('city', attraction.city);
+    if (attraction.country) formData.append('country', attraction.country);
+    if (attraction.description) formData.append('description', attraction.description);
+    if (attraction.category) formData.append('category', attraction.category);
+    if (attraction.entryFee) formData.append('entryFee', attraction.entryFee.toString());
+    // if (attraction.picture) formData.append('attractionPicture', attraction.picture);
+
+    // Append profile picture file if provided
+    if (attractionPictureFile) {
+      formData.append('attractionPicture', attractionPictureFile, attractionPictureFile.name);
+    } 
+
+    return this.http.put<AdminAttraction>(`${this.apiUrl}/${id}`, formData, { headers })
       .pipe(
         catchError(error => {
           console.error('Error updating attraction:', error);
-          return this.updateLocalAttraction(id, attraction);
+          throw new Error('Failed to update attraction');
+          // return this.updateLocalAttraction(id, attraction);
         })
       );
   }
@@ -137,12 +185,18 @@ export class AdminAttractionService {
    * Delete an attraction (admin only)
    */
   deleteAttraction(id: string): Observable<boolean> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    const token = this.authService.getAuthToken();
+    const headers = new HttpHeaders({
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    });
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers })
       .pipe(
         map(() => true),
         catchError(error => {
           console.error('Error deleting attraction:', error);
-          return this.deleteLocalAttraction(id);
+          throw new Error('Failed to delete attraction');
+          // return this.deleteLocalAttraction(id);
         })
       );
   }

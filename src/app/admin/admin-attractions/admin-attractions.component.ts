@@ -7,6 +7,7 @@ import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { AdminAttractionService, AdminAttraction, CreateAdminAttractionDto, UpdateAdminAttractionDto } from '../../services/admin-attraction.service';
 import { AutosuggestService, LocationSuggestion } from '../../services/autosuggest.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -20,7 +21,7 @@ export class AdminAttractionsComponent implements OnInit {
   showAddForm = false;
   editingId: string | null = null;
   loading = false;
-
+  attractionPictureFile: File | undefined = undefined;
   categories = [
     'Historical Sites',
     'Natural Wonders',
@@ -43,7 +44,8 @@ export class AdminAttractionsComponent implements OnInit {
     country: '',
     description: '',
     category: '',
-    pictures: [] as string[]
+    entryFee: undefined as number | undefined,
+    picture:  ''
   };
 
   locationSuggestions: LocationSuggestion[] = [];
@@ -72,6 +74,7 @@ export class AdminAttractionsComponent implements OnInit {
     this.adminAttractionService.getAllAttractions().subscribe({
       next: (attractions) => {
         this.attractions = attractions;
+        this.updateImageUrl(this.attractions);
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -81,6 +84,27 @@ export class AdminAttractionsComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  updateImageUrl(attractions: AdminAttraction[]): void {
+
+    for (const attraction of attractions) {
+
+      const imageUrl = attraction.imageUrl;
+      if (!imageUrl) continue;
+
+      // If it's a relative URL (starts with /), prepend the backend API URL
+      if (imageUrl.startsWith('/')) {
+        attraction.imageUrl = `${environment.apiUrl}/api${imageUrl}`;
+      }
+
+      // If it doesn't have a protocol (http:// or https://), treat as relative
+      if (!imageUrl.match(/^https?:\/\//)) {
+        continue;
+      }
+
+    }
+
   }
 
   onLocationInput(event: any) {
@@ -132,11 +156,12 @@ export class AdminAttractionsComponent implements OnInit {
       country: this.newAttraction.country,
       description: this.newAttraction.description,
       category: this.newAttraction.category,
-      pictures: [...this.newAttraction.pictures]
+      entryFee: this.newAttraction.entryFee,
+      picture: this.newAttraction.picture
     };
 
     this.loading = true;
-    this.adminAttractionService.createAttraction(attractionDto).subscribe({
+    this.adminAttractionService.createAttraction(attractionDto, this.attractionPictureFile).subscribe({
       next: (attraction) => {
         this.attractions.push(attraction);
         this.resetForm();
@@ -163,7 +188,8 @@ export class AdminAttractionsComponent implements OnInit {
       country: attraction.country,
       description: attraction.description,
       category: attraction.category,
-      pictures: [...(attraction.pictures || [])]
+      entryFee: attraction.entryFee,
+      picture: this.newAttraction.picture
     };
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -183,11 +209,12 @@ export class AdminAttractionsComponent implements OnInit {
         country: this.newAttraction.country,
         description: this.newAttraction.description,
         category: this.newAttraction.category,
-        pictures: [...this.newAttraction.pictures]
+        entryFee: this.newAttraction.entryFee,
+        picture: this.newAttraction.picture
       };
 
       this.loading = true;
-      this.adminAttractionService.updateAttraction(this.editingId!, updateDto).subscribe({
+      this.adminAttractionService.updateAttraction(this.editingId!, updateDto, this.attractionPictureFile).subscribe({
         next: (updatedAttraction) => {
           this.attractions[index] = updatedAttraction;
           this.resetForm();
@@ -232,15 +259,20 @@ export class AdminAttractionsComponent implements OnInit {
         const file = files[i];
         const reader = new FileReader();
         reader.onload = (e: any) => {
-          this.newAttraction.pictures.push(e.target.result);
+          this.newAttraction.picture = e.target.result;
+          this.attractionPictureFile = file;
+          this.cdr.detectChanges();
         };
         reader.readAsDataURL(file);
+        this.cdr.detectChanges();
       }
     }
   }
 
-  removePicture(index: number) {
-    this.newAttraction.pictures.splice(index, 1);
+  removePicture() {
+    this.newAttraction.picture = "";
+    this.attractionPictureFile = undefined;
+    this.cdr.detectChanges();
   }
 
   private resetForm() {
@@ -251,7 +283,8 @@ export class AdminAttractionsComponent implements OnInit {
       country: '',
       description: '',
       category: '',
-      pictures: []
+      entryFee: undefined,
+      picture: ''
     };
     this.editingId = null;
     this.locationSuggestions = [];
