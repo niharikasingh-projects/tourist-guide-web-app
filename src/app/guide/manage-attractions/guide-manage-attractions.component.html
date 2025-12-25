@@ -105,11 +105,19 @@
       <div class="form-row">
         <div class="form-group">
           <label>Available From</label>
-          <input type="date" [(ngModel)]="newProfile.fromDate" name="fromDate" />
+          <input 
+            type="date" 
+            [(ngModel)]="newProfile.fromDate" 
+            name="fromDate" 
+            [min]="getTodayDate()" />
         </div>
         <div class="form-group">
           <label>Available To</label>
-          <input type="date" [(ngModel)]="newProfile.toDate" name="toDate" />
+          <input 
+            type="date" 
+            [(ngModel)]="newProfile.toDate" 
+            name="toDate" 
+            [min]="newProfile.fromDate || getTodayDate()" />
         </div>
       </div>
 
@@ -172,11 +180,19 @@
             <div class="date-form-row">
               <div class="date-form-group">
                 <label>From Date</label>
-                <input type="date" [(ngModel)]="newDateRange.from" name="fromDate" />
+                <input 
+                  type="date" 
+                  [(ngModel)]="newDateRange.from" 
+                  name="fromDate" 
+                  [min]="getTodayDate()" />
               </div>
               <div class="date-form-group">
                 <label>To Date</label>
-                <input type="date" [(ngModel)]="newDateRange.to" name="toDate" />
+                <input 
+                  type="date" 
+                  [(ngModel)]="newDateRange.to" 
+                  name="toDate" 
+                  [min]="newDateRange.from || getTodayDate()" />
               </div>
               <button class="add-date-btn" (click)="submitDateRange(profile)">Add</button>
             </div>

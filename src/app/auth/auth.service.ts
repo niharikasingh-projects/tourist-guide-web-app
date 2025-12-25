@@ -21,12 +21,12 @@ export interface User {
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
-  
-  private users: User[] = [
-    { name: 'admin@gmail.com', email: 'admin@gmail.com', password: '123', role: 'admin' },
-    { name: 'guide@gmail.com', email: 'guide@gmail.com', password: '123', role: 'guide' },
-    { name: 'user@gmail.com', email: 'user@gmail.com', password: '123', role: 'user' }
-  ];
+  private users: User[] = [];
+  // private users: User[] = [
+  //   { name: 'admin@gmail.com', email: 'admin@gmail.com', password: '123', role: 'admin' },
+  //   { name: 'guide@gmail.com', email: 'guide@gmail.com', password: '123', role: 'guide' },
+  //   { name: 'user@gmail.com', email: 'user@gmail.com', password: '123', role: 'user' }
+  // ];
   private currentUser: User | null = null;
 
   constructor(private router: Router) {
@@ -73,18 +73,18 @@ export class AuthService {
     }
 
     // Fallback to local authentication
-    await this.delay(600);
-    const user = this.users.find(u => u.name === email || u.email === email);
-    if (!user) return { success: false, message: 'User not found' };
-    if (user.password !== password) return { success: false, message: 'Invalid password' };
-    this.currentUser = user;
-    try { 
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      // Generate a mock token for local development
-      const mockToken = 'mock-token-' + btoa(user.email + ':' + Date.now());
-      localStorage.setItem('authToken', mockToken);
-    } catch {}
-    return { success: true, user };
+    // await this.delay(600);
+    // const user = this.users.find(u => u.name === email || u.email === email);
+    // if (!user) return { success: false, message: 'User not found' };
+    // if (user.password !== password) return { success: false, message: 'Invalid password' };
+    // this.currentUser = user;
+    // try { 
+    //   localStorage.setItem('auth_user', JSON.stringify(user));
+    //   // Generate a mock token for local development
+    //   const mockToken = 'mock-token-' + btoa(user.email + ':' + Date.now());
+    //   localStorage.setItem('authToken', mockToken);
+    // } catch {}
+    return { success: true, user: this.currentUser! };
   }
 
   async signUp(newUser: User, profilePictureFile?: File): Promise<{ success: boolean; message?: string; user?: User }> {
@@ -136,10 +136,10 @@ export class AuthService {
     }
 
     // Fallback to local authentication
-    await this.delay(700);
-    const exists = this.users.find(u => u.name === newUser.name || u.email === newUser.email);
-    if (exists) return { success: false, message: 'User already exists' };
-    this.users.push(newUser);
+    // await this.delay(700);
+    // const exists = this.users.find(u => u.name === newUser.name || u.email === newUser.email);
+    // if (exists) return { success: false, message: 'User already exists' };
+    // this.users.push(newUser);
     return { success: true, user: newUser };
   }
 
