@@ -87,13 +87,38 @@ export class AuthService {
     return { success: true, user };
   }
 
-  async signUp(newUser: User): Promise<{ success: boolean; message?: string; user?: User }> {
+  async signUp(newUser: User, profilePictureFile?: File): Promise<{ success: boolean; message?: string; user?: User }> {
     try {
       // Try backend API first
+      const formData = new FormData();
+      formData.append('name', newUser.name);
+      formData.append('email', newUser.email);
+      formData.append('password', newUser.password);
+      
+      if (newUser.role) formData.append('role', newUser.role);
+      if (newUser.languages) formData.append('languages', newUser.languages);
+      if (newUser.location) formData.append('location', newUser.location);
+      if (newUser.phoneNumber) formData.append('phoneNumber', newUser.phoneNumber);
+      if (newUser.certifications) formData.append('certifications', newUser.certifications);
+      
+      // Append profile picture file if provided
+      if (profilePictureFile) {
+        formData.append('profilePicture', profilePictureFile, profilePictureFile.name);
+      } else if (newUser.profilePicture) {
+        // If profilePicture is a URL string, send it as is
+        formData.append('profilePicture', newUser.profilePicture);
+      }
+
       const response = await firstValueFrom(
         this.http.post<{ success: boolean; message?: string; user?: User }>(
           `${this.apiUrl}/api/auth/signup`,
-          newUser
+          formData,
+          {
+            headers: {
+              'Accept': 'application/json'
+              // Note: Don't set Content-Type for FormData - browser will set it with boundary
+            }
+          }
         ).pipe(
           timeout(5000), // 5 second timeout
           catchError((error: HttpErrorResponse) => {

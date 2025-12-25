@@ -31,14 +31,16 @@
             (click)="toggleProfileDropdown()"
             [attr.aria-expanded]="profileDropdownOpen"
             aria-label="User profile menu">
-            <span class="profile-avatar">{{ getUserInitials() }}</span>
+            <img *ngIf="hasProfilePicture()" [src]="getProfilePictureUrl()" alt="Profile" class="profile-avatar-img" />
+            <span *ngIf="!hasProfilePicture()" class="profile-avatar">{{ getUserInitials() }}</span>
             <span class="profile-name">{{ userProfile?.name || 'User' }}</span>
             <span class="dropdown-arrow" [class.open]="profileDropdownOpen">▼</span>
           </button>
           
           <div class="profile-dropdown" *ngIf="profileDropdownOpen">
             <div class="profile-info">
-              <div class="profile-avatar-large">{{ getUserInitials() }}</div>
+              <img *ngIf="hasProfilePicture()" [src]="getProfilePictureUrl()" alt="Profile" class="profile-avatar-large-img" />
+              <div *ngIf="!hasProfilePicture()" class="profile-avatar-large">{{ getUserInitials() }}</div>
               <div class="profile-details">
                 <div class="profile-name-large">{{ userProfile?.name || 'User' }}</div>
                 <div class="profile-email">{{ userProfile?.email || '' }}</div>

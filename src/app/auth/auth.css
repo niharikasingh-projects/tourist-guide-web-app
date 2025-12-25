@@ -418,3 +418,10 @@
 .auth-message { margin-top: 12px; font-weight: 600; outline: none }
 .auth-message.error { color: #b00020 }
 .auth-message.success { color: #064e3b }
+
+.error-text {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

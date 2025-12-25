@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { ProfileService, UserProfile } from '../../services/profile.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -100,6 +101,32 @@ export class HeaderComponent {
       return this.userProfile.name.substring(0, 2).toUpperCase();
     }
     return 'U';
+  }
+
+  getProfilePictureUrl(): string | null {
+    const user = this.auth.getCurrentUser();
+    if (!user?.profilePicture) {
+      return null;
+    }
+    
+    const profilePicture = user.profilePicture;
+    
+    // If it's a relative URL (starts with /), prepend the backend API URL
+    if (profilePicture.startsWith('/')) {
+      return `${environment.apiUrl}/api${profilePicture}`;
+    }
+    
+    // If it doesn't have a protocol (http:// or https://), treat as relative
+    if (!profilePicture.match(/^https?:\/\//)) {
+      return `${environment.apiUrl}/api${profilePicture}`;
+    }
+    
+    // Otherwise return as is (full URL or base64)
+    return profilePicture;
+  }
+
+  hasProfilePicture(): boolean {
+    return !!this.getProfilePictureUrl();
   }
 
   isGuide(): boolean {

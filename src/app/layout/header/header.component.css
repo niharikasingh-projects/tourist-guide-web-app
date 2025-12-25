@@ -222,6 +222,15 @@
   flex-shrink: 0;
 }
 
+.profile-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 140, 43, 0.2);
+}
+
 .profile-name {
   font-weight: 600;
   font-size: 0.9rem;
@@ -282,6 +291,14 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.2rem;
+}
+
+.profile-avatar-large-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 140, 43, 0.3);
 }
 
 .profile-details {

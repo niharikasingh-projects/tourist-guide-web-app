@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,6 +20,7 @@ export class SignupComponent {
   role = 'tourist';
   languages = '';
   profilePicture = '';
+  profilePictureFile: File | undefined = undefined;
   location = '';
   phoneNumber = '';
   certifications = '';
@@ -30,7 +31,8 @@ export class SignupComponent {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private searchStateService: SearchStateService
+    private searchStateService: SearchStateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onProfilePictureSelected(event: any) {
@@ -39,13 +41,23 @@ export class SignupComponent {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.profilePicture = e.target.result;
+        this.profilePictureFile = file;
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(file);
+      this.cdr.detectChanges();
     }
   }
 
   removeProfilePicture() {
     this.profilePicture = '';
+    this.profilePictureFile = undefined;
+    this.cdr.detectChanges();
+  }
+
+    isValidPhone(phone: string): boolean {
+    const phoneRegex = /^[0-9]{10,10}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
   }
 
   async onSubmit() {
@@ -70,22 +82,26 @@ export class SignupComponent {
     };
     this.loading = true;
     try {
-      const res = await this.auth.signUp(user);
+      const res = await this.auth.signUp(user, this.profilePictureFile);
       if (res.success) {
         this.messageType = 'success';
         this.message = 'Account created — you can sign in now';
         // Clear any existing search state
         this.searchStateService.clearSearchState();
-        setTimeout(() => { try { this.router.navigate(['/signin']); } catch (e) {} }, 500);
+        // setTimeout(() => { try { this.router.navigate(['/signin']); } catch (e) {} }, 2000);
+        this.cdr.detectChanges();
       } else {
         this.messageType = 'error';
         this.message = res.message || 'Sign up failed';
+        this.cdr.detectChanges();
       }
     } catch (err) {
       this.messageType = 'error';
       this.message = 'Unexpected error';
+      this.cdr.detectChanges();
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 }

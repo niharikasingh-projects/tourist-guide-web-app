@@ -145,7 +145,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   isValidPhone(phone: string): boolean {
-    const phoneRegex = /^[0-9]{10,15}$/;
+    const phoneRegex = /^[0-9]{10,10}$/;
     return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
   }
 
