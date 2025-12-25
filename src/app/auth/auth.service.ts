@@ -23,9 +23,9 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   
   private users: User[] = [
-    { name: 'admin', email: 'abc@gmail.com', password: '123', role: 'admin' },
-    { name: 'guide', email: 'guide@gmail.com', password: '123', role: 'guide' },
-    { name: 'user', email: 'user@gmail.com', password: '123', role: 'user' }
+    { name: 'admin@gmail.com', email: 'admin@gmail.com', password: '123', role: 'admin' },
+    { name: 'guide@gmail.com', email: 'guide@gmail.com', password: '123', role: 'guide' },
+    { name: 'user@gmail.com', email: 'user@gmail.com', password: '123', role: 'user' }
   ];
   private currentUser: User | null = null;
 

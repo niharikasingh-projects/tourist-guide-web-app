@@ -7,6 +7,7 @@ import { SearchStateService } from '../services/search-state.service';
 import { ResultCardComponent } from './result-card/result-card.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Component({
   standalone: true,
@@ -211,6 +212,7 @@ export class SearchComponent implements OnInit {
     this.searchService.searchAttractionsByLocation(this.location).subscribe({
       next: (results) => {
         this.searchResults = results;
+        this.updateImageUrl(this.searchResults);
         this.isSearching = false;
         // Save search state
         this.searchStateService.saveSearchState({
@@ -231,6 +233,27 @@ export class SearchComponent implements OnInit {
       }
     });
   }
+
+    updateImageUrl(results: TouristAttraction[]): void {
+  
+      for (const result of results) {
+  
+        const imageUrl = result.imageUrl;
+        if (!imageUrl) continue;
+  
+        // If it's a relative URL (starts with /), prepend the backend API URL
+        if (imageUrl.startsWith('/')) {
+          result.imageUrl = `${environment.apiUrl}/api${imageUrl}`;
+        }
+  
+        // If it doesn't have a protocol (http:// or https://), treat as relative
+        if (!imageUrl.match(/^https?:\/\//)) {
+          continue;
+        }
+  
+      }
+  
+    }
 
   onSelectAttraction(attractionId: string) {
     console.log('Selected attraction ID:', attractionId);
