@@ -112,6 +112,7 @@ export class GuideManageAttractionsComponent implements OnInit {
       next: (attractions) => {
         this.availableAttractions = attractions;
         this.filteredAttractions = attractions;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading attractions:', err);
@@ -142,6 +143,14 @@ export class GuideManageAttractionsComponent implements OnInit {
     if (!this.newProfile.location || !this.newProfile.attractionId || !this.newProfile.hourlyRate) {
       alert('Please fill in required fields (Location, Attraction, and Hourly Rate)');
       return;
+    }
+
+    // Validate date range if provided
+    if (this.newProfile.fromDate && this.newProfile.toDate) {
+      if (new Date(this.newProfile.fromDate) > new Date(this.newProfile.toDate)) {
+        alert('Available From date cannot be greater than Available To date');
+        return;
+      }
     }
 
     // const languages = this.newProfile.languagesInput
@@ -282,6 +291,12 @@ export class GuideManageAttractionsComponent implements OnInit {
       return;
     }
 
+    // Validate date range
+    if (new Date(this.newDateRange.from) > new Date(this.newDateRange.to)) {
+      alert('From date cannot be greater than To date');
+      return;
+    }
+
     profile.availableDates.push({
       from: this.newDateRange.from,
       to: this.newDateRange.to
@@ -339,5 +354,13 @@ export class GuideManageAttractionsComponent implements OnInit {
     this.locationSuggestions = [];
     this.showLocationSuggestions = false;
     this.filteredAttractions = [];
+  }
+
+  getTodayDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

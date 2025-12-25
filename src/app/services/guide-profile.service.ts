@@ -76,7 +76,8 @@ export class GuideProfileService {
       .pipe(
         catchError(error => {
           console.error('Error fetching guide profiles:', error);
-          return this.getLocalGuideProfiles(guideEmail);
+          throw new Error('Guide Profiles Fetch Failed');
+          // return this.getLocalGuideProfiles(guideEmail);
         })
       );
   }
@@ -102,7 +103,8 @@ export class GuideProfileService {
       .pipe(
         catchError(error => {
           console.error('Error creating guide profile:', error);
-          return this.createLocalGuideProfile(profile);
+          throw new Error('Guide Profile Creation Failed');
+          // return this.createLocalGuideProfile(profile);
         })
       );
   }
@@ -129,7 +131,8 @@ export class GuideProfileService {
         map(() => true),
         catchError(error => {
           console.error('Error deleting guide profile:', error);
-          return this.deleteLocalGuideProfile(id, guideEmail);
+          // return this.deleteLocalGuideProfile(id, guideEmail);
+          throw new Error('Guide Profile Deletion Failed');
         })
       );
   }
