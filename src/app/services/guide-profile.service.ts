@@ -16,7 +16,8 @@ export interface GuideProfile {
   hourlyRate: number;
   tourDuration: number;
   languages: string;
-  availableDates: { from: string; to: string }[];
+  experienceYears?: number;
+  availableDates: AvailableDateRange[];
   profilePicture?: string;
   bio?: string;
   specialties?: string[];
@@ -35,10 +36,16 @@ export interface CreateGuideProfileDto {
   hourlyRate: number;
   tourDuration: number;
   languages: string;
-  availableDates: { from: string; to: string }[];
+  experienceYears?: number;
+  availableDates: AvailableDateRange[];
   profilePicture?: string;
   bio?: string;
   specialties?: string[];
+}
+
+export interface AvailableDateRange {
+  from: string;
+  to: string;
 }
 
 export interface UpdateGuideProfileDto {
@@ -46,7 +53,8 @@ export interface UpdateGuideProfileDto {
   hourlyRate?: number;
   tourDuration?: number;
   languages?: string[];
-  availableDates?: { from: string; to: string }[];
+  experienceYears?: number;
+  availableDates?: AvailableDateRange[];
   profilePicture?: string;
   bio?: string;
   specialties?: string[];
