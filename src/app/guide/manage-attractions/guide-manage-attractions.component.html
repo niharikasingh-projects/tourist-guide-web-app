@@ -76,6 +76,16 @@
       </div>
 
       <div class="form-group">
+        <label>Years of Experience</label>
+        <input 
+          type="number" 
+          [(ngModel)]="newProfile.experienceYears" 
+          name="experienceYears" 
+          min="0" 
+          placeholder="e.g., 5" />
+      </div>
+
+      <div class="form-group">
         <label>Languages (comma-separated)</label>
         <input 
           type="text" 
@@ -150,6 +160,11 @@
         <div class="info-row" *ngIf="profile.tourDuration">
           <span class="label">Tour Duration:</span>
           <span class="value">{{ profile.tourDuration }} hours</span>
+        </div>
+
+        <div class="info-row" *ngIf="profile.experienceYears">
+          <span class="label">Experience:</span>
+          <span class="value">{{ profile.experienceYears }} years</span>
         </div>
 
         <div class="info-row" *ngIf="profile.languages.length">
