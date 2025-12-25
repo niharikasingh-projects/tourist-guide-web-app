@@ -48,6 +48,11 @@ export class SignupComponent {
     this.profilePicture = '';
   }
 
+    isValidPhone(phone: string): boolean {
+    const phoneRegex = /^[0-9]{10,10}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+  }
+
   async onSubmit() {
     this.message = '';
     this.messageType = '';
