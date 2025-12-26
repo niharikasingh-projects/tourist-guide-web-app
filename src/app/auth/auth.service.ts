@@ -84,7 +84,7 @@ export class AuthService {
     //   const mockToken = 'mock-token-' + btoa(user.email + ':' + Date.now());
     //   localStorage.setItem('authToken', mockToken);
     // } catch {}
-    return { success: true, user: this.currentUser! };
+    return { success: false, user: this.currentUser! };
   }
 
   async signUp(newUser: User, profilePictureFile?: File): Promise<{ success: boolean; message?: string; user?: User }> {

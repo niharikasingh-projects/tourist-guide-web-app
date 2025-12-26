@@ -6,6 +6,7 @@ import { GuideService, Guide } from '../../services/guide.service';
 import { GuideCardComponent } from '../guide-card/guide-card.component';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -51,6 +52,7 @@ export class AttractionDetailsComponent implements OnInit {
       next: (attraction) => {
         if (attraction) {
           this.attraction = attraction;
+          this.updateImageUrl([attraction]);
           this.loadGuides(attractionId);
           this.cdr.detectChanges();
         } else {
@@ -68,6 +70,27 @@ export class AttractionDetailsComponent implements OnInit {
     });
   }
 
+  updateImageUrl(results: TouristAttraction[]): void {
+  
+      for (const result of results) {
+  
+        const imageUrl = result.imageUrl;
+        if (!imageUrl) continue;
+  
+        // If it's a relative URL (starts with /), prepend the backend API URL
+        if (imageUrl.startsWith('/')) {
+          result.imageUrl = `${environment.apiUrl}/api${imageUrl}`;
+        }
+  
+        // If it doesn't have a protocol (http:// or https://), treat as relative
+        if (!imageUrl.match(/^https?:\/\//)) {
+          continue;
+        }
+  
+      }
+  
+    }
+
   loadGuides(attractionId: string) {
     // Pass the selected date as both from and to since we're searching for a specific date
     const fromDate = this.selectedDate;
@@ -76,6 +99,7 @@ export class AttractionDetailsComponent implements OnInit {
     this.guideService.getGuidesByAttractionId(attractionId, fromDate, toDate, this.timeFrom, this.timeTo).subscribe({
       next: (guides) => {
         this.guides = guides;
+        this.updateGuideImageUrl(this.guides);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -89,6 +113,27 @@ export class AttractionDetailsComponent implements OnInit {
       }
     });
   }
+
+  updateGuideImageUrl(guides: Guide[]): void {
+  
+      for (const guide of guides) {
+  
+        const imageUrl = guide.profileImageUrl;
+        if (!imageUrl) continue;
+  
+        // If it's a relative URL (starts with /), prepend the backend API URL
+        if (imageUrl.startsWith('/')) {
+          guide.profileImageUrl = `${environment.apiUrl}/api${imageUrl}`;
+        }
+  
+        // If it doesn't have a protocol (http:// or https://), treat as relative
+        if (!imageUrl.match(/^https?:\/\//)) {
+          continue;
+        }
+  
+      }
+  
+    }
 
   onBookGuide(guideId: string) {
     if (this.attraction) {

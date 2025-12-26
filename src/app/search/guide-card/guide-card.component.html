@@ -1,6 +1,6 @@
 <div class="guide-card">
   <div class="guide-header">
-    <img [src]="guide.imageUrl" [alt]="guide.name" class="guide-image">
+    <img [src]="guide.profileImageUrl" [alt]="guide.name" class="guide-image">
     <div class="guide-info">
       <h3 class="guide-name">{{guide.name}}</h3>
       <div class="rating">
@@ -21,11 +21,15 @@
       <div class="detail-label">
         <span class="icon">🗣️</span>
         <span>Languages</span>
-      </div>
-      <div class="languages">
+        <div class="languages">
         <!-- <span class="language-badge" *ngFor="let lang of guide.languages">{{lang}}</span> -->
         <span class="language-badge" >{{guide.languages}}</span>
       </div>
+      </div>
+      <!-- <div class="languages"> -->
+        <!-- <span class="language-badge" *ngFor="let lang of guide.languages">{{lang}}</span> -->
+        <!-- <span class="language-badge" >{{guide.languages}}</span> -->
+      <!-- </div> -->
     </div>
 
     <!-- <div class="detail-section">
