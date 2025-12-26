@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
@@ -24,7 +24,8 @@ export class GuideBookingsComponent implements OnInit {
   constructor(
     private auth: AuthService,
     private router: Router,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -44,7 +45,7 @@ export class GuideBookingsComponent implements OnInit {
     this.isLoading = true;
     
     // Use BookingService to fetch bookings
-    this.bookingService.getBookingsByGuideEmail(user.email).subscribe({
+    this.bookingService.getBookingsByGuideId(user?.id ?? '').subscribe({
       next: (bookings) => {
         this.allBookings = bookings;
         
@@ -55,6 +56,7 @@ export class GuideBookingsComponent implements OnInit {
         this.futureBookings = categorized.future;
         
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading bookings:', error);
@@ -118,7 +120,7 @@ export class GuideBookingsComponent implements OnInit {
   getPaymentStatusClass(paymentStatus?: string): string {
     if (!paymentStatus) return '';
     const classes: { [key: string]: string } = {
-      'paid': 'payment-paid',
+      'completed': 'payment-completed',
       'pending': 'payment-pending',
       'refunded': 'payment-refunded'
     };
@@ -127,8 +129,8 @@ export class GuideBookingsComponent implements OnInit {
 
   getPaymentMethodLabel(method: string): string {
     const labels: { [key: string]: string } = {
-      'upi': 'via UPI',
-      'credit-card': 'via Card',
+      'upi': 'UPI',
+      'credit-card': 'Credit/Debit Card',
       'pay-later': 'Pay at Check-in'
     };
     return labels[method] || method;

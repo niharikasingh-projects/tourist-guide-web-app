@@ -6,6 +6,7 @@ import { of, firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface User {
+  id?: string;
   name: string;
   email: string;
   password: string;

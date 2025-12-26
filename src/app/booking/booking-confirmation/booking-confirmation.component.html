@@ -13,6 +13,16 @@
     </div>
 
     <div *ngIf="!isLoading && !error && booking" class="confirmation-content">
+      <!-- Booking Status Badge -->
+      <div class="status-badge" [ngClass]="{
+        'status-confirmed': booking.status === 'confirmed',
+        'status-cancelled': booking.status === 'cancelled',
+        'status-completed': booking.status === 'completed',
+        'status-pending': booking.status === 'pending'
+      }">
+        <span class="status-text">{{ booking.status | uppercase }}</span>
+      </div>
+
       <!-- Success Header -->
       <div class="success-header" *ngIf="booking.status === 'confirmed'">
         <div class="success-icon">✓</div>
@@ -25,6 +35,13 @@
         <div class="cancelled-icon">✕</div>
         <h1 class="cancelled-title">Booking Cancelled</h1>
         <p class="cancelled-message">This booking has been cancelled</p>
+      </div>
+
+      <!-- Pending Header -->
+      <div class="pending-header" *ngIf="booking.status === 'pending'">
+        <div class="pending-icon">⏳</div>
+        <h1 class="pending-title">Booking Pending</h1>
+        <p class="pending-message">Your booking is being processed</p>
       </div>
 
       <!-- Booking Details Card -->
@@ -167,11 +184,11 @@
           </div>
           
           <div class="detail-row" *ngIf="booking.paymentStatus">
-            <span class="icon">{{booking.paymentStatus === 'paid' ? '✅' : (booking.paymentStatus === 'refunded' ? '💰' : '⏳')}}</span>
+            <span class="icon">{{booking.paymentStatus === 'completed' ? '✅' : (booking.paymentStatus === 'refunded' ? '💰' : '⏳')}}</span>
             <div class="detail-content">
               <span class="detail-label">Payment Status</span>
-              <span class="detail-value" [class.paid]="booking.paymentStatus === 'paid'" [class.pending]="booking.paymentStatus === 'pending'" [class.refunded]="booking.paymentStatus === 'refunded'">
-                {{booking.paymentStatus === 'paid' ? 'Paid' : (booking.paymentStatus === 'refunded' ? 'Refunded' : 'Pending (Pay at check-in)')}}
+              <span class="detail-value" [class.completed]="booking.paymentStatus === 'completed'" [class.pending]="booking.paymentStatus === 'pending'" [class.refunded]="booking.paymentStatus === 'refunded'">
+                {{booking.paymentStatus === 'completed' ? 'Completed' : (booking.paymentStatus === 'refunded' ? 'Refunded' : 'Pending (Pay at check-in)')}}
               </span>
             </div>
           </div>

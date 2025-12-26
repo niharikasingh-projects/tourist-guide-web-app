@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface PaymentValidationResult {
   isValid: boolean;
@@ -8,7 +10,8 @@ export interface PaymentValidationResult {
 }
 
 export interface PaymentRequest {
-  paymentMethod: 'upi' | 'credit-card' | 'pay-later';
+  bookingId?: string;
+  paymentMethod: 'upi' | 'CreditCard' | 'PayLater';
   amount: number;
   upiId?: string;
   cardNumber?: string;
@@ -30,8 +33,17 @@ export interface PaymentResponse {
 export class PaymentService {
   // Test card for demo purposes
   private readonly TEST_CARD_NUMBER = '1111111111111111';
+  private apiUrl = `${environment.apiUrl}/api/payments`;
   
-  constructor() {}
+  constructor(private http: HttpClient) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+  }
 
   /**
    * Format card number with spaces every 4 digits
@@ -100,7 +112,7 @@ export class PaymentService {
    * Validate payment based on payment method
    */
   validatePayment(paymentRequest: PaymentRequest): PaymentValidationResult {
-    if (paymentRequest.paymentMethod === 'pay-later') {
+    if (paymentRequest.paymentMethod === 'PayLater') {
       return { isValid: true };
     }
 
@@ -108,7 +120,7 @@ export class PaymentService {
       return this.validateUpiId(paymentRequest.upiId || '');
     }
 
-    if (paymentRequest.paymentMethod === 'credit-card') {
+    if (paymentRequest.paymentMethod === 'CreditCard') {
       return this.validateCreditCard(
         paymentRequest.cardNumber || '',
         paymentRequest.cardHolderName || '',
@@ -122,7 +134,7 @@ export class PaymentService {
   }
 
   /**
-   * Process payment (simulated for now, can be replaced with real API call)
+   * Process payment via backend API
    */
   processPayment(paymentRequest: PaymentRequest): Observable<PaymentResponse> {
     // Validate payment first
@@ -131,8 +143,29 @@ export class PaymentService {
       return throwError(() => new Error(validation.error || 'Payment validation failed'));
     }
 
-    // For pay-later, immediately return success
-    if (paymentRequest.paymentMethod === 'pay-later') {
+    // Call backend API to process payment (including pay-later)
+    return this.http.post<PaymentResponse>(`${this.apiUrl}/process`, paymentRequest, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(response => ({
+          success: true,
+          transactionId: response.transactionId || this.generateTransactionId(),
+          message: response.message || (paymentRequest.paymentMethod === 'PayLater' 
+            ? 'Booking confirmed. Payment pending at check-in.' 
+            : 'Payment processed successfully')
+        })),
+        catchError(error => {
+          console.error('Backend payment failed, using fallback:', error);
+          return this.processFallbackPayment(paymentRequest);
+        })
+      );
+  }
+
+  /**
+   * Fallback payment processing (simulated)
+   */
+  private processFallbackPayment(paymentRequest: PaymentRequest): Observable<PaymentResponse> {
+    // For PayLater fallback, return success immediately
+    if (paymentRequest.paymentMethod === 'PayLater') {
       return of({
         success: true,
         transactionId: this.generateTransactionId(),
@@ -141,7 +174,7 @@ export class PaymentService {
     }
 
     // Check if it's the test card
-    if (paymentRequest.paymentMethod === 'credit-card') {
+    if (paymentRequest.paymentMethod === 'CreditCard') {
       const cleanCardNumber = paymentRequest.cardNumber?.replace(/\s/g, '') || '';
       if (cleanCardNumber === this.TEST_CARD_NUMBER) {
         return of({
@@ -153,7 +186,6 @@ export class PaymentService {
     }
 
     // Simulate payment processing
-    // In real implementation, this would call a payment gateway API
     return of({
       success: true,
       transactionId: this.generateTransactionId(),

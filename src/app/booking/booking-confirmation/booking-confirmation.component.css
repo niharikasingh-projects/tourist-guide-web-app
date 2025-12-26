@@ -45,9 +45,42 @@
   gap: 2rem;
 }
 
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.status-confirmed {
+  background-color: #10b981;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #ef4444;
+  color: white;
+}
+
+.status-completed {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.status-pending {
+  background-color: #f59e0b;
+  color: white;
+}
+
 /* Success Header */
 .success-header,
-.cancelled-header {
+.cancelled-header,
+.pending-header {
   background: white;
   border-radius: 12px;
   padding: 2.5rem;
@@ -83,6 +116,31 @@
   animation: scaleIn 0.5s ease;
 }
 
+.pending-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  font-size: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.05);
+    opacity: 0.8; 
+  }
+}
+
 @keyframes scaleIn {
   from {
     transform: scale(0);
@@ -108,8 +166,16 @@
   font-weight: 700;
 }
 
+.pending-title {
+  font-size: 2rem;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
 .success-message,
-.cancelled-message {
+.cancelled-message,
+.pending-message {
   font-size: 1.1rem;
   color: #6b7280;
 }
@@ -199,7 +265,7 @@
   font-size: 1.3rem;
 }
 
-.detail-value.paid {
+.detail-value.completed {
   color: #10b981;
   font-weight: 700;
 }

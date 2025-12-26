@@ -37,12 +37,12 @@ export class MyBookingsComponent implements OnInit {
       return;
     }
 
-    this.loadBookings(currentUser.email);
+    this.loadBookings(currentUser.id!);
   }
 
-  loadBookings(email: string) {
+  loadBookings(id: string) {
     this.isLoading = true;
-    this.bookingService.getBookingsByCustomerEmail(email).subscribe({
+    this.bookingService.getBookingsByCustomerId(id).subscribe({
       next: (bookings) => {
         this.bookings = bookings;
         this.isLoading = false;
@@ -129,5 +129,25 @@ export class MyBookingsComponent implements OnInit {
 
   getStatusIcon(status: string): string {
     return status === 'confirmed' ? '✓' : '✕';
+  }
+
+  getPaymentMethodLabel(method?: string): string {
+    if (!method) return 'N/A';
+    const labels: { [key: string]: string } = {
+      'upi': 'UPI',
+      'credit-card': 'Credit/Debit Card',
+      'pay-later': 'Pay at Check-in'
+    };
+    return labels[method] || method;
+  }
+
+  getPaymentStatusLabel(status?: string): string {
+    if (!status) return 'N/A';
+    const labels: { [key: string]: string } = {
+      'completed': 'Completed',
+      'pending': 'Pending',
+      'refunded': 'Refunded'
+    };
+    return labels[status] || status;
   }
 }

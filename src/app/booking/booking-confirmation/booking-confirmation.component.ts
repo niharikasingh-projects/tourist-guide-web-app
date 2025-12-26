@@ -99,8 +99,8 @@ export class BookingConfirmationComponent implements OnInit {
       year: 'numeric', 
       month: 'long', 
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      // hour: '2-digit',
+      // minute: '2-digit'
     });
   }
 
@@ -108,9 +108,9 @@ export class BookingConfirmationComponent implements OnInit {
     switch(method) {
       case 'upi':
         return 'UPI';
-      case 'credit-card':
+      case 'CreditCard':
         return 'Credit/Debit Card';
-      case 'pay-later':
+      case 'PayLater':
         return 'Pay at Check-in';
       default:
         return method;
