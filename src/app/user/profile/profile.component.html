@@ -22,6 +22,33 @@
 
       <div class="profile-card">
         <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+          <!-- Profile Picture Section -->
+          <div class="form-row">
+            <div class="form-group full-width profile-picture-section">
+              <label>Profile Picture</label>
+              <div class="picture-upload-container">
+                <div class="picture-preview">
+                  <img *ngIf="previewUrl" [src]="previewUrl" alt="Profile Picture">
+                  <div *ngIf="!previewUrl" class="placeholder-icon">👤</div>
+                </div>
+                <div class="upload-actions">
+                  <input 
+                    type="file" 
+                    id="profilePicture" 
+                    name="profilePicture"
+                    accept="image/*"
+                    (change)="onFileSelected($event)"
+                    #fileInput
+                    style="display: none;">
+                  <button type="button" class="upload-button" (click)="fileInput.click()">
+                    Choose Photo
+                  </button>
+                  <p class="upload-hint">Max size: 5MB (JPG, PNG, GIF)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="form-row">
             <div class="form-group full-width">
               <label for="name">Full Name <span class="required">*</span></label>
@@ -89,16 +116,39 @@
 
           <div class="form-row">
             <div class="form-group full-width">
-              <label for="country">Country</label>
-              <select 
-                id="country" 
-                name="country"
-                [(ngModel)]="profile.country">
-                <option value="">Select your country</option>
-                <option *ngFor="let country of countries" [value]="country">
-                  {{ country }}
-                </option>
-              </select>
+              <label for="location">Location/City</label>
+              <input 
+                type="text" 
+                id="location" 
+                name="location"
+                [(ngModel)]="profile.location"
+                placeholder="e.g., New York, NY">
+            </div>
+          </div>
+
+          <div class="form-row" *ngIf="isGuide()">
+            <div class="form-group full-width">
+              <label for="languages">Languages (comma-separated)</label>
+              <input 
+                type="text" 
+                id="languages" 
+                name="languages"
+                [(ngModel)]="profile.languages"
+                placeholder="e.g., English, Spanish, French">
+              <span class="field-note">Separate multiple languages with commas</span>
+            </div>
+          </div>
+
+          <div class="form-row" *ngIf="isGuide()">
+            <div class="form-group full-width">
+              <label for="certifications">Certifications (comma-separated)</label>
+              <textarea 
+                id="certifications" 
+                name="certifications"
+                [(ngModel)]="profile.certifications"
+                rows="3"
+                placeholder="e.g., Certified Tour Guide, First Aid Certified"></textarea>
+              <span class="field-note">List your relevant certifications</span>
             </div>
           </div>
 

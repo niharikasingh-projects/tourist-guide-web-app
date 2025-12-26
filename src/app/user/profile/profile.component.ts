@@ -6,6 +6,7 @@ import { ProfileService, UserProfile } from '../../services/profile.service';
 import { AuthService } from '../../auth/auth.service';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -20,7 +21,11 @@ export class ProfileComponent implements OnInit {
     email: '',
     dateOfBirth: '',
     phoneNumber: '',
-    country: ''
+    country: '',
+    location: '',
+    languages: '',
+    certifications: '',
+    profileImageUrl: ''
   };
 
   isLoading = true;
@@ -28,6 +33,9 @@ export class ProfileComponent implements OnInit {
   error = '';
   successMessage = '';
   formSubmitted = false;
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
+  userPictureFile: File | undefined = undefined;
 
   countries = [
     'United States', 'United Kingdom', 'Canada', 'Australia', 'India',
@@ -61,6 +69,14 @@ export class ProfileComponent implements OnInit {
       next: (profile) => {
         if (profile) {
           this.profile = { ...profile };
+          // Format dateOfBirth for the date input (yyyy-MM-dd format)
+          if (this.profile.dateOfBirth) {
+            this.profile.dateOfBirth = this.formatDateForInput(this.profile.dateOfBirth);
+          }
+          this.profile.profileImageUrl = this.getProfilePictureUrl(profile) || '';
+          if (this.profile.profileImageUrl) {
+            this.previewUrl = this.profile.profileImageUrl;
+          }
         }
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -73,6 +89,65 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
+    // Extract just the date part (yyyy-MM-dd) from ISO string or other formats
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // If invalid, return as-is
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+    getProfilePictureUrl(profile: UserProfile): string | null {
+      if (!profile?.profileImageUrl) {
+        return null;
+      }
+      
+      const profilePicture = profile.profileImageUrl;
+      
+      // If it's a relative URL (starts with /), prepend the backend API URL
+      if (profilePicture.startsWith('/')) {
+        return `${environment.apiUrl}/api${profilePicture}`;
+      }
+      
+      // If it doesn't have a protocol (http:// or https://), treat as relative
+      if (!profilePicture.match(/^https?:\/\//)) {
+        return `${environment.apiUrl}/api${profilePicture}`;
+      }
+      
+      // Otherwise return as is (full URL or base64)
+      return profilePicture;
+    }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        this.error = 'File size should not exceed 5MB';
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        this.error = 'Please select an image file';
+        return;
+      }
+
+      this.selectedFile = file;
+      
+      // Preview the image
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewUrl = e.target.result;
+        this.profile.profileImageUrl = e.target.result; // Store base64 for now
+        this.userPictureFile = file;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onSubmit() {
     this.formSubmitted = true;
     this.error = '';
@@ -83,7 +158,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.isSaving = true;
-    this.profileService.updateUserProfile(this.profile).subscribe({
+    this.profileService.updateUserProfile(this.profile, this.userPictureFile).subscribe({
       next: (success) => {
         if (success) {
           this.successMessage = 'Profile updated successfully!';
@@ -123,6 +198,11 @@ export class ProfileComponent implements OnInit {
     const cleanedPhone = phone.replace(/[\s\-\(\)\+]/g, '');
     const phoneRegex = /^[0-9]{10,15}$/;
     return phoneRegex.test(cleanedPhone);
+  }
+
+  isGuide(): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    return currentUser?.role === 'guide';
   }
 
   goBack() {
