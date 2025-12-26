@@ -121,7 +121,7 @@ export class GuideProfileService {
    * Update an existing guide profile
    */
   updateGuideProfile(id: string, profile: UpdateGuideProfileDto): Observable<GuideProfile> {
-    return this.http.put<GuideProfile>(`${this.apiUrl}/${id}`, profile, { headers: this.getAuthHeaders() })
+    return this.http.put<GuideProfile>(`${this.apiUrl}/guides/profile`, profile, { headers: this.getAuthHeaders() })
       .pipe(
         catchError(error => {
           console.error('Error updating guide profile:', error);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, throwIfEmpty } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface GuideAttraction {
@@ -79,8 +79,9 @@ export class AttractionService {
     ).pipe(
       catchError(error => {
         console.error('Error creating attraction:', error);
+        throw new Error('Attraction Creation Failed');
         // Fallback to localStorage if API fails
-        return this.createLocalAttraction(guideEmail, attraction);
+        // return this.createLocalAttraction(guideEmail, attraction);
       })
     );
   }
@@ -99,7 +100,7 @@ export class AttractionService {
       catchError(error => {
         console.error('Error updating attraction:', error);
         // Fallback to localStorage if API fails
-        return this.updateLocalAttraction(attractionId, attraction);
+        throw new Error('Attraction Update Failed');
       })
     );
   }
@@ -114,7 +115,8 @@ export class AttractionService {
         catchError(error => {
           console.error('Error deleting attraction:', error);
           // Fallback to localStorage if API fails
-          return this.deleteLocalAttraction(attractionId, guideEmail);
+          throw new Error('Attraction Deletion Failed');
+          // return this.deleteLocalAttraction(attractionId, guideEmail);
         })
       );
   }
