@@ -108,9 +108,9 @@ export class BookingConfirmationComponent implements OnInit {
     switch(method) {
       case 'upi':
         return 'UPI';
-      case 'credit-card':
+      case 'CreditCard':
         return 'Credit/Debit Card';
-      case 'pay-later':
+      case 'PayLater':
         return 'Pay at Check-in';
       default:
         return method;

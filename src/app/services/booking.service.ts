@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, delay, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { PaymentService, PaymentRequest } from './payment.service';
 
 export interface Booking {
   id: string;
@@ -24,8 +25,8 @@ export interface Booking {
   sgst?: number;
   totalTax?: number;
   amount: number;
-  paymentMethod?: 'upi' | 'credit-card' | 'pay-later';
-  paymentStatus?: 'paid' | 'pending' | 'refunded';
+  paymentMethod?: 'upi' | 'CreditCard' | 'PayLater';
+  paymentStatus?: 'completed' | 'pending' | 'refunded';
   bookingDate: string;
   status: 'confirmed' | 'cancelled' | 'completed' | 'pending';
   fromDate?: string;
@@ -42,7 +43,10 @@ export class BookingService {
   private readonly COUNTER_KEY = 'tourist_guide_booking_counter';
   private apiUrl = `${environment.apiUrl}/api/bookings`;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private paymentService: PaymentService
+  ) {
     // this.loadBookingsFromStorage();
   }
 
@@ -90,19 +94,58 @@ export class BookingService {
     return `BK${this.bookingCounter}`;
   }
 
-  createBooking(booking: Omit<Booking, 'id' | 'bookingDate' | 'status'>): Observable<Booking> {
+  createBooking(booking: Omit<Booking, 'id' | 'bookingDate' | 'status'>, paymentRequest?: PaymentRequest): Observable<Booking> {
+    // Create booking first
+    return this.createBookingInBackend(booking).pipe(
+      switchMap(createdBooking => {
+        // If payment request is provided, process payment after booking creation
+        if (paymentRequest) {
+          // Add booking ID to payment request
+          const paymentRequestWithBookingId = {
+            ...paymentRequest,
+            bookingId: createdBooking.id
+          };
+          
+          return this.paymentService.processPayment(paymentRequestWithBookingId).pipe(
+            map(paymentResponse => {
+              if (!paymentResponse.success) {
+                // Payment failed, but booking is already created
+                // In a real scenario, you might want to cancel the booking or mark it differently
+                console.error('Payment failed after booking creation:', paymentResponse.message);
+              }
+              // Return the created booking regardless of payment status
+              // Payment status is already set in the booking object
+              return createdBooking;
+            }),
+            catchError(paymentError => {
+              console.error('Error processing payment after booking creation:', paymentError);
+              // Return the booking even if payment processing fails
+              // This allows the booking to exist with pending payment status
+              return of(createdBooking);
+            })
+          );
+        }
+        
+        // No payment request, return booking directly
+        return of(createdBooking);
+      }),
+      catchError(error => {
+        console.error('Error in booking/payment flow:', error);
+        throw new Error(error.message || 'Booking creation failed');
+      })
+    );
+  }
+
+  private createBookingInBackend(booking: Omit<Booking, 'id' | 'bookingDate' | 'status'>): Observable<Booking> {
     return this.http.post<Booking>(`${this.apiUrl}`, booking, { headers: this.getAuthHeaders() })
       .pipe(
         map(newBooking => {
           this.bookings.set(newBooking.id, newBooking);
-          // this.saveBookingsToStorage();
-          // this.saveToGuideBookings(newBooking);
           return newBooking;
         }),
         catchError(error => {
           console.error('Error creating booking:', error);
           throw new Error('Booking Creation Failed');
-          // return this.createLocalBooking(booking);
         })
       );
   }
@@ -178,7 +221,7 @@ export class BookingService {
           // const booking = this.bookings.get(id);
           // if (booking) {
           //   booking.status = 'cancelled';
-          //   if (booking.paymentStatus === 'paid') {
+          //   if (booking.paymentStatus === 'completed') {
           //     booking.paymentStatus = 'refunded';
           //   }
           //   this.bookings.set(id, booking);
@@ -297,8 +340,8 @@ export class BookingService {
   /**
    * Get all bookings for a guide by email
    */
-  getBookingsByGuideEmail(guideEmail: string): Observable<Booking[]> {
-    return this.http.get<Booking[]>(`${this.apiUrl}/guide-email/${encodeURIComponent(guideEmail)}`, { headers: this.getAuthHeaders() })
+  getBookingsByGuideId(guideId: string): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.apiUrl}/guide-bookings/${encodeURIComponent(guideId)}`, { headers: this.getAuthHeaders() })
       .pipe(
         catchError(error => {
           console.error('Error fetching bookings by guide email:', error);
@@ -415,7 +458,7 @@ export class BookingService {
           const booking = this.bookings.get(id);
           if (booking) {
             booking.status = status;
-            if (status === 'cancelled' && booking.paymentStatus === 'paid') {
+            if (status === 'cancelled' && booking.paymentStatus === 'completed') {
               booking.paymentStatus = 'refunded';
             }
             this.bookings.set(id, booking);

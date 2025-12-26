@@ -118,17 +118,17 @@
               </div>
 
               <!-- Credit Card Option -->
-              <div class="pay-option" [class.selected]="paymentMethod === 'credit-card'" (click)="$event.stopPropagation(); selectPayNowOption('credit-card')">
+              <div class="pay-option" [class.selected]="paymentMethod === 'CreditCard'" (click)="$event.stopPropagation(); selectPayNowOption('CreditCard')">
                 <div class="option-header">
                   <div class="radio-button">
                     <div class="radio-outer">
-                      <div class="radio-inner" *ngIf="paymentMethod === 'credit-card'"></div>
+                      <div class="radio-inner" *ngIf="paymentMethod === 'CreditCard'"></div>
                     </div>
                   </div>
                   <span class="option-label">Credit/Debit Card</span>
                 </div>
 
-                <div class="card-form" *ngIf="paymentMethod === 'credit-card'">
+                <div class="card-form" *ngIf="paymentMethod === 'CreditCard'">
                   <div class="form-group">
                     <label for="cardNumber">Card Number</label>
                     <input 
@@ -184,13 +184,13 @@
                           [(ngModel)]="expiryYear"
                           (click)="$event.stopPropagation()">
                           <option value="">YY</option>
-                          <option value="24">24</option>
-                          <option value="25">25</option>
-                          <option value="26">26</option>
-                          <option value="27">27</option>
-                          <option value="28">28</option>
-                          <option value="29">29</option>
-                          <option value="30">30</option>
+                          <option value="24">25</option>
+                          <option value="25">26</option>
+                          <option value="26">27</option>
+                          <option value="27">28</option>
+                          <option value="28">29</option>
+                          <option value="29">30</option>
+                          <option value="30">31</option>
                         </select>
                       </div>
                     </div>
@@ -213,7 +213,7 @@
           </div>
 
           <!-- Pay Later -->
-          <div class="payment-card" [class.selected]="!showPayNowOptions" (click)="selectPaymentMethod('pay-later')">
+          <div class="payment-card" [class.selected]="!showPayNowOptions" (click)="selectPaymentMethod('PayLater')">
             <div class="payment-header">
               <div class="radio-button">
                 <div class="radio-outer">

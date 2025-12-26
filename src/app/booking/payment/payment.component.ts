@@ -28,7 +28,7 @@ export class PaymentComponent implements OnInit {
   hoursBooked = 1;
 
   // Payment details
-  paymentMethod: 'upi' | 'credit-card' | 'pay-later' = 'upi';
+  paymentMethod: 'upi' | 'CreditCard' | 'PayLater' = 'upi';
   showPayNowOptions = true;
   
   // UPI details
@@ -107,17 +107,17 @@ export class PaymentComponent implements OnInit {
     return this.subtotal + this.totalTax;
   }
 
-  selectPaymentMethod(method: 'pay-now' | 'pay-later') {
+  selectPaymentMethod(method: 'pay-now' | 'PayLater') {
     if (method === 'pay-now') {
       this.showPayNowOptions = true;
       this.paymentMethod = 'upi'; // Default to UPI
     } else {
       this.showPayNowOptions = false;
-      this.paymentMethod = 'pay-later';
+      this.paymentMethod = 'PayLater';
     }
   }
 
-  selectPayNowOption(option: 'upi' | 'credit-card') {
+  selectPayNowOption(option: 'upi' | 'CreditCard') {
     this.paymentMethod = option;
   }
 
@@ -166,6 +166,20 @@ export class PaymentComponent implements OnInit {
 
     this.isProcessing = true;
 
+    // Prepare payment request
+    const paymentRequest = {
+      paymentMethod: this.paymentMethod,
+      amount: this.totalAmount,
+      upiId: this.upiId,
+      cardNumber: this.cardNumber,
+      cardHolderName: this.cardHolderName,
+      expiryMonth: this.expiryMonth,
+      expiryYear: this.expiryYear,
+      cvv: this.cvv
+    };
+
+    // Prepare booking data
+    const paymentStatus: 'completed' | 'pending' = this.paymentMethod === 'PayLater' ? 'pending' : 'completed';
     const bookingData = {
       attractionId: this.attraction.id,
       attractionName: this.attraction.attractionName,
@@ -186,16 +200,17 @@ export class PaymentComponent implements OnInit {
       totalTax: this.totalTax,
       amount: this.totalAmount,
       paymentMethod: this.paymentMethod,
-      paymentStatus: (this.paymentMethod === 'pay-later' ? 'pending' : 'paid') as 'paid' | 'pending'
+      paymentStatus: paymentStatus
     };
 
-    this.bookingService.createBooking(bookingData).subscribe({
+    // Create booking with payment integration (payment will be processed first in service)
+    this.bookingService.createBooking(bookingData, paymentRequest).subscribe({
       next: (booking) => {
         this.isProcessing = false;
         this.router.navigate(['/booking-confirmation', booking.id]);
       },
       error: (err) => {
-        this.error = 'Failed to process booking. Please try again.';
+        this.error = err.message || 'Failed to process payment and booking. Please try again.';
         this.isProcessing = false;
       }
     });

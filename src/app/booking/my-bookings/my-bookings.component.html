@@ -59,6 +59,21 @@
               </div>
             </div>
 
+            <div class="payment-section">
+              <div class="info-row">
+                <span class="icon">💳</span>
+                <span class="label">Payment Method:</span>
+                <span class="value">{{getPaymentMethodLabel(booking.paymentMethod)}}</span>
+              </div>
+              <div class="info-row" *ngIf="booking.paymentStatus">
+                <span class="icon">{{booking.paymentStatus === 'completed' ? '✅' : (booking.paymentStatus === 'refunded' ? '💸' : '⏳')}}</span>
+                <span class="label">Payment Status:</span>
+                <span class="value" [ngClass]="booking.paymentStatus">
+                  {{getPaymentStatusLabel(booking.paymentStatus)}}
+                </span>
+              </div>
+            </div>
+
             <div class="amount-section">
               <span class="amount-label">Amount Paid</span>
               <span class="amount-value">₹{{booking.amount | number:'1.2-2'}}</span>
