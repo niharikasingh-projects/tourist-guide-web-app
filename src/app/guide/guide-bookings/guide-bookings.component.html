@@ -71,7 +71,7 @@
             <span class="icon">⏱️</span>
             <div>
               <p class="label">Duration</p>
-              <p class="value">{{ booking.hoursBooked || 0 }} hours</p>
+              <p class="value">{{ getHoursBooked(booking.timeFrom, booking.timeTo) }} hours</p>
             </div>
           </div>
 

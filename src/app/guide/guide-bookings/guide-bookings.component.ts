@@ -26,7 +26,7 @@ export class GuideBookingsComponent implements OnInit {
     private router: Router,
     private bookingService: BookingService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     const user = this.auth.getCurrentUser();
@@ -43,18 +43,17 @@ export class GuideBookingsComponent implements OnInit {
     if (!user) return;
 
     this.isLoading = true;
-    
+
     // Use BookingService to fetch bookings
     this.bookingService.getBookingsByGuideId(user?.id ?? '').subscribe({
       next: (bookings) => {
         this.allBookings = bookings;
-        
+
         // Categorize bookings by date
         const categorized = this.bookingService.categorizeBookingsByDate(bookings);
         this.currentBookings = categorized.current;
         this.pastBookings = categorized.past;
         this.futureBookings = categorized.future;
-        
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -134,5 +133,14 @@ export class GuideBookingsComponent implements OnInit {
       'pay-later': 'Pay at Check-in'
     };
     return labels[method] || method;
+  }
+
+  getHoursBooked(timeFrom?: string, timeTo?: string): number {
+    if (!timeFrom || !timeTo) return 0;
+    const [fromHour, fromMin] = timeFrom.split(':').map(Number);
+    const [toHour, toMin] = timeTo.split(':').map(Number);
+    const fromMinutes = fromHour * 60 + fromMin;
+    const toMinutes = toHour * 60 + toMin;
+    return (toMinutes - fromMinutes) / 60;
   }
 }
