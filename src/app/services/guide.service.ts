@@ -23,6 +23,7 @@ export interface Guide {
   phoneNumber: string;
   timeFrom?: string;  // Default 09:00
   timeTo?: string;    // Default 18:00
+  tourDuration?: number; // in hours
 }
 
 @Injectable({
