@@ -22,7 +22,7 @@ export class SearchComponent implements OnInit {
   timeFrom = '';
   timeTo = '';
   minDate: string;
-  
+
   // Validation error messages
   dateError = '';
   timeFromError = '';
@@ -49,7 +49,7 @@ export class SearchComponent implements OnInit {
     // Set minimum date to today
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
-    
+
     // Set up the autosuggest observable pipeline
     this.searchSubject.pipe(
       distinctUntilChanged(), // Only emit if value changed
@@ -81,7 +81,7 @@ export class SearchComponent implements OnInit {
   onLocationInput(event: Event) {
     const input = (event.target as HTMLInputElement).value;
     this.location = input;
-    
+
     // Only trigger search if 2 or more characters
     if (input.length >= 2) {
       this.searchSubject.next(input);
@@ -133,12 +133,12 @@ export class SearchComponent implements OnInit {
 
   onDateChange() {
     this.dateError = '';
-    
+
     if (this.selectedDate) {
       const selected = new Date(this.selectedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       if (selected < today) {
         this.dateError = 'Date cannot be in the past';
         this.selectedDate = null;
@@ -150,14 +150,14 @@ export class SearchComponent implements OnInit {
   onTimeChange() {
     this.timeFromError = '';
     this.timeToError = '';
-    
+
     if (this.timeFrom && this.timeTo) {
       const [fromHour, fromMin] = this.timeFrom.split(':').map(Number);
       const [toHour, toMin] = this.timeTo.split(':').map(Number);
-      
+
       const fromMinutes = fromHour * 60 + fromMin;
       const toMinutes = toHour * 60 + toMin;
-      
+
       if (toMinutes <= fromMinutes) {
         this.timeToError = 'Time To must be after Time From';
         this.timeTo = '';
@@ -172,43 +172,43 @@ export class SearchComponent implements OnInit {
     this.timeToError = '';
     this.locationError = '';
     this.searchResults = [];
-    
+
     // Validate location is not empty
     if (!this.location || this.location.trim() === '') {
       this.locationError = 'Please enter a location';
       return;
     }
-    
+
     // Validate date
     if (this.selectedDate) {
       const selected = new Date(this.selectedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       if (selected < today) {
         this.dateError = 'Date cannot be in the past';
         return;
       }
     }
-    
+
     // Validate times
     if (this.timeFrom && this.timeTo) {
       const [fromHour, fromMin] = this.timeFrom.split(':').map(Number);
       const [toHour, toMin] = this.timeTo.split(':').map(Number);
-      
+
       const fromMinutes = fromHour * 60 + fromMin;
       const toMinutes = toHour * 60 + toMin;
-      
+
       if (toMinutes <= fromMinutes) {
         this.timeToError = 'Time To must be after Time From';
         return;
       }
     }
-    
+
     // Perform search
     this.isSearching = true;
     this.hasSearched = true;
-    
+
     this.searchService.searchAttractionsByLocation(this.location).subscribe({
       next: (results) => {
         this.searchResults = results;
@@ -234,26 +234,26 @@ export class SearchComponent implements OnInit {
     });
   }
 
-    updateImageUrl(results: TouristAttraction[]): void {
-  
-      for (const result of results) {
-  
-        const imageUrl = result.imageUrl;
-        if (!imageUrl) continue;
-  
-        // If it's a relative URL (starts with /), prepend the backend API URL
-        if (imageUrl.startsWith('/')) {
-          result.imageUrl = `${environment.apiUrl}/api${imageUrl}`;
-        }
-  
-        // If it doesn't have a protocol (http:// or https://), treat as relative
-        if (!imageUrl.match(/^https?:\/\//)) {
-          continue;
-        }
-  
+  updateImageUrl(results: TouristAttraction[]): void {
+
+    for (const result of results) {
+
+      const imageUrl = result.imageUrl;
+      if (!imageUrl) continue;
+
+      // If it's a relative URL (starts with /), prepend the backend API URL
+      if (imageUrl.startsWith('/')) {
+        result.imageUrl = `${environment.apiUrl}/api${imageUrl}`;
       }
-  
+
+      // If it doesn't have a protocol (http:// or https://), treat as relative
+      if (!imageUrl.match(/^https?:\/\//)) {
+        continue;
+      }
+
     }
+
+  }
 
   onSelectAttraction(attractionId: string) {
     console.log('Selected attraction ID:', attractionId);
