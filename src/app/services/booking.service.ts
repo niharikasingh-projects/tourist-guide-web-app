@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, delay, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Booking {
   id: string;
@@ -37,9 +40,18 @@ export class BookingService {
   private bookingCounter = 1000;
   private readonly STORAGE_KEY = 'tourist_guide_bookings';
   private readonly COUNTER_KEY = 'tourist_guide_booking_counter';
+  private apiUrl = `${environment.apiUrl}/api/bookings`;
 
-  constructor() {
-    this.loadBookingsFromStorage();
+  constructor(private http: HttpClient) {
+    // this.loadBookingsFromStorage();
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
   }
 
   private loadBookingsFromStorage(): void {
@@ -79,6 +91,23 @@ export class BookingService {
   }
 
   createBooking(booking: Omit<Booking, 'id' | 'bookingDate' | 'status'>): Observable<Booking> {
+    return this.http.post<Booking>(`${this.apiUrl}`, booking, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(newBooking => {
+          this.bookings.set(newBooking.id, newBooking);
+          // this.saveBookingsToStorage();
+          // this.saveToGuideBookings(newBooking);
+          return newBooking;
+        }),
+        catchError(error => {
+          console.error('Error creating booking:', error);
+          throw new Error('Booking Creation Failed');
+          // return this.createLocalBooking(booking);
+        })
+      );
+  }
+
+  private createLocalBooking(booking: Omit<Booking, 'id' | 'bookingDate' | 'status'>): Observable<Booking> {
     const newBooking: Booking = {
       ...booking,
       id: this.generateBookingId(),
@@ -88,47 +117,90 @@ export class BookingService {
 
     this.bookings.set(newBooking.id, newBooking);
     this.saveBookingsToStorage();
-    
-    // Also save to guide-specific bookings in localStorage
     this.saveToGuideBookings(newBooking);
     
-    // Simulate API call with delay
     return of(newBooking).pipe(delay(500));
   }
 
   getBookingById(id: string): Observable<Booking | null> {
-    const booking = this.bookings.get(id);
-    return of(booking || null).pipe(delay(300));
+    return this.http.get<Booking>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching booking:', error);
+          throw new Error('Booking Fetch Failed');
+          // const booking = this.bookings.get(id);
+          // return of(booking || null);
+        })
+      );
+  }
+
+  getBookingsByCustomerId(id: string): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.apiUrl}/my-bookings/${encodeURIComponent(id)}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(bookings => bookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())),
+        catchError(error => {
+          console.error('Error fetching customer bookings:', error);
+          throw new Error('Customer Bookings Fetch Failed');
+          // const userBookings = Array.from(this.bookings.values())
+          //   .filter(booking => booking.customerEmail === email)
+          //   .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
+          // return of(userBookings);
+        })
+      );
   }
 
   getBookingsByCustomerEmail(email: string): Observable<Booking[]> {
-    const userBookings = Array.from(this.bookings.values())
-      .filter(booking => booking.customerEmail === email)
-      .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
-    return of(userBookings).pipe(delay(300));
+    return this.http.get<Booking[]>(`${this.apiUrl}/my-bookings/${encodeURIComponent(email)}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(bookings => bookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())),
+        catchError(error => {
+          console.error('Error fetching customer bookings:', error);
+          throw new Error('Customer Bookings Fetch Failed');
+          // const userBookings = Array.from(this.bookings.values())
+          //   .filter(booking => booking.customerEmail === email)
+          //   .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
+          // return of(userBookings);
+        })
+      );
   }
 
   cancelBooking(id: string): Observable<boolean> {
-    const booking = this.bookings.get(id);
-    if (booking) {
-      booking.status = 'cancelled';
-      // Update payment status to refunded if it was paid
-      if (booking.paymentStatus === 'paid') {
-        booking.paymentStatus = 'refunded';
-      }
-      this.bookings.set(id, booking);
-      this.saveBookingsToStorage();
-      
-      // Also update guide-specific bookings
-      this.updateGuideBooking(booking);
-      
-      return of(true).pipe(delay(400));
-    }
-    return throwError(() => new Error('Booking not found'));
+    return this.http.put<Booking>(`${this.apiUrl}/${id}/cancel`, {}, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(booking => {
+          this.bookings.set(id, booking);
+          // this.saveBookingsToStorage();
+          // this.updateGuideBooking(booking);
+          return true;
+        }),
+        catchError(error => {
+          console.error('Error cancelling booking:', error);
+          // const booking = this.bookings.get(id);
+          // if (booking) {
+          //   booking.status = 'cancelled';
+          //   if (booking.paymentStatus === 'paid') {
+          //     booking.paymentStatus = 'refunded';
+          //   }
+          //   this.bookings.set(id, booking);
+          //   this.saveBookingsToStorage();
+          //   this.updateGuideBooking(booking);
+          //   return of(true);
+          // }
+          // return throwError(() => new Error('Booking not found'));
+          throw new Error('Booking Cancellation Failed');
+        })
+      );
   }
 
   getAllBookings(): Observable<Booking[]> {
-    return of(Array.from(this.bookings.values())).pipe(delay(300));
+    return this.http.get<Booking[]>(`${this.apiUrl}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching all bookings:', error);
+          throw new Error('All Bookings Fetch Failed');
+          // return of(Array.from(this.bookings.values()));
+        })
+      );
   }
 
   /**
@@ -177,14 +249,15 @@ export class BookingService {
    * This method tries backend API first, then falls back to localStorage
    */
   getBookingsForGuide(guideId: string, selectedDate?: string): Observable<Booking[]> {
-    // TODO: Replace with actual API call when backend is ready
-    // const apiUrl = `${environment.apiUrl}/api/bookings/guide/${guideId}${selectedDate ? '?date=' + selectedDate : ''}`;
-    // return this.http.get<Booking[]>(apiUrl).pipe(
-    //   catchError(() => this.getLocalBookingsForGuide(guideId, selectedDate))
-    // );
-    
-    // For now, use localStorage directly
-    return this.getLocalBookingsForGuide(guideId, selectedDate);
+    const url = `${this.apiUrl}/guide/${guideId}${selectedDate ? '?date=' + selectedDate : ''}`;
+    return this.http.get<Booking[]>(url, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching guide bookings:', error);
+          throw new Error('Guide Bookings Fetch Failed');
+          // return this.getLocalBookingsForGuide(guideId, selectedDate);
+        })
+      );
   }
 
   /**
@@ -225,13 +298,14 @@ export class BookingService {
    * Get all bookings for a guide by email
    */
   getBookingsByGuideEmail(guideEmail: string): Observable<Booking[]> {
-    // TODO: Replace with actual API call when backend is ready
-    // const apiUrl = `${environment.apiUrl}/api/bookings/guide-email/${guideEmail}`;
-    // return this.http.get<Booking[]>(apiUrl).pipe(
-    //   catchError(() => this.getLocalBookingsByGuideEmail(guideEmail))
-    // );
-    
-    return this.getLocalBookingsByGuideEmail(guideEmail);
+    return this.http.get<Booking[]>(`${this.apiUrl}/guide-email/${encodeURIComponent(guideEmail)}`, { headers: this.getAuthHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching bookings by guide email:', error);
+          throw new Error('Guide Email Bookings Fetch Failed');
+          // return this.getLocalBookingsByGuideEmail(guideEmail);
+        })
+      );
   }
 
   /**
@@ -328,21 +402,29 @@ export class BookingService {
    * Update booking status (confirm, complete, etc.)
    */
   updateBookingStatus(id: string, status: 'confirmed' | 'cancelled' | 'completed' | 'pending'): Observable<boolean> {
-    const booking = this.bookings.get(id);
-    if (booking) {
-      booking.status = status;
-      
-      // If completing or cancelling, update payment status if needed
-      if (status === 'cancelled' && booking.paymentStatus === 'paid') {
-        booking.paymentStatus = 'refunded';
-      }
-      
-      this.bookings.set(id, booking);
-      this.saveBookingsToStorage();
-      this.updateGuideBooking(booking);
-      
-      return of(true).pipe(delay(300));
-    }
-    return of(false);
+    return this.http.put<Booking>(`${this.apiUrl}/${id}/status`, { status }, { headers: this.getAuthHeaders() })
+      .pipe(
+        map(booking => {
+          this.bookings.set(id, booking);
+          this.saveBookingsToStorage();
+          this.updateGuideBooking(booking);
+          return true;
+        }),
+        catchError(error => {
+          console.error('Error updating booking status:', error);
+          const booking = this.bookings.get(id);
+          if (booking) {
+            booking.status = status;
+            if (status === 'cancelled' && booking.paymentStatus === 'paid') {
+              booking.paymentStatus = 'refunded';
+            }
+            this.bookings.set(id, booking);
+            this.saveBookingsToStorage();
+            this.updateGuideBooking(booking);
+            return of(true);
+          }
+          return of(false);
+        })
+      );
   }
 }

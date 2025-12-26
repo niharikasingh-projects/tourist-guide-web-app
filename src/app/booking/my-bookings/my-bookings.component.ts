@@ -37,12 +37,12 @@ export class MyBookingsComponent implements OnInit {
       return;
     }
 
-    this.loadBookings(currentUser.email);
+    this.loadBookings(currentUser.id!);
   }
 
-  loadBookings(email: string) {
+  loadBookings(id: string) {
     this.isLoading = true;
-    this.bookingService.getBookingsByCustomerEmail(email).subscribe({
+    this.bookingService.getBookingsByCustomerId(id).subscribe({
       next: (bookings) => {
         this.bookings = bookings;
         this.isLoading = false;

@@ -100,11 +100,11 @@
               [(ngModel)]="customerContact"
               placeholder="Enter your contact number"
               required
-              [class.invalid]="formSubmitted && (!customerContact.trim() || !isValidPhone(customerContact))">
-            <span *ngIf="formSubmitted && !customerContact.trim()" class="error-text">
+              [class.invalid]="(!customerContact.trim() || !isValidPhone(customerContact))">
+            <span *ngIf="!customerContact.trim()" class="error-text">
               Contact number is required
             </span>
-            <span *ngIf="formSubmitted && customerContact.trim() && !isValidPhone(customerContact)" class="error-text">
+            <span *ngIf="customerContact.trim() && !isValidPhone(customerContact)" class="error-text">
               Please enter a valid contact number (10 digits)
             </span>
           </div>
@@ -118,11 +118,11 @@
               [(ngModel)]="customerEmail"
               placeholder="Enter your email address"
               required
-              [class.invalid]="formSubmitted && (!customerEmail.trim() || !isValidEmail(customerEmail))">
-            <span *ngIf="formSubmitted && !customerEmail.trim()" class="error-text">
+              [class.invalid]="(!customerEmail.trim() || !isValidEmail(customerEmail))">
+            <span *ngIf="!customerEmail.trim()" class="error-text">
               Email is required
             </span>
-            <span *ngIf="formSubmitted && customerEmail.trim() && !isValidEmail(customerEmail)" class="error-text">
+            <span *ngIf="customerEmail.trim() && !isValidEmail(customerEmail)" class="error-text">
               Please enter a valid email address
             </span>
           </div>
