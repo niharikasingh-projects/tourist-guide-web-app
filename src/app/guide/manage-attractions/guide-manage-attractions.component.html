@@ -215,7 +215,7 @@
 
           <div class="date-ranges" *ngIf="profile.availableDates.length > 0">
             <div class="date-range" *ngFor="let dateRange of profile.availableDates; let i = index">
-              <span>{{ dateRange.from }} → {{ dateRange.to }}</span>
+              <span>{{ dateRange.from | date:'mediumDate' }} → {{ dateRange.to | date:'mediumDate' }}</span>
               <button class="remove-button" (click)="removeDateRange(profile, i)">×</button>
             </div>
           </div>
