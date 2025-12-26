@@ -7,6 +7,7 @@ import { GuideService, Guide } from '../../services/guide.service';
 import { BookingService } from '../../services/booking.service';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -41,25 +42,25 @@ export class CheckoutComponent implements OnInit {
     private guideService: GuideService,
     private bookingService: BookingService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     const attractionId = this.route.snapshot.paramMap.get('attractionId');
     const guideId = this.route.snapshot.paramMap.get('guideId');
-    
+
     // Get date and time from query params
     const dateParam = this.route.snapshot.queryParamMap.get('date');
     const timeFromParam = this.route.snapshot.queryParamMap.get('timeFrom');
     const timeToParam = this.route.snapshot.queryParamMap.get('timeTo');
-    
+
     if (dateParam) {
       this.selectedDate = new Date(dateParam);
     }
-    
+
     if (timeFromParam && timeToParam) {
       this.timeFrom = timeFromParam;
       this.timeTo = timeToParam;
-      
+
       // Calculate hours based on time difference
       const [fromHour, fromMin] = timeFromParam.split(':').map(Number);
       const [toHour, toMin] = timeToParam.split(':').map(Number);
@@ -67,7 +68,7 @@ export class CheckoutComponent implements OnInit {
       const toMinutes = toHour * 60 + toMin;
       this.hoursBooked = (toMinutes - fromMinutes) / 60;
     }
-    
+
     // Restore customer details from navigation state (when coming back from payment page)
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state || history.state;
@@ -93,6 +94,7 @@ export class CheckoutComponent implements OnInit {
       next: (attraction) => {
         if (attraction) {
           this.attraction = attraction;
+          this.attraction.imageUrl = this.getUpdatedAttractionPictureUrl(attraction);
           this.loadGuide(attractionId, guideId);
         } else {
           this.error = 'Attraction not found';
@@ -110,6 +112,7 @@ export class CheckoutComponent implements OnInit {
     this.guideService.getGuidesByAttractionId(attractionId).subscribe({
       next: (guides) => {
         this.guide = guides.find(g => g.id.toString() === guideId) || null;
+        this.guide!.profileImageUrl = this.getUpdatedGuidePictureUrl(this.guide!);
         if (!this.guide) {
           this.error = 'Guide not found';
         }
@@ -127,6 +130,36 @@ export class CheckoutComponent implements OnInit {
     if (!this.guide) return 0;
     // Base calculation: guide hourly rate
     return this.guide.hourlyRate;
+  }
+
+  getUpdatedAttractionPictureUrl(attraction: TouristAttraction): string {
+    // If it's a relative URL (starts with /), prepend the backend API URL
+    if (attraction.imageUrl.startsWith('/')) {
+      return `${environment.apiUrl}/api${attraction.imageUrl}`;
+    }
+
+    // If it doesn't have a protocol (http:// or https://), treat as relative
+    if (!attraction.imageUrl.match(/^https?:\/\//)) {
+      return `${environment.apiUrl}/api${attraction.imageUrl}`;
+    }
+
+    // Otherwise return as is (full URL or base64)
+    return attraction.imageUrl;
+  }
+
+    getUpdatedGuidePictureUrl(guide: Guide): string {
+    // If it's a relative URL (starts with /), prepend the backend API URL
+    if (guide.profileImageUrl.startsWith('/')) {
+      return `${environment.apiUrl}/api${guide.profileImageUrl}`;
+    }
+
+    // If it doesn't have a protocol (http:// or https://), treat as relative
+    if (!guide.profileImageUrl.match(/^https?:\/\//)) {
+      return `${environment.apiUrl}/api${guide.profileImageUrl}`;
+    }
+
+    // Otherwise return as is (full URL or base64)
+    return guide.profileImageUrl;
   }
 
   isFormValid(): boolean {

@@ -73,14 +73,17 @@ export class GuideManageAttractionsComponent implements OnInit {
     this.loading = true;
     this.guideProfileService.getGuideProfiles(this.userEmail).subscribe({
       next: (profiles) => {
-        this.guideProfiles = profiles;
+        this.guideProfiles = Array.isArray(profiles) ? profiles : [];
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading guide profiles:', err);
+        this.guideProfiles = [];
         this.loading = false;
         this.cdr.detectChanges();
+      },
+      complete: () => {
+        console.log('Observable completed');
       }
     });
   }
